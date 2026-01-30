@@ -1,0 +1,119 @@
+Fault detection for critical patientns, Early Warning Systems
+
+Bachelor Idé
+Jeg ønsker at undersøge, hvordan machine learning kan anvendes til at 
+forudsige dødelighedsrisiko hos indlagte patienter.
+Idéen er at lave en model, der baseret på de mange målinger/data, som 
+løbende registreres for kritisk syge patienter kan forudsige patientens aktuelle 
+og fremtidige tilstand. Formålet er at støtte sundhedspersonalet i at 
+identificere om en patient er i fare og har brug for behandling eller ekstra opsyn.
+
+
+Vejledere der kunne være intressante at arbejde med:
+    - Jesper Løve Hinrich:  jehi@dtu.dk, B:321, R:129 ? Aftale Torsdag 6. Nov kl 14 (Yeeh lets go)
+    - Morten Mørup:         mmor@dtu.dk, B:321, R:118 ? Send Mail eller mød ham på kontoret
+
+    - Tommy Sonne Alstrøm:  tsal@dtu.dk, B:321, R:207 ? Skeptisk med data interasseret
+    - Bjørn Sand Jensen:    bjje@dtu.dk, B:321, R:226 ? Skeptisk med data interasseret
+    - Nicki Detlefsen:      nsde@dtu.dk, B:321, R:206 ? Eget projekt, interasseret
+    - Kristoffer Hougaard:  khma@dtu.dk, B:324, R:230 ? Ikke fået svar
+    - Per Bækgaard:         pgba@dtu.dk, B:321, R:132 ? Ikke fået svar
+
+    Afslag
+    ##############################################################################################################################################
+    - Jes Frellsen:         jefr@dtu.dk, B:321, R:221 X Har ikke tid
+    - Søren Hauberg:        sohau@dtu.dk, B:321, R:209 X
+
+
+Data problem:
+
+Skriv til afdelingerne
+    - Rigshospitalet
+        
+        Majken Maul leegaard
+            - Datachef i Økonomi
+            - majken.maul.leegaard@regionh.dk
+        ! Fik kontakt igennem til Hans-Christian Thorsen-Meyer
+
+        Hans-Christian Thorsen-Meyer
+            - Overlæge, PhD, postdoc, Intensiv Terapiklinik
+            - Hans-christian.Thorsen-meyer.01@regionh.dk
+        ! 
+
+
+    Pause
+    - ECG
+    https://bdsp.io/content/heedb/4.0/
+
+    - EHR
+    https://health.ec.europa.eu/ehealth-digital-health-and-care/certification-ehr-systems_en
+
+    Afslag
+    ##############################################################################################################################################
+    https://ward247.com
+    Ylva Pisters:       Clinical Implementation     ylva.langemark@ward247.com 
+    ? Ikke rigtig mail
+    Jelle Reichert:     Co-founder & CTO            jelle.reichert@ward247.com
+    ? Afslag    
+    Mikkel Dahlgaard:   Business Strategy Manager   mikkel.dahlgaard@ward247.com
+    ? Vidersendt
+    Micheal Frandsen:   Chief Commercial Officer    michael.frandsen@ward247.com
+    ? Vidersendt
+
+
+Andre idéer hvis data er besværligt
+    - Vindmølle data
+    - Radar detection
+    - Tanke (novo Tanke); process Ananlytic technologi
+    - Plasma: Jesper mail
+
+
+#################################
+12/12/2025
+Møde: (Hans-Christian Thorsen-Meyer, Jesper Løve Hinrich, Davide Placido)
+
+Dansk anom center
+Dutch intinsive care data base
+
+OK måske er dette ikke den bedste idé at arbejde på.
+Fik nogle link og prøver at finde på noget andet....
+
+
+https://github.com/AmsterdamUMC/AmsterdamUMCdb
+- Adgang via:
+https://amsterdammedicaldatascience.nl
+
+
+https://physionet.org/content/mimiciv/3.1/
+
+- Adgang via:
+https://physionet.org
+
+
+https://www.esicm.org/events/8th-digital-critical-care-datathon/
+
+
+
+https://www.thelancet.com/journals/landig/article/PIIS2589-7500(20)30018-2/fulltext
+
+
+
+https://www.nature.com/articles/s41746-022-00679-6
+
+#################################
+21/12/2025
+Få adgang til data:
+Amsterdam medical data science
+
+#############################################
+
+28/01/2026
+Møde med Jesper
+Lad os arbejde med simulering og ML
+
+
+Physics informed engine
+
+30/01/2026
+Klar gør projekt: Se indberetning af projekt fil:
+    - Bachelor_projekt/indberette_projekt.txt
