@@ -11,7 +11,7 @@ Bachelor project at the Technical University of Denmark (DTU)
 **Co-supervisor:**  Alexander Simon Thrysøe     https://orbit.dtu.dk/en/persons/alexander-simon-thrysøe/ \\
 **Period:**         Spring 2026
 
-### \* Jesper is not certified to be supervisor thus we have Morten. Jesper will mainly guide me and Morten will make sure everythin is in order.
+####### \* Jesper is not certified to be supervisor thus we have Morten. Jesper will mainly guide me and Morten will make sure everythin is in order.
 ---
 
 ## 📌 Project Overview
