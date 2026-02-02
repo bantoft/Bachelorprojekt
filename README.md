@@ -6,12 +6,11 @@ This is for product/scientific development for my bachelorprojekt.
 Bachelor project at the Technical University of Denmark (DTU)
 
 **Student:**        Andreas Bjarnastein Antoft
-**Supervisor\*:**   Jesper Løve Hinrich         https://orbit.dtu.dk/en/persons/jesper-løve-hinrich/ \\
-**Supervisor:**     Morten Mørup                https://orbit.dtu.dk/en/persons/morten-mørup/ \\
-**Co-supervisor:**  Alexander Simon Thrysøe     https://orbit.dtu.dk/en/persons/alexander-simon-thrysøe/ \\
+**Supervisor:**     Jesper Løve Hinrich         https://orbit.dtu.dk/en/persons/jesper-løve-hinrich/
+**Supervisor:**     Morten Mørup                https://orbit.dtu.dk/en/persons/morten-mørup/
+**Co-supervisor:**  Alexander Simon Thrysøe     https://orbit.dtu.dk/en/persons/alexander-simon-thrysøe/
 **Period:**         Spring 2026
 
-####### \* Jesper is not certified to be supervisor thus we have Morten. Jesper will mainly guide me and Morten will make sure everythin is in order.
 ---
 
 ## 📌 Project Overview
@@ -27,18 +26,18 @@ The goal is to compare classical numerical simulation methods with ML-based surr
 
 ---
 
-## 🧠 Scientific Approach
+## 🧠 Scientific Machiner learning Approach
 
 The physical system is described by a set of coupled PDEs:
 
 \[
-u_i(x, t), \quad i = 1, \dots, n
+    \bold{\overset{\rightharpoonup}U}(\bold{\overset{\rightharpoonup}x}, t)
 \]
 
 These solutions are approximated using a parameterized neural network:
 
 \[
-u_i(x, t) \approx f_\theta(x, t)
+    \bold{\overset{\rightharpoonup}U}(\bold{\overset{\rightharpoonup}x}, t) \approx f_\theta(\bold{\overset{\rightharpoonup}x}, t)
 \]
 
 where \( f_\theta \) is trained using physics-informed loss functions incorporating:
@@ -56,4 +55,4 @@ where \( f_\theta \) is trained using physics-informed loss functions incorporat
     ├── For_arbejde.txt         # Diary to keep trak of everythin
     ├── indberette_projekt.txt  # Pre report of the project
 ├── LICENCE     #Standard MIT licence
-└── README.md   #This beauty of a file :)
+└── README.md   #This beauty of a file 

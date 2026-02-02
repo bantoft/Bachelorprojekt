@@ -2,85 +2,26 @@ Min version:
 
 Titel:
     Dansk
-    Optimering af kant-dynamisk nHesel-plasmasimuleringer ved brug af Scientific Machine Learning
+    Videnskabelig maksine læring for simulation af fusion plasma kant dynamikker
 
     Engelsk
-    Optimizing edge-dynamic nHesel Plasma Simulations using Scientific Machine Learning
+    Scientific machine mearning for simulation of fusion plasma edge dynamics
 
 Beskrivelse:
-    Numerikse simulationer af plasma edge-dynamics bruges meget når man forsker i fusion. Da man simulerer komplekse partielle differentialligninger (PDE'er) 
-    med høj opløsning, koster det usædvanlig meget computer kraft, energi og tid. Den nuværende tilgang til simulering af dette fysiske system er baseret på 2D nHesel-simuleringer.
-    Formålet med dette bachelor projekt er at undersøge hvorvidt man kan bruge Scientific Machine Learning modeller (SciML) til at reducere disse omkostninger uden at forværre
-    for meget 2D nHesel simuleringerne. 
-
-    Idé
-    - Givet et fysisk system beskrevet ved et sæt partielle differentialligninger (PDE’er), undersøger vi om løsningen kan approksimeres hurtigere end klassiske numeriske metoder uden væsentligt tab af præcision.
-    Til dette anvendes metoder fra Scientific Machine Learning (SciML), og specifikt Physics-Informed Neural Networks (PINNs), hvor den ukendte løsning repræsenteres af et neuralt netværk, der respekterer den underliggende fysik.
-
-    Givet PDE: u[i](x[j], t) i \in {1, 2, ...,n}, j \in {1, 2, ..., m}. Find en repæresentation af de PDE ved: (u[i](x[j], t)) ≃ f_[\theta](x[j], t)
-    hvorved |u[i](x[j], t) - f_[\theta](x[j], t)| <= \epsilion
+    
+    Numerikse simulationer af plasma edge-dynamics bruges til at undersøge og forklare dynamikker i fusions plasma, fx. i forbindelse med design af reaktorer og kontrol tekniskker. 
+    Simulationer er baset på komplekse partielle differentialligninger (PDE'er) og ideelt med høj tidslig og rumlig opløsning, hvilket er dyrt i computer kraft, tid, og energi. 
+    Der findes flere måder at simulere fusions plasma på, her tager vi udgangspunkt i 2D nHesel-simulations modellen, som er en høj "fidelity" simulering af kant dynamikkerne i fusion plasma. 
+    Dette projekt vil udforske brugen af scientific machine learning (SciML) til at reducere disse omkostninger ved simulation af plasma dynamikker og øge generalisation af simulering. 
+    Konkret, ved at lave en ablationsundersøgelse 2D nHesel-simulationerne og evaluere brugen af SciML på hver af disse ablationer. 
 
 
 Læringsmål for projektet
-    - Forstå og redegøre de grundlæggende fysiske principper bag PDE’erne, edge dynamic og 2D nHesel-simulering.
-    - Analysere  omkostninger for PDE simulating.
-    - Modificere simulationskode så SciML kan bruges.
-    - Udvikle, træne SciML og sammenligne/evaluere med nuværrende simuleringsmetode.
+    - Forstå og redegøre de grundlæggende fysiske principper bag 2D nHesel modellen.
+    - Design ablations studier af 2D nHesel modellen
+    - Udforsk state of the art scientic macine learning teknikker for PDE’er
+    - Udvikle og evaluer SciML til 2D nHesel modellen og ablations
     - Formidle tekniske og videnskabelige resultater klart og struktureret i en skriftlig rapport.
-
-Antal ECTS for B.Sc. Projektet
-    - 15
-Antal ECTS I kurser ved siden af projektet
-    - 15
-Ønsket start dato
-    Asap
-
-##################################################################################################################################################################################################
-Chatten's version
-
-Titel:
-    Dansk
-    Optimering af nHesel-plasmasimuleringer ved brug af Scientific Machine Learning
-
-    Engelsk
-    Optimizing nHesel Plasma Simulations using Scientific Machine Learning
-
-Projektbeskrivelse
-    Numeriske simulationer af plasma edge-dynamik spiller en central rolle i fusionsforskning. Disse simulationer er baseret på løsningen af komplekse,
-    ikke-lineære partielle differentialligninger (PDE’er) med høj rumlig og tidslig opløsning, hvilket medfører meget høje krav til beregningskraft,
-    energiforbrug og beregningstid. Den nuværende tilgang til modellering af dette fysiske system bygger blandt andet på 2D nHesel-simulationer.
-
-    Formålet med dette bachelorprojekt er at undersøge, om metoder fra Scientific Machine Learning (SciML) kan anvendes til at reducere de beregningsmæssige
-    omkostninger ved 2D nHesel-simulationer, uden at gå væsentligt på kompromis med nøjagtigheden af de fysiske løsninger.
-
-    Projektet tager udgangspunkt i et fysisk system beskrevet ved et sæt koblede PDE’er for plasmaets dynamik. Ved hjælp af SciML-metoder,
-    og specifikt Physics-Informed Neural Networks (PINNs), undersøges det, om løsningen kan approksimeres hurtigere end med klassiske numeriske metoder.
-    I PINNs repræsenteres den ukendte løsning af et neuralt netværk, som trænes under eksplicit inddragelse af de underliggende
-    fysiske ligninger, randbetingelser og initialbetingelser.
-
-
-    Idé
-    Givet et fysisk system beskrevet ved et sæt PDE’er
-    u_i(x_j, t), \quad i \in {1, \dots, n}, ; j \in {1, \dots, m},
-
-    undersøges det, om løsningen kan approksimeres ved en parameteriseret model
-    u_i(x_j, t) \approx f_\theta(x_j, t),
-
-    således at approksimationsfejlen opfylder
-    \lvert u_i(x_j, t) - f_\theta(x_j, t) \rvert \le \varepsilon,
-
-    hvor ( f_\theta ) er et neuralt netværk trænet ved hjælp af Physics-Informed Machine Learning, og ( \varepsilon ) er en acceptabel fejlgrænse fastlagt ud fra fysiske og numeriske hensyn.
-
-Læringsmål for projektet
-
-Efter gennemførelse af projektet forventes den studerende at kunne:
-
-    - Forstå og redegøre for de grundlæggende fysiske principper bag plasma edge-dynamik, de tilhørende PDE’er samt 2D nHesel-simuleringsmodellen.
-    - Analysere de beregningsmæssige omkostninger forbundet med klassiske numeriske løsninger af PDE-baserede plasmasimulationer.
-    - Modificere og anvende eksisterende simulationskode, så den kan bruges i samspil med Scientific Machine Learning-metoder.
-    - Udvikle, træne og implementere SciML-modeller (herunder PINNs) til approksimation af PDE-løsninger.
-    - Sammenligne og evaluere ML-baserede metoder i forhold til eksisterende numeriske simulationsmetoder med hensyn til nøjagtighed, stabilitet og beregningstid.
-    - Formidle tekniske og videnskabelige resultater klart og struktureret i en skriftlig bachelorrapport.
 
 Antal ECTS for B.Sc. Projektet
     - 15
