@@ -8,7 +8,6 @@ Titel:
     Scientific machine mearning for simulation of fusion plasma edge dynamics
 
 Beskrivelse:
-    
     Numerikse simulationer af plasma edge-dynamics bruges til at undersøge og forklare dynamikker i fusions plasma, fx. i forbindelse med design af reaktorer og kontrol tekniskker. 
     Simulationer er baset på komplekse partielle differentialligninger (PDE'er) og ideelt med høj tidslig og rumlig opløsning, hvilket er dyrt i computer kraft, tid, og energi. 
     Der findes flere måder at simulere fusions plasma på, her tager vi udgangspunkt i 2D nHesel-simulations modellen, som er en høj "fidelity" simulering af kant dynamikkerne i fusion plasma. 

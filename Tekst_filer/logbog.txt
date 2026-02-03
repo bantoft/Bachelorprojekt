@@ -123,9 +123,25 @@ Møde med Jesper
 Færdig gøre projekt indberettelse
 
 03
+Finde materiale:
+
 Selvstudie af partielle differential ligninger
-    MIT Open course ware
-    - https://ocw.mit.edu/courses/18-152-introduction-to-partial-differential-equations-fall-2011/
-    Bogen:
-    - https://www.sgo.fi/~j/baylie/Partial%20Differential%20Equations%20in%20Action%20-%20From%20Modelling%20to%20Theory%20-%20S.%20Salsa%20(Springer,%202008)%20WW.pdf
+    Partielle differential ligninger (MIT Open course ware)
+        MIT kurset
+        - https://ocw.mit.edu/courses/18-152-introduction-to-partial-differential-equations-fall-2011/
+        Bogen:
+        - https://www.sgo.fi/~j/baylie/Partial%20Differential%20Equations%20in%20Action%20-%20From%20Modelling%20to%20Theory%20-%20S.%20Salsa%20(Springer,%202008)%20WW.pdf
+
+    Note_til_selv: Den matematiske tilgang til hvordan de PDE'er kan løses. Meget regler, theorems, sætnigner, ligheder osv. 
     
+
+    Modellering og Modeling and Numerical Simulation af PDE'er
+        Bogen:
+        - https://www.sgo.fi/~j/baylie/Partial%20Differential%20Equations%20-%20Modelling%20and%20Numerical%20Simulation%20-%20R.%20Glowinski,%20P.%20Neittaanmaki%20(Springer,%202008)%20WW.pdf
+        Youtube collage:
+        - https://www.youtube.com/watch?v=y3dHKNl-q-k&list=PLYdroRCLMg5MLOnfJMyu4nLxtKOD7gGpz
+
+    Note_til_selv: Stadig meget matematisk men nok mere den rætte vej
+
+Har læst kap 1, 2 og er i gang med 3 s. 123
+Løst et par opagver til kap 2
