@@ -107,22 +107,22 @@ Amsterdam medical data science
 
 #############################################
 
-28/01
+28/01/2026
 Møde med Jesper
 Lad os arbejde med simulering og ML
 
 
 Physics informed engine
 
-30
+30/01/2026
 Klar gør projekt: Se indberetning af projekt fil:
     - Bachelor_projekt/indberette_projekt.txt
 
-02/02
+02/02/2026
 Møde med Jesper
 Færdig gøre projekt indberettelse
 
-03
+03/02/2026
 Finde materiale:
 
 Selvstudie af partielle differential ligninger
