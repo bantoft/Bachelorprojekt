@@ -106,7 +106,7 @@ Få adgang til data:
 Amsterdam medical data science
 
 #############################################
-
+##########
 28/01/2026
 Møde med Jesper
 Lad os arbejde med simulering og ML
@@ -114,14 +114,17 @@ Lad os arbejde med simulering og ML
 
 Physics informed engine
 
+##########
 30/01/2026
 Klar gør projekt: Se indberetning af projekt fil:
     - Bachelor_projekt/indberette_projekt.txt
 
+##########
 02/02/2026
 Møde med Jesper
 Færdig gøre projekt indberettelse
 
+##########
 03/02/2026
 Finde materiale:
 
@@ -129,19 +132,42 @@ Selvstudie af partielle differential ligninger
     Partielle differential ligninger (MIT Open course ware)
         MIT kurset
         - https://ocw.mit.edu/courses/18-152-introduction-to-partial-differential-equations-fall-2011/
-        Bogen:
+        Bogen: PDE in Action From Modelling to Theory
         - https://www.sgo.fi/~j/baylie/Partial%20Differential%20Equations%20in%20Action%20-%20From%20Modelling%20to%20Theory%20-%20S.%20Salsa%20(Springer,%202008)%20WW.pdf
 
     Note_til_selv: Den matematiske tilgang til hvordan de PDE'er kan løses. Meget regler, theorems, sætnigner, ligheder osv. 
     
 
     Modellering og Modeling and Numerical Simulation af PDE'er
-        Bogen:
+        Bogen: PDE Modeling and Numerical Simulation
         - https://www.sgo.fi/~j/baylie/Partial%20Differential%20Equations%20-%20Modelling%20and%20Numerical%20Simulation%20-%20R.%20Glowinski,%20P.%20Neittaanmaki%20(Springer,%202008)%20WW.pdf
         Youtube collage:
         - https://www.youtube.com/watch?v=y3dHKNl-q-k&list=PLYdroRCLMg5MLOnfJMyu4nLxtKOD7gGpz
 
     Note_til_selv: Stadig meget matematisk men nok mere den rætte vej
 
-Har læst kap 1, 2 og er i gang med 3 s. 123
+Har læst kap 1 og 2
 Løst et par opagver til kap 2
+
+##########
+04/02/2026
+Har læst kap 3: PDE i Action
+
+Note_til_selv: MIT kurset er stort set kun matematiske tilgang til PDE'er og deres løsning. Har givet godt indblik i hvad det er.
+
+    Der er mange forskellige slags PDE'er og tilsvarende løsnings form og theoremer.
+    Fra PDE in action. kap 6.1 motivation: "The fewrigoroustheorems andproofs wehavepresented hadthe roleofbring-
+    ing to light the main results on the qualitative properties of the solutions and
+    justifying, partially at least, the well-posedness of the relevant boundary and ini-
+    tial/boundaryvalue problems we have considered"
+    Note_til_selv: Brug mange qoutes fra: <PDE in action. 6.1 Motivations>
+
+Har fået artikler til nHesel simulering af Jesper lokeret her.
+    - Laerings_maal_1/Selv_studie_Simulering/nHesel_artikler
+
+Todo:
+    Læs resten af Kap 6: 6.2-
+    Løs nogle opgaver hvis nødvændigt
+    Vurder om du skal læse flere kapitler i PDE in action eller om du skal gå videre til PDE Modeling and Numerical Simulation
+
+    Vigtig ! Læs artikler om nHesel ASAP
