@@ -132,14 +132,14 @@ Selvstudie af partielle differential ligninger
     Partielle differential ligninger (MIT Open course ware)
         MIT kurset
         - https://ocw.mit.edu/courses/18-152-introduction-to-partial-differential-equations-fall-2011/
-        Bogen: PDE in Action From Modelling to Theory
+        Bogen: PDE_in_Action From Modelling to Theory
         - https://www.sgo.fi/~j/baylie/Partial%20Differential%20Equations%20in%20Action%20-%20From%20Modelling%20to%20Theory%20-%20S.%20Salsa%20(Springer,%202008)%20WW.pdf
 
     Note_til_selv: Den matematiske tilgang til hvordan de PDE'er kan løses. Meget regler, theorems, sætnigner, ligheder osv. 
     
 
     Modellering og Modeling and Numerical Simulation af PDE'er
-        Bogen: PDE Modeling and Numerical Simulation
+        Bogen: PDEs_Numerical_Simulation
         - https://www.sgo.fi/~j/baylie/Partial%20Differential%20Equations%20-%20Modelling%20and%20Numerical%20Simulation%20-%20R.%20Glowinski,%20P.%20Neittaanmaki%20(Springer,%202008)%20WW.pdf
         Youtube collage:
         - https://www.youtube.com/watch?v=y3dHKNl-q-k&list=PLYdroRCLMg5MLOnfJMyu4nLxtKOD7gGpz
@@ -171,3 +171,15 @@ Todo:
     Vurder om du skal læse flere kapitler i PDE in action eller om du skal gå videre til PDE Modeling and Numerical Simulation
 
     Vigtig ! Læs artikler om nHesel ASAP
+
+##########
+07/02/2026
+Har brugt de 3 sidste dage på kurser
+
+Har dog lige fået læst <Laerings_maal_1/Selv_studie_Simulering/nHesel_artikler/Brug_af_2d_nHesel_til_PDE.pdf> godt og grundigtr i gennem.
+Har også kigget på <Laerings_maal_1/Selv_studie_Simulering/nHesel_artikler/PDE_til_plasma.pdf> og læser den imorgen og sætter mig mere ind i
+detaljerne for hvad der foregår i ligningerne. 
+
+Todo:
+    Læs: [PDE_til_plasma, PDE_in_Action 6.2-  og PDEs_Numerical_Simulation]
+    Lav noter ligningerne
