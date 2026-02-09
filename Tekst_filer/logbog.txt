@@ -176,10 +176,25 @@ Todo:
 07/02/2026
 Har brugt de 3 sidste dage på kurser
 
-Har dog lige fået læst <Laerings_maal_1/Selv_studie_Simulering/nHesel_artikler/Brug_af_2d_nHesel_til_PDE.pdf> godt og grundigtr i gennem.
+Har fået læst <Laerings_maal_1/Selv_studie_Simulering/nHesel_artikler/Brug_af_2d_nHesel_til_PDE.pdf> godt og grundigtr i gennem.
 Har også kigget på <Laerings_maal_1/Selv_studie_Simulering/nHesel_artikler/PDE_til_plasma.pdf> og læser den imorgen og sætter mig mere ind i
 detaljerne for hvad der foregår i ligningerne. 
 
 Todo:
     Læs: [PDE_til_plasma, PDE_in_Action 6.2-  og PDEs_Numerical_Simulation]
     Lav noter ligningerne
+
+
+##########
+08/02/2026: Selv_studie
+Har læst PDE_til_plasma
+
+##########
+08/02/2026: Møde med Jesper
+Har kigget på PDE og årøvet at finde hoved oh hale i hvad der foregår.
+
+Har sat nogle milepæle op se: milepæl.pdf
+
+
+Læs op på SciML
+    - https://github.com/apengsigkarup/SciML
