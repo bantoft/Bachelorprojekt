@@ -6,3 +6,16 @@
 
 5. Projekt schedule (Ghant)
 6. Learning outcome (.... DTU's for bachelor)
+
+Milepæle:
+    - Kom i gang med SciML på Braginskii ligninger
+        - 1D:
+            Modellere Braginskii's tæthed/transport ligning
+            Modellere de andre ligninger individuelt
+            Modellere hele ligningsystemet
+        - 2D:
+            Modellere Braginskii's tæthed/transport ligning
+            Modellere de andre ligninger individuelt
+            Modellere hele ligningsystemet
+        
+        Modellere nHesel ligninger i 2D

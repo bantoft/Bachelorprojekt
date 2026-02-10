@@ -190,11 +190,28 @@ Todo:
 Har læst PDE_til_plasma
 
 ##########
-08/02/2026: Møde med Jesper
-Har kigget på PDE og årøvet at finde hoved oh hale i hvad der foregår.
+09/02/2026: Møde med Jesper
+Done:
+    Læst : PDE_til_plasma og taget noter, Læst Braginskii 1965. Til om med Øverst på side 209
+    Lavet: 1D transport eksempel udfra Braginskii model
 
-Har sat nogle milepæle op se: milepæl.pdf
+Har kigget på PDE og har prøvet at finde hoved og hale i hvad der foregår med PDE systemet.
+
+Da Hesel tager udgangspunkt Braginskii's ligninger starter vi med at prøve at køre 
+SciML på Braginskii's ligninger. Vi starter med at træne modeller i 1D på ligningen for tæthed/transport
+i 1D, derefter samle flere ligninger og derefter få op i dimensioner. Nå vi forstår Hesel modellen
+går vi i gang med at modellere den.
 
 
 Læs op på SciML
     - https://github.com/apengsigkarup/SciML
+
+
+Todo:
+    - Læs:
+        Resten af Braginskii
+        PDE_in_Action 6.2-
+        PDEs_Numerical_Simulation
+    - Studer
+        SciML
+        Milepæle [1] i hånd
