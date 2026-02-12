@@ -215,3 +215,19 @@ Todo:
     - Studer
         SciML
         Milepæle [1] i hånd
+
+
+##########
+11/02/2026: Selvstudie
+Done:
+    Læst : Braginskii og sat mig sådan rimelig meget totalt ind i PDE systemet
+    Lavet: Opstillet teoratiske parametre til at simulere PDE systemet
+
+Todo:
+    - Læs:
+        Resten af Braginskii [Frem til og med ligningssystem]
+        PDE_in_Action 6.2-
+        PDEs_Numerical_Simulation
+    - Studer
+        SciML
+        Milepæle [1] i hånd
