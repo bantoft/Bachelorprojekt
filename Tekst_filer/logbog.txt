@@ -230,4 +230,4 @@ Todo:
         PDEs_Numerical_Simulation
     - Studer
         SciML
-        Milepæle [1] i hånd
+        Milepæle [1] i håndjj
