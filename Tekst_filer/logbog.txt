@@ -246,5 +246,8 @@ TODO:
         Multithread/parralleliser
         Dt inde i system classen
         classem skal returnere liste af RHS
+    - Læs:
+        PDE_in_Action 6.2-
+        PDEs_Numerical_Simulation
     
     Udvkl: SciML på system
