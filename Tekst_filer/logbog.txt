@@ -231,3 +231,19 @@ Todo:
     - Studer
         SciML
         Milepæle [1] i håndjj
+
+
+##########
+19/02/2026
+Done:
+    Møde : Har haft møde med Jepser.
+    Læst : Resten af Braginskii 
+    lavet: Milepæle [1] dog ikke noget godt resultat
+    Lavet: Udvilket simulator til 2D, og simpelt dobbelt koblede PDE system
+Tode:
+    Udvkl: 2D simulator
+        Multithread/parralleliser
+        Dt inde i system classen
+        classem skal returnere liste af RHS
+    
+    Udvkl: SciML på system
