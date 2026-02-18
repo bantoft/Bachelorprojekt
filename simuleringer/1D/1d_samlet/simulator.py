@@ -12,7 +12,7 @@ dx = x[1] - x[0]
 
 # closures (konstanter)
 closure = Closure1DConst(
-    eta=1e-2,
+    eta=1e-4,
     kappa=1e-2,
     nu=0.1,
     E0=0.0,
