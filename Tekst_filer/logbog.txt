@@ -242,6 +242,7 @@ DONE:
     Lavet: Udvilket simulator til 2D, og simpelt dobbelt koblede PDE system
 TODO:
     Skriv: projekt beskrivelse
+    
     Udvkl: 2D simulator
         Multithread/parralleliser
         Dt inde i system classen
