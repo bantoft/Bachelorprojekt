@@ -1,3 +1,5 @@
+# simuleringer/2D/pdeer/tripple_test.py
+
 from __future__ import annotations
 from dataclasses import dataclass
 import numpy as np
@@ -9,9 +11,9 @@ from kerne.operators import apply_periodic_bc_2d, laplace, advection
 class Coupled3RDAdv2D:
     """
     3-koblet system (u,v,w):
-      u_t = -c·∇u + Du Δu + α (v - u)
+      u_t = -c·∇u + Du Δu + alpha (v - u)
       v_t = -c·∇v + Dv Δv + β (w - v)
-      w_t = -c·∇w + Dw Δw + γ (u - w)
+      w_t = -c·∇w + Dw Δw + gamma (u - w)
 
     Periodiske BC via ghost cells.
     dt sættes i __post_init__ ud fra (advektion + diffusion) stabilitetskriterier.
@@ -77,9 +79,6 @@ class Coupled3RDAdv2D:
         self._rhs_adv = np.zeros((nx, ny), dtype=g.dtype)
         self._rhs_lap = np.zeros((nx, ny), dtype=g.dtype)
 
-    @property
-    def m(self) -> int:
-        return 3
 
     def initial_condition(self) -> np.ndarray:
         """
@@ -117,6 +116,18 @@ class Coupled3RDAdv2D:
         laplace(field_ghosted, g.dx, g.dy,
                 out=self._rhs_lap, tmp=self._lap_tmp)
         out[:] = self._rhs_adv + D * self._rhs_lap
+    
+        
+    @property
+    def m(self) -> int:
+        return 3
+    
+    @property
+    def field_names(self):
+        return ["u", "v", "w"]
+
+    def U0(self):
+        return self.initial_condition()
 
     def rhs(self, U: np.ndarray, out_rhs: np.ndarray) -> None:
         """

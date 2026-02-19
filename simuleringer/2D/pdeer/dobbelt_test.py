@@ -1,3 +1,5 @@
+# simuleringer/2D/pdeer/dobbelt_test.py
+
 from __future__ import annotations
 from dataclasses import dataclass
 import numpy as np
@@ -13,7 +15,7 @@ from kerne.operators import (
 class CoupledRDAdv2D:
     """
     Simpelt dobbelt-koblet PDE-system (u,v):
-        u_t = -c·∇u + Du Δu + α (v - u)
+        u_t = -c·∇u + Du Δu + alpha (v - u)
         v_t = -c·∇v + Dv Δv + β (u - v)
 
     Periodiske randbetingelser via ghost cells.
@@ -81,9 +83,6 @@ class CoupledRDAdv2D:
         self._rhs_adv = np.zeros((nx, ny), dtype=g.dtype)   # advektion output
         self._rhs_lap = np.zeros((nx, ny), dtype=g.dtype)   # laplace output
 
-    @property
-    def m(self) -> int:
-        return 2  # (u,v)
 
     def initial_condition(self) -> np.ndarray:
         """
@@ -108,6 +107,17 @@ class CoupledRDAdv2D:
         apply_periodic_bc_2d(U[0])
         apply_periodic_bc_2d(U[1])
         return U
+    
+    @property
+    def m(self) -> int:
+        return 2
+    
+    @property
+    def field_names(self):
+        return ["u", "v"]
+
+    def U0(self):
+        return self.initial_condition()
 
     def rhs(self, U: np.ndarray, out_rhs: np.ndarray) -> None:
         """
