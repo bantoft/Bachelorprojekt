@@ -230,7 +230,40 @@ Todo:
         PDEs_Numerical_Simulation
     - Studer
         SciML
-        Milepæle [1] i hånd
+
 
 ##########
-Besøg Mirza: https://www.dtu.dk/Person/cwis?id=20347&type=person&lg=showcommon&entity=profile
+18/02/2026
+DONE:
+    Møde : Har haft møde med Jepser.
+    Læst : Resten af Braginskii 
+    lavet: Milepæle [1] dog ikke noget godt resultat
+    Lavet: Udvilket simulator til 2D, og simpelt dobbelt koblede PDE system
+
+
+
+##########
+19/02/2026
+DONE:
+    Lavet:{
+        Udvkl: 2D simulator
+            Multithread/parralleliser
+            Dt inde i system classen
+            classem skal returnere liste af RHS
+            }
+
+
+
+
+############################ TODE liste
+TODO:
+    Skriv: projekt beskrivelse
+    
+    - Læs:
+        PDE_in_Action 6.2-
+        PDEs_Numerical_Simulation
+    
+    - udvkl:
+        Overclock computer
+    
+    Udvkl: SciML på system
