@@ -1,0 +1,269 @@
+Fault detection for critical patientns, Early Warning Systems
+
+Bachelor Idé
+Jeg ønsker at undersøge, hvordan machine learning kan anvendes til at 
+forudsige dødelighedsrisiko hos indlagte patienter.
+Idéen er at lave en model, der baseret på de mange målinger/data, som 
+løbende registreres for kritisk syge patienter kan forudsige patientens aktuelle 
+og fremtidige tilstand. Formålet er at støtte sundhedspersonalet i at 
+identificere om en patient er i fare og har brug for behandling eller ekstra opsyn.
+
+
+Vejledere der kunne være intressante at arbejde med:
+    - Jesper Løve Hinrich:  jehi@dtu.dk, B:321, R:129 ? Aftale Torsdag 6. Nov kl 14 (Yeeh lets go)
+    - Morten Mørup:         mmor@dtu.dk, B:321, R:118 ? Send Mail eller mød ham på kontoret
+
+    - Tommy Sonne Alstrøm:  tsal@dtu.dk, B:321, R:207 ? Skeptisk med data interasseret
+    - Bjørn Sand Jensen:    bjje@dtu.dk, B:321, R:226 ? Skeptisk med data interasseret
+    - Nicki Detlefsen:      nsde@dtu.dk, B:321, R:206 ? Eget projekt, interasseret
+    - Kristoffer Hougaard:  khma@dtu.dk, B:324, R:230 ? Ikke fået svar
+    - Per Bækgaard:         pgba@dtu.dk, B:321, R:132 ? Ikke fået svar
+
+    Afslag
+    ##############################################################################################################################################
+    - Jes Frellsen:         jefr@dtu.dk, B:321, R:221 X Har ikke tid
+    - Søren Hauberg:        sohau@dtu.dk, B:321, R:209 X
+
+
+Data problem:
+
+Skriv til afdelingerne
+    - Rigshospitalet
+        
+        Majken Maul leegaard
+            - Datachef i Økonomi
+            - majken.maul.leegaard@regionh.dk
+        ! Fik kontakt igennem til Hans-Christian Thorsen-Meyer
+
+        Hans-Christian Thorsen-Meyer
+            - Overlæge, PhD, postdoc, Intensiv Terapiklinik
+            - Hans-christian.Thorsen-meyer.01@regionh.dk
+        ! 
+
+
+    Pause
+    - ECGhttps://ocw.mit.edu/courses/18-152-introduction-to-partial-differential-equations-fall-2011/
+    https://bdsp.io/content/heedb/4.0/
+
+    - EHR
+    https://health.ec.europa.eu/ehealth-digital-health-and-care/certification-ehr-systems_en
+
+    Afslag
+    ##############################################################################################################################################
+    https://ward247.com
+    Ylva Pisters:       Clinical Implementation     ylva.langemark@ward247.com 
+    ? Ikke rigtig mail
+    Jelle Reichert:     Co-founder & CTO            jelle.reichert@ward247.com
+    ? Afslag    
+    Mikkel Dahlgaard:   Business Strategy Manager   mikkel.dahlgaard@ward247.com
+    ? Vidersendt
+    Micheal Frandsen:   Chief Commercial Officer    michael.frandsen@ward247.com
+    ? Vidersendt
+
+
+Andre idéer hvis data er besværligt
+    - Vindmølle data
+    - Radar detection
+    - Tanke (novo Tanke); process Ananlytic technologi
+    - Plasma: Jesper mail
+
+
+#################################
+12/12/2025
+Møde: (Hans-Christian Thorsen-Meyer, Jesper Løve Hinrich, Davide Placido)
+
+Dansk anom center
+Dutch intinsive care data base
+
+OK måske er dette ikke den bedste idé at arbejde på.
+Fik nogle link og prøver at finde på noget andet....
+
+
+https://github.com/AmsterdamUMC/AmsterdamUMCdb
+- Adgang via:
+https://amsterdammedicaldatascience.nl
+
+
+https://physionet.org/content/mimiciv/3.1/
+
+- Adgang via:
+https://physionet.org
+
+
+https://www.esicm.org/events/8th-digital-critical-care-datathon/
+
+
+
+https://www.thelancet.com/journals/landig/article/PIIS2589-7500(20)30018-2/fulltext
+
+
+
+https://www.nature.com/articles/s41746-022-00679-6
+
+#################################
+21/12/2025
+Få adgang til data:
+Amsterdam medical data science
+
+#############################################
+##########
+28/01/2026
+Møde med Jesper
+Lad os arbejde med simulering og ML
+
+
+Physics informed engine
+
+##########
+30/01/2026
+Klar gør projekt: Se indberetning af projekt fil:
+    - Bachelor_projekt/indberette_projekt.txt
+
+##########
+02/02/2026
+Møde med Jesper
+Færdig gøre projekt indberettelse
+
+##########
+03/02/2026
+Finde materiale:
+
+Selvstudie af partielle differential ligninger
+    Partielle differential ligninger (MIT Open course ware)
+        MIT kurset
+        - https://ocw.mit.edu/courses/18-152-introduction-to-partial-differential-equations-fall-2011/
+        Bogen: PDE_in_Action From Modelling to Theory
+        - https://www.sgo.fi/~j/baylie/Partial%20Differential%20Equations%20in%20Action%20-%20From%20Modelling%20to%20Theory%20-%20S.%20Salsa%20(Springer,%202008)%20WW.pdf
+
+    Note_til_selv: Den matematiske tilgang til hvordan de PDE'er kan løses. Meget regler, theorems, sætnigner, ligheder osv. 
+    
+
+    Modellering og Modeling and Numerical Simulation af PDE'er
+        Bogen: PDEs_Numerical_Simulation
+        - https://www.sgo.fi/~j/baylie/Partial%20Differential%20Equations%20-%20Modelling%20and%20Numerical%20Simulation%20-%20R.%20Glowinski,%20P.%20Neittaanmaki%20(Springer,%202008)%20WW.pdf
+        Youtube collage:
+        - https://www.youtube.com/watch?v=y3dHKNl-q-k&list=PLYdroRCLMg5MLOnfJMyu4nLxtKOD7gGpz
+
+    Note_til_selv: Stadig meget matematisk men nok mere den rætte vej
+
+Har læst kap 1 og 2
+Løst et par opagver til kap 2
+
+##########
+04/02/2026
+Har læst kap 3: PDE i Action
+
+Note_til_selv: MIT kurset er stort set kun matematiske tilgang til PDE'er og deres løsning. Har givet godt indblik i hvad det er.
+
+    Der er mange forskellige slags PDE'er og tilsvarende løsnings form og theoremer.
+    Fra PDE in action. kap 6.1 motivation: "The fewrigoroustheorems andproofs wehavepresented hadthe roleofbring-
+    ing to light the main results on the qualitative properties of the solutions and
+    justifying, partially at least, the well-posedness of the relevant boundary and ini-
+    tial/boundaryvalue problems we have considered"
+    Note_til_selv: Brug mange qoutes fra: <PDE in action. 6.1 Motivations>
+
+Har fået artikler til nHesel simulering af Jesper lokeret her.
+    - Laerings_maal_1/Selv_studie_Simulering/nHesel_artikler
+
+Todo:
+    Læs resten af Kap 6: 6.2-
+    Løs nogle opgaver hvis nødvændigt
+    Vurder om du skal læse flere kapitler i PDE in action eller om du skal gå videre til PDE Modeling and Numerical Simulation
+
+    Vigtig ! Læs artikler om nHesel ASAP
+
+##########
+07/02/2026
+Har brugt de 3 sidste dage på kurser
+
+Har fået læst <Laerings_maal_1/Selv_studie_Simulering/nHesel_artikler/Brug_af_2d_nHesel_til_PDE.pdf> godt og grundigtr i gennem.
+Har også kigget på <Laerings_maal_1/Selv_studie_Simulering/nHesel_artikler/PDE_til_plasma.pdf> og læser den imorgen og sætter mig mere ind i
+detaljerne for hvad der foregår i ligningerne. 
+
+Todo:
+    Læs: [PDE_til_plasma, PDE_in_Action 6.2-  og PDEs_Numerical_Simulation]
+    Lav noter ligningerne
+
+
+##########
+08/02/2026: Selv_studie
+Har læst PDE_til_plasma
+
+##########
+09/02/2026: Møde med Jesper
+Done:
+    Læst : PDE_til_plasma og taget noter, Læst Braginskii 1965. Til om med Øverst på side 209
+    Lavet: 1D transport eksempel udfra Braginskii model
+
+Har kigget på PDE og har prøvet at finde hoved og hale i hvad der foregår med PDE systemet.
+
+Da Hesel tager udgangspunkt Braginskii's ligninger starter vi med at prøve at køre 
+SciML på Braginskii's ligninger. Vi starter med at træne modeller i 1D på ligningen for tæthed/transport
+i 1D, derefter samle flere ligninger og derefter få op i dimensioner. Nå vi forstår Hesel modellen
+går vi i gang med at modellere den.
+
+
+Læs op på SciML
+    - https://github.com/apengsigkarup/SciML
+
+
+Todo:
+    - Læs:
+        Resten af Braginskii
+        PDE_in_Action 6.2-
+        PDEs_Numerical_Simulation
+    - Studer
+        SciML
+        Milepæle [1] i hånd
+
+
+##########
+11/02/2026: Selvstudie
+Done:
+    Læst : Braginskii og sat mig sådan rimelig meget totalt ind i PDE systemet
+    Lavet: Opstillet teoratiske parametre til at simulere PDE systemet
+
+Todo:
+    - Læs:
+        Resten af Braginskii [Frem til og med ligningssystem]
+        PDE_in_Action 6.2-
+        PDEs_Numerical_Simulation
+    - Studer
+        SciML
+
+
+##########
+18/02/2026
+DONE:
+    Møde : Har haft møde med Jepser.
+    Læst : Resten af Braginskii 
+    lavet: Milepæle [1] dog ikke noget godt resultat
+    Lavet: Udvilket simulator til 2D, og simpelt dobbelt koblede PDE system
+
+
+
+##########
+19/02/2026
+DONE:
+    Lavet:{
+        Udvkl: 2D simulator
+            Multithread/parralleliser
+            Dt inde i system classen
+            classem skal returnere liste af RHS
+            }
+
+
+
+
+############################ TODE liste
+TODO:
+    Skriv: projekt beskrivelse
+    
+    - Læs:
+        PDE_in_Action 6.2-
+        PDEs_Numerical_Simulation
+    
+    - udvkl:
+        Overclock computer
+    
+    Udvkl: SciML på system
