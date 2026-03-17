@@ -1,4 +1,4 @@
-1. Motivation
+1. Motivatio
 2. Sota
 3. Primary metoder/projekt paln
 4. Research questions + tilgang operationalisering

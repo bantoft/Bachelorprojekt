@@ -1,0 +1,35 @@
+% Siden den industrielle revolution har fossile brændstoffer været menneskets primære energikilde.
+% Forbrænding af fossile brændstoffer frigiver store mængder drivhusgasser, som bidrager til global opvarmning og klimaforandringer. 
+% Derfor er der stigende fokus på alternative energikilder som sol, vind og kernekraft.
+
+% Kernekraft udnyttes i dag primært gennem fission, hvor tunge atomkerner sammen spaltes og frigiver energi. 
+% Fission har det negative biprodukt, radioaktivt affald, som medfører en række sikkerheds/miljømæssige udfordringer.
+
+% Fusion, hvor lette atomkerner sammensmeltes, betragtes som en lovende fremtidig energikilde. 
+% Processen kan potentielt levere store mængder energi hvorved affaldet har meget højere halveringstid.
+
+% For at opnå fusion opvarmes en kilde af atomer til ekstremt høj temperatur, hvor stoffet overgår 
+% til plasma, en ioniseret gas bestående af frie elektroner og ioner. 
+% I moderne fusionsanlæg som tokamaker fastholdes plasmaet ved hjælp af stærke elektro magnetiskefelter,
+% så det ikke kommer i kontakt med tokamakkens vægge, hvilket medfører energitab og ustabilitet.
+
+En central udfordring inden for fusionsforskning er at forstå og beskrive plasmaets dynamik, 
+særligt i randzonen, hvor turbulens og transportfænomener har stor betydning for energitab og stabilitet.
+Disse processer er moddeleret med koblede partielle differentialligninger (PDE'er). 
+Projektet fokuserer på hot edge (scrape of layer) electrostatic (HESEL) modellering. 
+
+
+Til at simulere HESEL-moddelen bruges numerisk finite difference. Dette er et centralt værktøj i moderne plasmafysik.
+Ulæmpen ved denne tilgang er at simuleringerne er beregningstunge og skal køres igen hvis input betingelser ændres en smule.
+
+I dette projekt undersøges, hvordan Scientific Machine Learning (SciML) kan anvendes 
+til at modellere og simulere plasmafysiske ligningssystemer. 
+
+--- SciML har vist sig at kunne generalisere godt mellem gridpunkt af startbetingelser, så få træner+simulleringer kan generalisere rigtig godt ----
+
+Projektet vil først fokusere på appalations versioner af HESEL-modellen,
+til træning af state of the art (SOTA) SciML-metoder såsom Physics-Informed Neural Networks (PINN).
+Herefter implimenteres og trænes disse modeller på det fulde HESEL-ligningssystem.
+
+Målet er at undersøge, om SciML kan bidrage til mere fleksibel og effektiv modellering af 
+plasmaets randdynamik.
