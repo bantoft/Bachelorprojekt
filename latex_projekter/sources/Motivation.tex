@@ -14,22 +14,26 @@
 % så det ikke kommer i kontakt med tokamakkens vægge, hvilket medfører energitab og ustabilitet.
 
 En central udfordring inden for fusionsforskning er at forstå og beskrive plasmaets dynamik, 
-særligt i randzonen, hvor turbulens og transportfænomener har stor betydning for energitab og stabilitet.
-Disse processer er moddeleret med koblede partielle differentialligninger (PDE'er). 
-Projektet fokuserer på hot edge (scrape of layer) electrostatic (HESEL) modellering. 
+særligt i randzonen, scarpe-off layer (SOL), hvor turbulens og transportfænomener har stor betydning for energitab og stabilitet.
+Disse processer er modelleret med koblede partielle differentialligninger (PDE'er). 
+Projektet fokuserer på hot edge SOL electrostatic (HESEL) modellen.\cite{PDE_til_plasma}
 
+Til at simulere HESEL-modellen bruges numerisk finite difference. Simulering er et centralt matematisk værktøj i moderne plasmafysik.
+En generel ulempe ved simuleringsarbejde er, at det er beregningsmæssigt tungt og bestemt af begyndelsesbetingelserne.
+Plasmaets randdynamik er stærkt ikke-lineær og følsom over for små ændringer i begyndelsesbetingelserne, 
+hvilket gør det vanskeligt at forudsige disse processer nøjagtigt uden at køre omfattende simuleringer.\cite{SciML_til_plasma}
 
-Til at simulere HESEL-moddelen bruges numerisk finite difference. Dette er et centralt værktøj i moderne plasmafysik.
-Ulæmpen ved denne tilgang er at simuleringerne er beregningstunge og skal køres igen hvis input betingelser ændres en smule.
+I dette projekt undersøges det, hvordan Scientific Machine Learning (SciML) kan anvendes til at modellere og simulere 
+randdynamik i plasmaet med fokus på HESEL-modellen.
+SciML har vist sig at kunne generalisere godt til simuleringsdata samt at overholde de fysiske love. 
+Ved at træne en SciML-model på en lille mængde simuleringsdata vil man kunne bygge en statistisk model, 
+som fortæller, hvordan systemet vil opføre sig.
+En veltrænet SciML-model vil kunne generalisere HESEL-modellen og fortælle, hvordan systemet vil opføre sig 
+givet nogle interpolerede begyndelsesbetingelser, punkter og tidsskridt uden at skulle køre omfattende simuleringer.
 
-I dette projekt undersøges, hvordan Scientific Machine Learning (SciML) kan anvendes 
-til at modellere og simulere plasmafysiske ligningssystemer. 
-
---- SciML har vist sig at kunne generalisere godt mellem gridpunkt af startbetingelser, så få træner+simulleringer kan generalisere rigtig godt ----
-
-Projektet vil først fokusere på appalations versioner af HESEL-modellen,
-til træning af state of the art (SOTA) SciML-metoder såsom Physics-Informed Neural Networks (PINN).
-Herefter implimenteres og trænes disse modeller på det fulde HESEL-ligningssystem.
+Projektet vil først fokusere på ablation af HESEL-modellen 
+til træning af state of the art (SOTA) SciML-metoder, specifikt Physics Informed Neural Networks (PINN).
+Herefter implementeres og trænes disse modeller på det fulde HESEL-ligningssystem og med forskellige begyndelsesbetingelser.
 
 Målet er at undersøge, om SciML kan bidrage til mere fleksibel og effektiv modellering af 
 plasmaets randdynamik.

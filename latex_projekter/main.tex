@@ -1,6 +1,5 @@
 \documentclass[12pt,oneside,a4paper,danish]{article}
 \usepackage[T1]{fontenc}
-\usepackage[latin2]{inputenc}
 \usepackage[margin=2.25cm,headheight=26pt,includeheadfoot]{geometry}
 \usepackage[danish]{babel}
 \usepackage{listings}
@@ -31,9 +30,6 @@
 \usepackage{xcolor}
 \usepackage{lipsum}
 \usepackage{amsmath}
-% Hvordan skriver jeg med danske tegn i LaTeX
-
-\usepackage{}
 
 % --- set footer and header ---
 \pagestyle{fancy}
@@ -119,35 +115,39 @@ numbersep=0.5cm
 \section{Læringsmål} \label{laeringsmaal}
 \input{sources/laeringsmaal.tex}
 
+\section{Gantt chart}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figurer/gantt_chart.png}
+    \caption{projektets planlagte tidslinje}
+\end{figure}
+
 \label{EndOfText}
 
 
 
 % --- End of main text ---
 
-\newpage
-\pagenumbering{Roman} 
-\addcontentsline{toc}{section}{List of Figures}
-\fancyfoot[C]{Page \thepage\ of \pageref{endOfDoc}}
-\listoffigures
-\thispagestyle{fancy}
+% \newpage
+% \pagenumbering{Roman} 
+% \addcontentsline{toc}{section}{List of Figures}
+% \fancyfoot[C]{Page \thepage\ of \pageref{endOfDoc}}
+% \listoffigures
+% \thispagestyle{fancy}
 
-\newpage
-\addcontentsline{toc}{section}{List of Tables}
-\listoftables
-\thispagestyle{fancy}
 
-\newpage
-\addcontentsline{toc}{section}{Nomenclature}
-\input{sources/9_nomenclat.tex}
+
+% \newpage
+% \addcontentsline{toc}{section}{Nomenclature}
+% \input{sources/9_nomenclat.tex}
 
 \newpage
 \addcontentsline{toc}{section}{References}
 \bibliography{document.bib} 
 \bibliographystyle{ieeetr}
-
-\newpage
-\section{Appendix A} \label{ch6}
+% \newpage
+% \section{Appendix A} \label{ch6}
 
 \label{endOfDoc}
 \end{document}
