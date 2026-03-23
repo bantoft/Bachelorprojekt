@@ -1,0 +1,98 @@
+1. Motivation
+2. State of the art
+3. Primary metoder/projekt paln
+4. Research questions + tilgang operationalisering
+2 sider +..
+
+5. Projekt schedule (Ghant)
+6. Learning outcome (.... DTU's for bachelor)
+
+Milepæle:
+    - Kom i gang med SciML på Braginskii ligninger
+        - 1D:
+            Modellere Braginskii's tæthed/transport ligning
+            Modellere de andre ligninger individuelt
+            Modellere hele ligningsystemet
+        - 2D:
+            Modellere Braginskii's tæthed/transport ligning
+            Modellere de andre ligninger individuelt
+            Modellere hele ligningsystemet
+        
+        Modellere nHesel ligninger i 2D
+
+
+1. Formål / Motivation (ca. ½ side)
+Her skal du forklare:
+
+- Hvad projektet handler om
+- Hvorfor det er relevant
+- Hvad problemet er
+- Hvorfor det er interessant fagligt
+
+Ex:
+Formålet med projektet er at undersøge, hvordan Scientific Machine Learning (SciML)
+kan anvendes til modellering og simulering af plasmafysiske ligningssystemer med 
+fokus på Braginskii-ligningerne og HESEL-modellen.
+
+Du bør også nævne:
+- fusion / plasma relevance
+- numerisk simulering
+- kobling mellem fysik + AI/ML
+- Sota rimelig kort
+
+
+2. Research Questions (ca. ¼–½ side)
+Her skal du formulere 2–4 klare spørgsmål.
+
+- Primært forskningsspørgsmål
+    - Delspørgsmål
+
+Ex:
+- Hvordan kan SciML anvendes til effektiv modellering af Braginskii-baserede plasma PDE-systemer?
+    - Kan individuelle ligninger løses stabilt i 1D?
+    - Hvordan skalerer modellen til 2D?
+    - Hvordan adskiller HESEL sig numerisk fra Braginskii?
+
+
+3. Metode / Primary Methods / Operationalisering (ca. ½ side)
+Hvilken tilgang er der for at løøse disse spørgsmål?
+
+Her skal du beskrive:
+- hvilke ligninger du starter med
+- hvilken software
+- hvilke numeriske metoder
+- hvordan du tester progression
+- Tools
+
+
+4. Læringsmål (meget vigtigt på DTU) (ca. ½ side)
+Bachelorprojektets indhold skal aftales med vejleder. Projektet kan indeholde en kombination af eksperimentelt arbejde, feltarbejde, teoretiske studier, syntese, modellering og analyse.
+
+En bachelor fra DTU:
+
+kan arbejde selvstændigt og er i stand til at strukturere et større arbejde, herunder overholde tidsplaner og organisere og planlægge arbejdet
+kan sammenfatte og tolke teknisk information og behersker teknisk problemløsning gennem projektarbejde
+er i stand til at arbejde med alle faser i et projekt, herunder udarbejdelse af forslag, løsning og dokumentation
+er i stand til selvstændigt at tilegne sig ny viden og er desuden i stand til at forholde sig kritisk til tilegnet viden samt udføre relevant og kritisk informationssøgning og på den baggrund finde de rette metoder til at belyse den aktuelle problemstilling.
+kan formidle teknisk information, teori og resultater skriftligt, visuelt/grafisk og mundtligt.
+Bachelorprojektet skal vise den studerendes evne til at løse en ingeniørfaglig opgave, hvor den erhvervede viden og de opnåede kompetencer anvendes på en selvstændig måde i et større arbejde. Den studerende skal på passende niveau vurdere muligheder og resultater samt redegøre for de opnåede resultater på en logisk og sammenhængende måde.
+
+
+5. Delmål / Milepæle (meget vigtigt) (ca. ½ side)
+
+Her er dine milepæle allerede stærke 👇
+
+
+6. Projekt plan: Gantt chart
+
+
+7. Learning Outcome / forventet output (kort afsnit)
+Her skriver du:
+
+Hvad forventer du at stå med til sidst?
+
+fungerende prototype
+
+numerisk sammenligning
+
+forståelse af SciML limitations

@@ -1,0 +1,54 @@
+cd ~
+cd Andreas
+rm -rf Simulator/*
+
+
+cd Simulator
+git clone https://github.com/boutproject/BOUT-dev.git
+cd BOUT-dev
+git checkout v4.3.2
+
+cd ~
+cd Andreas/Simulator
+git clone --recursive https://github.com/PPFE-Turbulence/BOUT-HESEL.git
+
+
+qrsh
+lscpu | grep "CPU(s):"
+export OMP_NUM_THREADS=16
+
+
+module purge
+module load mpi/5.0.3-gcc-13.3.0-binutils-2.42
+module load fftw3/3.3.10-openmpi-5.0.3-gcc-13.3.0
+module load netcdf-c/4.9.3-hdf5-1.14.6-intel-2021-update4
+module load intel/2021.4.0
+
+
+cd ~
+cd Andreas/Simulator/BOUT-dev
+./configure
+gmake -j16
+
+cd ~
+cd Andreas/Simulator/BOUT-HESEL
+ln -s HESEL-Common/BoutFastOutput BoutFastOutput
+ln -s HESEL-Common/HeselParameters HeselParameters
+ln -s HESEL-Common/Neutrals Neutrals
+ln -s HESEL-Common/Parallel Parallel
+make -j16
+######
+# Gå ind og lav en lille test på 25 skridt (100x100) er den der kom med
+Simulator/BOUT-HESEL/data/BOUT.inp de første linjer
+
+./hesel
+
+
+cd ~
+cd Andreas/Simulator/
+
+module load python3/3.12.11
+python3 -m venv bsc_venv
+source bsc_venv/bin/activate
+pip install --upgrade pip
+pip install -r req.txt

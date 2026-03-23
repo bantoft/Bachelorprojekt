@@ -1,0 +1,3 @@
+xbout
+matplotlib
+ipykernel
