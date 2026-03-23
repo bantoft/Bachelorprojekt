@@ -1,0 +1,66 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{Overblik over Hesel ligningerne}
+\author{s224041}
+\date{March 2026}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\section{Standard form}
+
+HESEL ligningerne er givet på følgende form:
+
+\begin{gather}
+    \mathrm{d} _t n + n\mathcal{K}(\phi) - \mathcal{K}(p_e) = \Lambda_n  \label{tæthedsligning} \\ 
+    \mathrm{d}_t^0 \omega^* + \left\{\nabla\phi, \nabla p_i \right\} - \mathcal{K}(p_e+p_i)=\Lambda_\omega \label{vorticiteten} \\
+    \frac{3}{2}\mathrm{d} _t p_e + \frac{5}{2}p_e \mathcal{K}(\phi) -\frac{5}{2}\mathcal{K}\left(\frac{p_e^2}{n}\right)= \Lambda_{p_e}\label{elektrontryksligning} \\
+    \frac{3}{2}\mathrm{d} _t p_i + \frac{5}{2}p_i \mathcal{K}(\phi) +\frac{5}{2}\mathcal{K}\left(\frac{p_i^2}{n}\right) - p_i\mathcal{K}(p_e+p_i) = \Lambda_{p_i} \label{iontryksligning}
+\end{gather}
+
+\section{Lambda termer}
+Lambda termerne er givet ved:
+
+\begin{gather*}
+    \Lambda_n = D_e\nabla_\perp^2 n - \frac{n}{\tau} -\alpha\left( \tilde T_e +
+    \frac{\tilde T_e}{\bar n}\tilde n - \tilde \phi\right) - \frac{n-n_p}{\tau_p} \\
+    \Lambda_\omega
+\end{gather*}
+
+\section{Operatorer}
+Herved er operatorerne defineret med:
+
+\begin{gather*}
+    \mathrm{d}_t^0 f = \partial_t f + \left\{\phi, f \right\}\\
+    \mathrm{d}_t f = \partial_t f  + \frac{1}{B}  \left\{ \phi , f \right\} \\    
+    \left\{ f, g\right\} = \partial_x f \partial_y g - \partial_y f \partial_x g\\
+    \mathcal{K}(f)= - \frac{\rho_s}{R}\partial_y f \\
+    \nabla = \left(\partial_x, \partial_y, \partial_z \right)^T\\
+    \nabla_\perp = \left(\partial_x, \partial_y, 0 \right)^T\\
+\end{gather*}
+
+\section{Funktioner}
+Funktionerne er gevet ved:
+
+\begin{gather*}
+    n(x,y,t): "Tæthed" \\
+    p_e(x,y,t): "Elektrontryk" \\
+    p_i(x,y,t): "Iontryk" \\
+    \phi(x,y,t): "Elektrisk potentiale" \\
+\end{gather*}
+
+\section{Udtryk}
+Samling af udtryk:
+
+\begin{gather*}
+    \phi^*(x,y,t) = \phi(x,y,t) + p_i(x,y,t)\\
+    \rho_s = \sqrt{\frac{T_{e0}}{m_i\Omega_{ei}^2}}
+\end{gather*}
+
+
+\end{document}
