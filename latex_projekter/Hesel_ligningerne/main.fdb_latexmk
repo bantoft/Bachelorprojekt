@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1774309014.07391 "/home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne/main.tex" "main.pdf" "main" 1774309014.22073 0
-  "/home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne/main.tex" 1774309013.78894 2040 9746e4bd9fb38b339f5cb8faedb4b970 ""
+["pdflatex"] 1774353232.37003 "/home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne/main.tex" "main.pdf" "main" 1774353232.52141 0
+  "/home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne/main.tex" 1774353232.23355 3922 730da90878f46b11d6c414529910c2b9 ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1772820570 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1772820570 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1772820570 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -26,6 +26,7 @@
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb" 1772820570 32362 179c33bbf43f19adbb3825bb4e36e57a ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1772820570 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1772820570 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb" 1772820570 32915 7bf7720c61a5b3a7ff25b0964421c9b6 ""
   "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1772820570 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1772820570 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/share/texmf-dist/tex/latex/amsmath/amsbsy.sty" 1772820570 2222 27db7d52163edae53881b71ff62e754e ""
@@ -47,8 +48,8 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1772820570 43569 fd570f2fa160877d211e859f687312ba ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1773736948 5384140 9ef23e7d5d9c96d2806f8b40e57f5eef ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1773736936 2968234 435f1a5753a816a28227b22413636b50 ""
-  "main.aux" 1774309014.20195 730 843792b9f1a2f2c9d26b6ed09c1b45f7 "pdflatex"
-  "main.tex" 1774309013.78894 2040 9746e4bd9fb38b339f5cb8faedb4b970 ""
+  "main.aux" 1774353232.50036 1026 610e78394dc4feb3bd081a1b248478d1 "pdflatex"
+  "main.tex" 1774353232.23355 3922 730da90878f46b11d6c414529910c2b9 ""
   (generated)
   "main.aux"
   "main.log"
