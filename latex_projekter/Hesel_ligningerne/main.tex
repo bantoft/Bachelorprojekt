@@ -35,29 +35,16 @@ Lambda termerne er givet ved:
 \Lambda_{p_i} =& D_i\nabla_\perp^2 p_i - D_iT_i\nabla_\perp^2n - \frac{9p_i}{2\tau} +\Theta -\frac{p_i-p_{i,p}}{\tau_p} +p_i\Lambda_{\omega^*}
 \end{align*}
 
-
-\section{Koeffecienter}
-Samling af koeffecienter:
-\begin{gather*}
-    T_{e,i} = p_{e,i}/n \\
-    D_i = \left(1 + \frac{R}{a}q^2\right)\frac{\rho_{i0}^2v_{ii,0}}{\rho_{s0}^2\omega_{i0}}\\
-    D_e = \left(1 + \frac{T_{i0}}{T_{e0}}\right) \left(1 + \frac{R}{a}q^2\right)\frac{\rho_{e0}^2v_{ei,0}}{\rho_{s0}^2\omega_{i0}}\\
-    \Theta = \frac{3m_e}{m_i}v_{ei}\left(p_e - p_i\right)\\
-    \tau = \frac{L_b}{2M_\parallel cs} \\
-    \tau^{SH} = \frac{L_b}{X_{\parallel,e}^{SH}} \\
-    \alpha = \frac{2T_{e0}}{v_{ei}m_eL^2_\parallel\omega_{i0}}\\
-    c_s = \sqrt{(T_e + T_i)/m_i} \\
-    \phi_m = \ln(\sqrt{m_i/2\pi m_e})\\
-    \L_\parallel = L_b = qR\\
-    \rho_s = \sqrt{\frac{T_{e0}}{m_i\Omega_{ei}^2}}\\
-\end{gather*}
-
-
-\section{Forkotelser}
-De forkortede symboler er givet ved:
+\section{Funktioner}
+Funktionerne er gevet ved:
 \begin{align*}
-\omega^* = \nabla^2\phi + \nabla^2 p_i
+    &n: n(x,y,t): &\text{Tæthed} \\
+    &p_{e,i}: p_{e,i}(x,y,t): &\text{Elektron- og iontryk}  \\
+    &T_{e,i}: T_{e,i}(x,y,t) = p_{e,i}/n: \quad &\text{Elektron- og iontemperatur} \\
+    &\phi: \phi(x,y,t): \quad &\text{Elektrisk potentiale} \\
+    &\omega^*: \omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i: \quad &\text{Vorticitet} \\
 \end{align*}
+
 
 \section{Operatorer}
 Herved er operatorerne defineret med:
@@ -75,26 +62,56 @@ Herved er operatorerne defineret med:
 \end{gather*}
 
 
-\section{Funktioner}
-Funktionerne er gevet ved:
-\begin{align*}
-    &n: n(x,y,t): \quad "Tæthed" \\
-    &p_e: p_e(x,y,t): \quad "Elektrontryk" \\
-    &p_i: p_i(x,y,t): \quad "Iontryk" \\
-    &\phi: \phi(x,y,t): \quad "Elektrisk potentiale" \\
-\end{align*}
+\section{Koeffecienter}
+Samling af koeffecienter:
+\begin{gather*}
+    \rho_s = \sqrt{\frac{T_{e0}}{m_i\Omega_{ei}^2}}\\
+    D_i = \left(1 + \frac{R}{a}q^2\right)\frac{\rho_{i0}^2v_{ii,0}}{\rho_{s0}^2\omega_{i0}}\\
+    D_e = \left(1 + \frac{T_{i0}}{T_{e0}}\right) \left(1 + \frac{R}{a}q^2\right)\frac{\rho_{e0}^2v_{ei,0}}{\rho_{s0}^2\omega_{i0}}\\
+    \Theta = \frac{3m_e}{m_i}v_{ei}\left(p_e - p_i\right)\\
+    \tau = \frac{L_b}{2M_\parallel cs} \\
+    \tau^{SH} = \frac{L_b}{X_{\parallel,e}^{SH}} \\
+    \alpha = \frac{2T_{e0}}{v_{ei}m_eL^2_\parallel\omega_{i0}}\\
+    c_s = \sqrt{(T_e + T_i)/m_i} \\
+    \phi_m = \ln(\sqrt{m_i/2\pi m_e})\\
+    \L_\parallel = L_b = qR\\
+\end{gather*}
+
 
 \section{parametre}
+Parametre for HESEL ligningerne:
 \begin{align*}
-    L_b = qR\approx8m\\
-    L_c \approx 15m\\
-    T_{e0} = 25eV\\
-    T_{i0} = 25eV\\
-    M_\parallel = 0.5\\
-    2M_\parallel c_s  = 50000ms^{-1}\\
-    c_s = \sqrt{(T_e + T_i)/m_i}\\
+    B_0 &= 1.9T &\text{Magnetfeltstyrke} \\
+    R &= 1.65m &\text{Tokamakens store radius} \\
+    a &= 0.5m &\text{Tokamakens lille radius} \\
+    q &= 5.32 &\text{Sikkerhedsfaktor} \\
+    L_b &= qR \approx 8m  &\text{Poloidal angle}\\
+    L_c &\approx 15m &\text{Divertor leg along the magneticfield lines}\\    
+    L_c &= 2.5m &\text{Divertor leg shadow region}\\
+    T_i &= T_e = 25eV &\text{Used for calculating cs} \\
+    M_\parallel &= 0.5 &\text{Mach tal}\\
+    2M_\parallel c_s &\approx 50000 m/s &\text{plasma radially propagation speed}\\
+    X_{\parallel,e}^{SH} &= 3.16V_e^2/v_{ee} &\text{Spitzer-Härm heat diffusivity}\\
 \end{align*}
 
-\section{Variabler}
+Afhængige parametre:
+\begin{align*}
+\textbf{Referenceværdier (lav kollisionalitet, ved LCFS):} \\
+n_0 &= 1.5 \cdot 10^{19}~\mathrm{m}^{-3} \\
+T_{e0} &= 25~\mathrm{eV} \\
+T_{i0} &= 25~\mathrm{eV} \\
+\Lambda_0 &= 0.758 \\
+\textbf{Referenceværdier (høj kollisionalitet):} \\
+n_0 &= 3.5 \cdot 10^{19}~\mathrm{m}^{-3} \\
+T_{e0} &= 15~\mathrm{eV} \\
+T_{i0} &= 15~\mathrm{eV} \\
+\Lambda_0 &= 4.6 \\
+\textbf{Numerisk domæne:} \\
+L_x &= L_y = 95.0~\mathrm{mm} \\
+L_{\text{edge}} &= 34.4~\mathrm{mm} \\
+L_{\text{SOL}} &= 47.5~\mathrm{mm} \\
+L_{\text{wall}} &= 12.3~\mathrm{mm} \\
+N_x &= N_y = 1024
+\end{align*}
 
 \end{document}
