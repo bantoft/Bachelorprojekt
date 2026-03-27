@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1774356732.18097 "/home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne/main.tex" "main.pdf" "main" 1774356732.33514 0
-  "/home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne/main.tex" 1774356732.0457 4997 86b92f856d4950c0e11d0c96055c6629 ""
+["pdflatex"] 1774616768.73934 "/home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne/main.tex" "main.pdf" "main" 1774616768.89276 0
+  "/home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne/main.tex" 1774616768.60069 4997 158f8f9bb69a7c22c0736f39b5c782a5 ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1772820570 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1772820570 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1772820570 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -52,8 +52,8 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1772820570 43569 fd570f2fa160877d211e859f687312ba ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1773736948 5384140 9ef23e7d5d9c96d2806f8b40e57f5eef ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1773736936 2968234 435f1a5753a816a28227b22413636b50 ""
-  "main.aux" 1774356732.31371 830 9d775d2fcacd6c6f706486bda31670e7 "pdflatex"
-  "main.tex" 1774356732.0457 4997 86b92f856d4950c0e11d0c96055c6629 ""
+  "main.aux" 1774616768.87105 830 9d775d2fcacd6c6f706486bda31670e7 "pdflatex"
+  "main.tex" 1774616768.60069 4997 158f8f9bb69a7c22c0736f39b5c782a5 ""
   (generated)
   "main.aux"
   "main.log"

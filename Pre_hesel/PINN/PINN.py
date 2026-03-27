@@ -6,7 +6,6 @@ from PDE_system import device
 class PINNWaveSystem(nn.Module):
     def __init__(self, layers):
         super(PINNWaveSystem, self).__init__()
-        # layers fx [2, 64, 64, 64, 2]
         self.depth = len(layers) - 1
         layer_list = []
         for i in range(self.depth - 1):
