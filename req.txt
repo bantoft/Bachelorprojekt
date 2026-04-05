@@ -1,4 +1,0 @@
-xbout
-matplotlib
-ipykernel
-torch
