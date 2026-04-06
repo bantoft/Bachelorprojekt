@@ -82,6 +82,10 @@ def _parse_bout_format(path: Path) -> dict:
 
     params = _evaluate_expressions(params)
 
+#param_mappings = {
+#    "B0": ["B0"],
+#    "Bt": ["Bt"],
+
     param_mappings = {
         "B": ["B", "B0", "Bt"],
         "rho_s": ["rho_s", "rhos"],

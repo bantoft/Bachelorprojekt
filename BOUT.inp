@@ -1,0 +1,348 @@
+#==============================================================================
+#==============================================================================
+t_end    = timestep*nout  # total simulation time
+timestep = 50	          # time step length of outputted data
+nout     = 50	          # number of outputted time steps
+
+myg      = 0              # no need for Y communications, so no guard cells
+mxg      = 1              # guard cell number in the boundary of local CPU
+#grid     = alec_data/tcv/64465/experimental_data/grid.nc
+#==============================================================================
+#==============================================================================
+[mesh]
+nx = 128+2*mxg           # internal grid points plus guard cells along x-axis
+ny = 1                   # y is along magnetic field, set to 1
+nz = 128                 # internal grid points along z-axis
+
+Lx = 140                 # simulation length along x-axis
+Lz = 140                 # simulation length along z-axis
+
+dx = Lx/(nx-1-2*mxg)      # grid spacing along x-axis
+dy = 1.0                  # grid spacing along y-axis
+dz = Lz/(nz-1)            # grid spacing along z-axis
+
+xl = x*(Lx+2*mxg*dx)      # grid points coordinates along x-axis
+zl = z*Lz                 # grid points coordinates along z-axis
+#==============================================================================
+#==============================================================================
+[mesh:ddx]   # methods used for x derivative terms
+first  = C2  # d/dx (f)
+second = C2  # d^2/dx^2 (f)
+upwind = W3  # v_x d/dx (f)
+flux   = U1  # d/dx (v_x f)
+
+[mesh:ddy]   # methods used for y derivative terms
+first  = C2  # d/dx (f)
+second = C2  # d^2/dx^2 (f)
+upwind = W3  # v_x d/dx (f)
+flux   = U1  # d/dx (v_x f)
+
+[mesh:ddz]   # methods used for z derivative terms
+first  = C2  # d/dx (f)
+second = C2  # d^2/dx^2 (f)
+upwind = W3  # v_x d/dx (f)
+flux   = U1  # d/dx (v_x f)
+#==============================================================================
+#==============================================================================
+[laplace]               # boundary condition for phi
+inner_boundary_flags = 0
+outer_boundary_flags = 3
+
+[solver]                # ddt solver settings
+type     = pvode        # solver type for solving ddt
+atol     = 1.0e-10      # absolute tolerance
+rtol     = 1.0e-5       # relative tolerance
+timestep = 1.           # Suggested init timestep for numerical methods
+mxstep   = 1000000      # max steps before result is deemed not to converge
+#==============================================================================
+#==============================================================================
+[hesel]
+right_handed_coord          = false     # switch for converting BOUT++ left-handed coordinate to HESEL right-handed coordinate
+interchange_dynamics        = true      # switch for interchange dynamics, left hand side parts of HESEL equations
+parallel_dynamics           = true      # switch for parallel dynamics
+perpendicular_dynamics      = true      # switch for perpendicular dynamics
+plasma_neutral_interactions = 0         # switch for plasma neutral interactions 15 - all on, 16 dynamic non interacting
+kinetic_plasma_neutral_interactions = 1 # switch for kinetic plasma neutral interactions
+force_profiles              = true      # switch for forcing profiles
+floor_profiles              = false     # switch for floor profiles
+static_plasma               = 48        # bitwise switch for making plasma static, (n, pe, pi, vort, te, ti) <-> (1, 2, 4, 8, 16, 32)
+
+Z_eff  = 1.2
+
+Bt     = 1.11                           # toroidal magnetic field at magnetic axis
+q      = 4.2                            # safety factor (95%)
+Te0    = 29.8                           # reference electron temperature
+Ti0    = 29.8
+n0     = 1.85e+19                       # reference electron density
+lconn  = 20                             # connection length
+lblob  = -1                             # ballooning length, -1 use inner definition: lblob = q*R
+Rminor = 0.225                          # minor radius
+Rmajor = 0.88                           # major radius
+A      = 2                              # ion mass number. m_i = A*m_p
+Z      = 1                              # ion charge
+Mach   = 0.5                            # Mach number
+
+e      = 1.60e-19
+mp     = 1.67262158e-27
+mi     = A*mp
+B0     = Bt*Rmajor/(Rmajor+Rminor)
+
+oci    = e*Z*B0/mi
+cs     = sqrt(e*Te0/mi)
+rhos   = cs/oci
+
+# parallel dynamics
+parallel_sheath_damping       = 3        # 0 = off, 1 = cs0+average field, 2 = average field, 3 = full field
+parallel_advection_damping    = 3        # 0 = off, 1 = cs0, 2 = avgcsHot, 3 = csHot
+parallel_conduction           = 1        # 0 = off, 1 = electron, 2 = electron + ion
+parallel_drift_wave           = 1        # 0 = off, 1 = Te0, 2 = avg_te, 3 = te   How taudw depends on te
+reciprocal_approx             = 3        # 1: constant fields, 2: avg fields, 3: no approximation
+
+# perpendicular dynamics
+collisional_model             = 2        # switch for neo-classical collision model on RHS; 0: off, 1: simple, 2: standard, 3: full
+perpend_heat_exchange         = true
+perpend_viscous_heating       = true
+ti_over_te                    = 3        # approximation of ti/te, 1: Ti0/Te0, 2: ZAvg(ti/te), 3: no approximation
+diffusion_coeff               = 1        # approximation for diffusion coefficients, 1: n0+te0 (std), 2: avg_n+avg_te, 3: n+te, 4: avg_n+te (full), 5: n+avg_te, 6 n0+avg_te
+neoclass_correction_factor    = -1       # neo-classical correction of diffusion coefficients
+qdelta_approx                 = 3        # approximation of nuei in Qdelta,0: off, 1: nuei0, 2: average field, 3: full field
+
+# bracket options
+bracket_method = 2                      # 0 = std, 1 = simple, 2 = arakawa
+
+# force profiles options
+force_time = 50                         # force profiles time
+
+# floor profiles options
+floor_n    = 0.005
+floor_pe   = 0.000025
+floor_pi   = 0.000025
+floor_time = 50                         # floor profiles time
+
+# variables used for profile generation
+x_lcfs       = 0.40                      # x coordinate for LCFS, x range is [0, 1]
+x_wall       = 0.80                      # x coordinate for WALL, x range is [0, 1]
+d_lcfs       = 2                         # step width of smoothing function between inner and SOL regions
+d_wall       = 2                         # step width of smoothing function between wall and SOL regions
+d_force      = 2                         # step width of smoothing function for forcing profiles
+wall_amp     = 8                         # parallel damping in wall region is given as a factor wall_amp times the damping in the SOL region
+edge_width   = x_lcfs*mesh:Lx            # width of edge region
+sol_width    = (x_wall-x_lcfs)*mesh:Lx   # width of SOL region
+force_width  = 0.5 * edge_width          # width of force region
+xr           = mesh:xl - edge_width      # x coordinate with  LCFS is origin
+#==============================================================================
+#Include neutrals
+#==============================================================================
+[neutrals]
+
+atomicIonization 	= true	# H + e -> H+ + 2e
+molecularIonization 	= true	# H2 + e -> H2+ + 2e -> H + H+ + 2e
+chargeExchange 		= true	# H + H+ -> H+ + H
+dissociation 		= true	# H2 + e -> 2H + e
+elasticCollisions	= false
+
+neutralDynamics 	= 0	# solve for neutral dynamics
+
+nColdFlux		= -1.5e21  # m^-2s^-1
+
+local_diffusion 	= false
+
+Tcold 			= 0.3	 # eV
+Twarm 			= 2. 		# eV
+Thot 			= hesel:Ti0 	# eV
+
+sigma 			= 3.53e-20 	# m^2
+m 			= 2*1.67e-27 	# kg
+e 			= 1.60e-19 	# C
+
+Dcold			= 20.  	# m^2s^-1
+Dwarm			= 53. 	# m^2s^-1
+Dhot			= 412.	# m^2s^-1
+
+v_cold_x          = -758.  # ms^-1
+v_warm_x          = -2000. # ms^-1
+v_hot_x           = -2800. # ms^-1
+
+inputBCs 		= false
+wallAbsorbtionFraction  = 0.2
+
+floor_neutral_profiles  = false
+floor_neutral_density   = 1e-9
+neutral_floor_time      = 50
+
+
+[init_neutrals]
+oci_proxy		= 1e-19/1e-27
+rhos_proxy		= sqrt(1/oci_proxy)
+k_proxy			= 1e-14*hesel:n0/oci_proxy
+
+NcoldConst	= 1/(rhos_proxy*oci_proxy*hesel:n0)*neutrals:nColdFlux/(sqrt(k_proxy*init_n:n_bg/neutrals:D_cold) * exp(sqrt(k_proxy*init_n:n_bg/neutrals:D_cold)*mesh:Lx*hesel:x_wall))
+
+Ncold_SOL		= NcoldConst*exp(sqrt(k_proxy*init_n:n_bg/neutrals:D_cold)*(hesel:xr - init_n:x_shift_n))
+Ncold_EDGE		= NcoldConst*exp(sqrt(k_proxy*init_n:n_inner/neutrals:D_cold)*(hesel:xr - init_n:x_shift_n))
+Ncold_INIT		= exp((x-1)/0.1)
+
+Nwarm_INIT		= 1e-3
+
+Nhot_INIT		= 1e-3
+
+# Neutral profiles
+[lnNcold]
+scale 		= 1.0
+function	= log(init_neutrals:Ncold_INIT)
+
+bndry_xin 	= neumann
+bndry_xout 	= none 
+
+[lnNwarm]
+scale 		= 1.0
+function	= log(init_neutrals:Nwarm_INIT)
+
+bndry_xin 	= neumann
+bndry_xout	= none 
+
+[lnNhot]
+scale 		= 1.0
+function	= log(init_neutrals:Nhot_INIT)
+
+bndry_xin 	= neumann
+bndry_xout	= none 
+
+#==============================================================================
+#Include kinetic neutrals
+#==============================================================================
+[kinetic_neutrals]
+
+H_atom_injection_rate     = 0
+H_atom_N_max              = 1000000
+H_molecule_temperature    = 0.3          #Injection temperature for molecules
+H_atom_temperature        = 1
+H_molecule_injection_rate  = 250*1e+10      #Injected supermolecules per second
+phys_injection_rate_molecules = 150e+19
+H_molecule_N_max          = 3000000       #Maximum number of molecules.
+flag_initialized          = 0            #If 0 run initializer, else load initiated objects from files
+dt_min                    = 1.0          #Minimum timestep for kinetic neutral model
+step_length               = 1.0          #Step length for the kinetic neutral model in oci units
+r_std_blur                = 2.0            #standard deviation for blur expressed in rhos.
+init_source_time          = 1.0            #Time length over which the sources for the first timestep in plasma sim is calculated
+wallAbsorbtionFractionAtom    = 0.2          # Fraction absorbed
+wallAbsorbtionFractionMolecule = 0.2
+
+
+#==============================================================================
+#==============================================================================
+[All]          # default setttings for variable boundary conditions
+scale          = 0.0
+bndry_all      = neumann
+#==============================================================================
+#==============================================================================
+[init_n]                   # initial profile for density, n_LCFS = n0
+scale          = 1.0
+n_inner        = 1.5       # inner boundary value for density
+n_bg           = 0.1       # background density
+x_shift_n      = 2.93794   # shift x in order to set n_lcfs = n0, for n_inner=1.5, n_bg=0.1 and step_width=10.
+step_width     = 10.       # step width for tanh function
+
+function       = 0.5 * (n_inner - n_bg) * (1 - tanh( (hesel:xr - x_shift_n)/step_width)) + n_bg
+
+[init_pe]                  # initial profile for electron pressure, pe_LCFS = n0*Te0
+scale          = 1.0
+pe_inner       = 9.0       # inner boundary value for electron pressure
+pe_bg          = 0.01      # background electron pressure
+x_shift_pe     = -3.51585  # shift x in order to set pe_lcfs = n0*Te0, for pe_inner=9, pe_bg=0.01 and step_width=10.
+step_width     = 10.       # step width for tanh function
+
+line_slope     = (sqrt(pe_inner)-1)/hesel:edge_width
+edge_prof      = 1 - line_slope * sigma_closed:function * hesel:xr
+function       = (0.5 *(sqrt(pe_inner) - pe_bg) * (1 - tanh( (hesel:xr - x_shift_pe)/step_width)) + pe_bg) * edge_prof
+
+[init_pi]                  # initial profile for ion pressure, pi_LCFS = n0*Ti0
+scale          = 1.0
+pi_inner       = 9.0       # inner boundary value for ion pressure
+pi_bg          = 0.01      # background ion pressure
+x_shift_pi     = -3.51585  # shift x in order to set pi_lcfs = n0*Ti0, for pi_inner=8, pi_bg=0.01 and step_width=10.
+step_width     = 10.       # step width for tanh function
+
+line_slope     = (sqrt(pi_inner)-1)/hesel:edge_width
+edge_prof      = 1 - line_slope * sigma_closed:function * hesel:xr
+function       = (0.5 *(sqrt(pi_inner) - pi_bg) * (1 - tanh( (hesel:xr - x_shift_pi)/step_width)) + pi_bg) * edge_prof
+
+[seed_n]
+scale          = 1.0
+pert_amp       = 0.001
+pert_size      = 5
+xaxis          = mesh:xl-hesel:force_width
+zaxis          = mesh:zl-mesh:Lz/2
+seed           = 10
+function       = pert_amp*(5 + mixmode(z, seed)*mixmode(2*pi*x, seed)) # pert_amp*(1 + sin(z^2/pi)*sin(10*2*pi*x)) # pert_amp*exp(-(xaxis*xaxis + zaxis*zaxis)/(2*pert_size*pert_size))
+#==============================================================================
+#==============================================================================
+[lnn]          # initial profile for lnn field
+scale          = 1.0
+bndry_xin      = dirichlet_o2(log(init_n:n_inner))
+bndry_xout     = neumann_o2(0.)
+function       = log(init_n:function+seed_n:function)
+
+[lnpe]         # initial profile for lnpe field
+scale          = 1.0
+bndry_xin      = dirichlet_o2(log(init_pe:pe_inner))
+bndry_xout     = neumann_o2(0.)
+function       = log(Te0*init_n:function)
+
+[lnpi]         # initial profile for lnpi field
+scale          = 1.0
+bndry_xin      = dirichlet_o2(log(init_pi:pi_inner))
+bndry_xout     = neumann_o2(0.)
+function       = log(Ti0*init_n:function)
+
+[vort]         # initial profile for vort field
+scale          = 1.0
+bndry_xin      = dirichlet_o2(0.)
+bndry_xout     = neumann_o2(0.)
+function       = 0.
+#==============================================================================
+#==============================================================================
+[sigma_open]   # step function for open field lines
+scale          = 1.0
+function       = 0.5 * (1+tanh(hesel:xr/hesel:d_lcfs)) + hesel:wall_amp*0.5 * (1+tanh((hesel:xr-hesel:sol_width)/hesel:d_wall))
+
+[sigma_closed] # step function for closed field lines
+scale          = 1.0
+function       = 0.5 * (1-tanh(hesel:xr/hesel:d_lcfs))
+
+[sigma_force]  # step function for forced profiles
+scale          = 1.0
+function       = 0.5 * (1-tanh((mesh:xl-hesel:force_width)/hesel:d_force))
+#==============================================================================
+#==============================================================================
+[fast_output]
+type = monitor
+flushfrequency = 100
+
+xpos0 = 0.2
+ypos0 = 0
+zpos0 = 0.5
+
+xpos1 = 0.3
+ypos1 = 0
+zpos1 = 0.5
+
+xpos2 = 0.4
+ypos2 = 0
+zpos2 = 0.5
+
+xpos3 = 0.5
+ypos3 = 0
+zpos3 = 0.5
+
+xpos4 = 0.6
+ypos4 = 0
+zpos4 = 0.5
+
+xpos5 = 0.7
+ypos5 = 0
+zpos5 = 0.5
+
+xpos6 = 0.8
+ypos6 = 0
+zpos6 = 0.5
