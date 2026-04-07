@@ -1,7 +1,11 @@
 import torch
 import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+from itertools import chain
 
-from PDE import pde_loss
+from loss_PDE import pde_loss
+from data_loader import make_data_loader, ids_to_inputs
 from model import PINN
 from params2 import *
 
@@ -36,18 +40,63 @@ def main() -> None:
 	p_i_model = build_model(device)
 	phi_model = build_model(device)
 
-	x, y, t = make_collocation_points(n_points=8, device=device)
+	optimizer = optim.Adam(
+		chain(
+			n_model.parameters(),
+			p_e_model.parameters(),
+			p_i_model.parameters(),
+			phi_model.parameters(),
+		),
+		lr=1e-2,
+	)
 
-	n = n_model(x, y, t)
-	p_e = p_e_model(x, y, t)
-	p_i = p_i_model(x, y, t)
-	phi_tensor = phi_model(x, y, t)
+	w_pde = 1.0
+	w_data = 1.0
+	batch_size_data = 256
+	n_epochs = 100
+	data_loader = make_data_loader(batch_size=batch_size_data, shuffle=True)
 
-	loss_weights = {"n": 1.0, "w": 1.0, "pe": 1.0, "pi": 1.0}
-	loss_dict = pde_loss(n, p_e, p_i, phi_tensor, x, y, t, loss_weights)
+	for epoch in range(1, n_epochs + 1):
+		optimizer.zero_grad()
 
-	for i in loss_dict:
-		print(i, loss_dict[i])
+		x_col, y_col, t_col = make_collocation_points(n_points=256, device=device)
+		n_col = n_model(x_col, y_col, t_col)
+		p_e_col = p_e_model(x_col, y_col, t_col)
+		p_i_col = p_i_model(x_col, y_col, t_col)
+		phi_col = phi_model(x_col, y_col, t_col)
+		loss_pde = pde_loss(n_col, p_e_col, p_i_col, phi_col, x_col, y_col, t_col)
+
+		x_ids, y_ids, t_ids, lnn_target, lnpe_target, lnpi_target, vort_target = next(iter(data_loader))
+		x_data, y_data, t_data = ids_to_inputs(x_ids, y_ids, t_ids)
+
+		x_data = x_data.to(device)
+		y_data = y_data.to(device)
+		t_data = t_data.to(device)
+		lnn_target = lnn_target.to(device).unsqueeze(1)
+		lnpe_target = lnpe_target.to(device).unsqueeze(1)
+		lnpi_target = lnpi_target.to(device).unsqueeze(1)
+		vort_target = vort_target.to(device).unsqueeze(1)
+
+		n_data_pred = n_model(x_data, y_data, t_data)
+		p_e_data_pred = p_e_model(x_data, y_data, t_data)
+		p_i_data_pred = p_i_model(x_data, y_data, t_data)
+		phi_data_pred = phi_model(x_data, y_data, t_data)
+
+		loss_data_total = (
+			F.mse_loss(n_data_pred, lnn_target)
+			+ F.mse_loss(p_e_data_pred, lnpe_target)
+			+ F.mse_loss(p_i_data_pred, lnpi_target)
+			+ F.mse_loss(phi_data_pred, vort_target)
+		)
+
+		loss_total = w_pde * loss_pde + w_data * loss_data_total
+		loss_total.backward()
+		optimizer.step()
+
+		print(
+			f"epoch={epoch:03d} total={loss_total.item():.6e} "
+			f"pde={loss_pde.item():.6e} data={loss_data_total.item():.6e}"
+		)
 
 if __name__ == "__main__":
 	main()
