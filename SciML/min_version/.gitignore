@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+results/
+training_history.pt
+training_models_data_loss.png
+training_pde_losses.png

@@ -26,3 +26,13 @@ def pde_loss(n: Tensor, p_e: Tensor, p_i: Tensor, phi: Tensor, x: Tensor, y: Ten
     loss_pi = mse_residual(R_pi)
     return loss_n + loss_w + loss_pe + loss_pi
 
+
+def pde_losses(n: Tensor, p_e: Tensor, p_i: Tensor, phi: Tensor, x: Tensor, y: Tensor, t: Tensor):
+    R_n, R_w, R_pe, R_pi = compute_residuals(n=n, p_e=p_e, p_i=p_i, phi=phi, x=x, y=y, t=t)
+    return {
+        "R_n": mse_residual(R_n),
+        "R_w": mse_residual(R_w),
+        "R_pe": mse_residual(R_pe),
+        "R_pi": mse_residual(R_pi),
+    }
+

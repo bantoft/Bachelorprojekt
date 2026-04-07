@@ -1,10 +1,16 @@
 import xarray as xr
 import torch
 import torch.nn.functional as F
+from pathlib import Path
 
 from torch import Tensor
 
-ds = xr.open_dataset("BOUT.dmp.0.nc", engine="netcdf4")
+DATA_PATH = Path(__file__).with_name("BOUT.dmp.0.nc")
+
+if not DATA_PATH.exists():
+    raise FileNotFoundError(f"Could not find dataset: {DATA_PATH}")
+
+ds = xr.open_dataset(DATA_PATH, engine="netcdf4")
 
 vars_needed = ["lnn", "lnpe", "lnpi", "vort"]
 data = {}
