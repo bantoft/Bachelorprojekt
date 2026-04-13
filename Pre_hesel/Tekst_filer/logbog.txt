@@ -257,7 +257,6 @@ DONE:
 
 ############################ TODE liste
 TODO:
-    Skriv: projekt beskrivelse
     
     - Læs:
         PDE_in_Action 6.2-
@@ -265,5 +264,7 @@ TODO:
     
     - udvkl:
         Overclock computer
-    
-    Udvkl: SciML på system
+
+    spg til Alexander (gennemgå parametre)
+    model structur (find i literatur, samle det hele i en model)
+    colocation point,

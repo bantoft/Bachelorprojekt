@@ -14,7 +14,7 @@ from params2 import *
 
 NN_STRUCTURE = {
 	"input_size": 3,
-	"output_size": 1,
+	"output_size": 1, #(n, p_e, p_i, phi)
 	"hidden_layers": [50, 50, 50],
 	"activation": [nn.Tanh(), nn.ReLU(), nn.Sigmoid()],
 	"dropout": [0.1, 0.2, nn.AlphaDropout(0.2)],
