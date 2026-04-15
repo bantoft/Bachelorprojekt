@@ -1,2 +1,17 @@
-ignore_mappe/
+simulatorer/BANT-dev/data
+
 SciML/min_version/BOUT.dmp.0.nc
+
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+BOUT
+teori

@@ -2,23 +2,21 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 from pathlib import Path
-from itertools import chain
 
 from loss_PDE import pde_loss, pde_losses
 from data_loader import make_data_loader, ids_to_inputs
 from model import PINN
 from params2 import *
 
-
-
 NN_STRUCTURE = {
-	"input_size": 3,
-	"output_size": 1, #(n, p_e, p_i, phi)
-	"hidden_layers": [50, 50, 50],
-	"activation": [nn.Tanh(), nn.ReLU(), nn.Sigmoid()],
-	"dropout": [0.1, 0.2, nn.AlphaDropout(0.2)],
-	"batch_norm": ["batch_norm", "batch_norm", None],
+    "input_size": 3,
+    "output_size": 4,
+    "hidden_layers": [64, 64, 64, 64],
+    "activation": [nn.Tanh(), nn.Tanh(), nn.Tanh(), nn.Tanh()],
+    "dropout": [0.0, 0.0, 0.0, 0.0],
+	"batch_norm": [None, None, None, None],
 }
 
 
@@ -33,24 +31,42 @@ def build_model(device: torch.device) -> PINN:
 	return PINN(NN_STRUCTURE).to(device)
 
 
+def split_outputs(prediction: torch.Tensor):
+	return prediction.split(1, dim=1)
+
+
+def plot_total_loss(history: dict, outdir: Path) -> Path:
+	epochs = history.get("epoch", [])
+	total_loss = history.get("total_loss", [])
+
+	fig, ax = plt.subplots(figsize=(10, 6))
+	ax.plot(epochs, total_loss, linewidth=2.0, label="total_loss")
+	ax.set_title("Total training loss")
+	ax.set_xlabel("Epoch")
+	ax.set_ylabel("Loss")
+	ax.set_yscale("log")
+	ax.grid(True, which="both", alpha=0.25)
+	ax.legend(frameon=False)
+	fig.tight_layout()
+
+	plot_path = outdir / "training_total_loss.png"
+	fig.savefig(plot_path, dpi=180, bbox_inches="tight")
+	plt.close(fig)
+	return plot_path
+
+
 def main() -> None:
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	results_dir = Path(__file__).with_name("results")
 	results_dir.mkdir(parents=True, exist_ok=True)
+	plots_dir = results_dir / "plots"
+	plots_dir.mkdir(parents=True, exist_ok=True)
 	history_path = results_dir / "training_history.pt"
 
-	n_model = build_model(device)
-	p_e_model = build_model(device)
-	p_i_model = build_model(device)
-	phi_model = build_model(device)
+	model = build_model(device)
 
 	optimizer = optim.Adam(
-		chain(
-			n_model.parameters(),
-			p_e_model.parameters(),
-			p_i_model.parameters(),
-			phi_model.parameters(),
-		),
+		model.parameters(),
 		lr=1e-2,
 	)
 
@@ -82,10 +98,8 @@ def main() -> None:
 		optimizer.zero_grad()
 
 		x_col, y_col, t_col = make_collocation_points(n_points=256, device=device)
-		n_col = n_model(x_col, y_col, t_col)
-		p_e_col = p_e_model(x_col, y_col, t_col)
-		p_i_col = p_i_model(x_col, y_col, t_col)
-		phi_col = phi_model(x_col, y_col, t_col)
+		pred_col = model(x_col, y_col, t_col)
+		n_col, p_e_col, p_i_col, phi_col = split_outputs(pred_col)
 		loss_pde = pde_loss(n_col, p_e_col, p_i_col, phi_col, x_col, y_col, t_col)
 		losses_pde = pde_losses(n_col, p_e_col, p_i_col, phi_col, x_col, y_col, t_col)
 
@@ -100,10 +114,8 @@ def main() -> None:
 		lnpi_target = lnpi_target.to(device).unsqueeze(1)
 		vort_target = vort_target.to(device).unsqueeze(1)
 
-		n_data_pred = n_model(x_data, y_data, t_data)
-		p_e_data_pred = p_e_model(x_data, y_data, t_data)
-		p_i_data_pred = p_i_model(x_data, y_data, t_data)
-		phi_data_pred = phi_model(x_data, y_data, t_data)
+		pred_data = model(x_data, y_data, t_data)
+		n_data_pred, p_e_data_pred, p_i_data_pred, phi_data_pred = split_outputs(pred_data)
 
 		loss_n_data = F.mse_loss(n_data_pred, lnn_target)
 		loss_p_e_data = F.mse_loss(p_e_data_pred, lnpe_target)
@@ -142,7 +154,9 @@ def main() -> None:
 		)
 
 	torch.save(history, history_path)
+	total_loss_plot_path = plot_total_loss(history, plots_dir)
 	print(f"saved training history to {history_path}")
+	print(f"saved total loss plot to {total_loss_plot_path}")
 
 if __name__ == "__main__":
 	main()
