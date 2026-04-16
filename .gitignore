@@ -1,7 +1,9 @@
+teori
+
+simulatorer/BOUT/
 simulatorer/BANT-dev/data
 
 SciML/min_version/BOUT.dmp.0.nc
-
 
 # Python-generated files
 __pycache__/
@@ -13,5 +15,3 @@ wheels/
 
 # Virtual environments
 .venv
-BOUT
-teori

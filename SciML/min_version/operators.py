@@ -1,4 +1,4 @@
-from params2 import *
+from params import *
 
 import torch
 from torch import Tensor
@@ -25,7 +25,7 @@ def p_yy(f: Tensor, y: Tensor) -> Tensor:
     return grad(grad(f, y), y)
 
 def curvature(f: Tensor, y: Tensor) -> Tensor:
-    return -(rhos/R)*grad(f, y)
+    return -(rhos/Rmajor)*grad(f, y)
 
 
 def poisson_bracket(f: Tensor, g: Tensor, x: Tensor, y: Tensor) -> Tensor:

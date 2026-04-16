@@ -263,9 +263,17 @@ TODO:
         PDEs_Numerical_Simulation
     
     - udvkl:
-        Overclock computer
+
+    Opstil lambda termer i PDE systemet
+        - Kør sim
+        - læs værdier fra logfilen
+        - Få styr på hvilke værdier der skal bruges til lambda termerne i bestemte intervaller
+        - Opstil fulde PDE med lambda termer
+        _ Opstil initial conditions og boundery conditions
 
     spg til Alexander (gennemgå parametre)
     model structur (find i literatur, samle det hele i en model)
     colocation point,
-    https://skaftenicki.github.io/dtu_mlops/latest/s2_organisation_and_version_control/code_structure/
+    updater: Ic. til funk, Boundery skal læses fra inp fil (konstant, konstant hældning),
+    Få fra Alexander: hvordan man læser parametre til lambda termer, og hvor de er aktive
+    Opdater colocation point normal fordelt eller vægt normal fordelt
