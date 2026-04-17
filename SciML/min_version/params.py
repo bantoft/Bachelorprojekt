@@ -1,27 +1,7 @@
-from math import sqrt
+from math import sqrt, log, pi
 
-# Z_eff   = 1.2
-# Bt      = 1.11                           # toroidal magnetic field at magnetic axis
-# Te0     = 29.8                           # reference electron temperature
-# Ti0     = 29.8
-# n0      = 1.85e+19                       # reference electron density
-# lconn   = 20                             # connection length
-# lblob   = -1                             # ballooning length, -1 use inner definition: lblob = q*R
-# R       = 0.88                           # major radius
-# a       = 0.225                          # minor radius
-# A       = 2                              # ion mass number. m_i = A*m_p
-# Z       = 1                              # ion charge
-# Mach    = 0.5                            # Mach number
-# e       = 1.60e-19
-# mp      = 1.67262158e-27
 
-# mi      = A*mp
-# B0      = Bt*R/(R+a)
-
-# oci     = e*Z*B0/mi                      # Sigma_{ci} 
-# cs      = sqrt(e*Te0/mi)
-# rhos    = cs/oci
-
+# Direkte fra log fil: (copy paste for nu)
 Coulomb_Log = 1.328201e+01
 vte         = 2.287830e+06	 
 vti       = 3.775324e+04	 
@@ -56,16 +36,32 @@ en_over_taun    = 1.021462e+04
 taudw       = 5.714467e-06	 
 en_over_taudw   = 1.749945e+05
 
-
 # Parametre fra input er fundet i <	Option hesel:>
-floor_time = 50 # tau_p [aktivt på indersiden]
-force_time = 50 # tau TODO: Er Tau over det hele ?
+
+
+# Dummy variabler
+Lc = 15 # Divertor leg length (Artikel værdi): Option hesel:diag_thermal = 15
+tau_SH = 50/3.16 # tau Spitzer-Härm (Artikel sted: Num sim "under eq" (13)): Option hesel:?
+L_perp = 8 # L_b = L_perp = q*R  8 ?: and this length should be compared to the connection 
+e_skæv = -1 # Blvier brugt til at regne omega_io
+
+# Profile region for phi
+connected = 0.8 # Større er den disconected
+
+
+# værdier i profile region
 x_lcfs = 0.4 # LCFS linje (her tror jeg profile region er halvdelen)
 x_wall = 0.8 # wall region
-# værdier i profile region
+# Værdierne
+floor_time = 50 # tau_p [aktivt på indersiden]
+force_time = 50 # tau TODO: Er Tau over det hele ?
+# Profile værdier
 floor_n    = 0.005 # n_p
 floor_pe   = 0.000025 # p_e,p
 floor_pi   = 0.000025 # p_i,p
 
-# Dummy variabler
-Lc = 15 # fundet i artikel er det denne: Option hesel:diag_thermal = 15
+# udregnet parametre:
+phi_m = log(sqrt(mi/(2*pi*me))) # Bohm potential
+omega_io = e_skæv*B0/mi # gyro frequency at magnetic
+alpha = 2*Te0/(nuei*me*L_perp**2) # Udregnet i (14)
+

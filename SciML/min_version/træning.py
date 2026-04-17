@@ -5,10 +5,10 @@ import torch.nn.functional as F
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-from loss_PDE import pde_loss, pde_losses
 from data_loader import make_data_loader, ids_to_inputs
+from PDE_EQ_loss import EQ_residuals as pde_loss
 from model import PINN
-from params2 import *
+from params import *
 
 NN_STRUCTURE = {
     "input_size": 3,
@@ -100,8 +100,16 @@ def main() -> None:
 		x_col, y_col, t_col = make_collocation_points(n_points=256, device=device)
 		pred_col = model(x_col, y_col, t_col)
 		n_col, p_e_col, p_i_col, phi_col = split_outputs(pred_col)
-		loss_pde = pde_loss(n_col, p_e_col, p_i_col, phi_col, x_col, y_col, t_col)
-		losses_pde = pde_losses(n_col, p_e_col, p_i_col, phi_col, x_col, y_col, t_col)
+
+
+		weights = {
+			'Eq_n': 1,
+			'Eq_w': 1,
+			'Eq_pe': 1,
+			'Eq_pi': 1
+		}
+		loss_pde = pde_loss(n_col, p_e_col, p_i_col, phi_col, x_col, y_col, t_col, 0.8, weights)
+		losses_pde = pde_loss(n_col, p_e_col, p_i_col, phi_col, x_col, y_col, t_col, 0.8, weights)
 
 		x_ids, y_ids, t_ids, lnn_target, lnpe_target, lnpi_target, vort_target = next(iter(data_loader))
 		x_data, y_data, t_data = ids_to_inputs(x_ids, y_ids, t_ids)
