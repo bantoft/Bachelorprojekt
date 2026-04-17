@@ -1,7 +1,7 @@
-PWD /home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne
+PWD /home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Hesel_ligningerne
 INPUT /usr/share/texmf-dist/web2c/texmf.cnf
 INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
-INPUT /home/andreas_a/Desktop/Bachelorprojekt/latex_projekter/Hesel_ligningerne/main.tex
+INPUT /home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Hesel_ligningerne/main.tex
 OUTPUT main.log
 INPUT /usr/share/texmf-dist/tex/latex/base/article.cls
 INPUT /usr/share/texmf-dist/tex/latex/base/article.cls

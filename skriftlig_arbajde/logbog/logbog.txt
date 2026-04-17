@@ -255,25 +255,27 @@ DONE:
 
 
 
-############################ TODE liste
+############################ TODO liste
 TODO:
-    
-    - Læs:
-        PDE_in_Action 6.2-
-        PDEs_Numerical_Simulation
-    
-    - udvkl:
+Literatur:
+    []  Artikler om PINN til plasma
+    []  PDE_in_Action 6.2-
+    []  PDEs_Numerical_Simulation
 
-    Opstil lambda termer i PDE systemet
-        - Kør sim
-        - læs værdier fra logfilen
-        - Få styr på hvilke værdier der skal bruges til lambda termerne i bestemte intervaller
-        - Opstil fulde PDE med lambda termer
-        _ Opstil initial conditions og boundery conditions
+Produkt udvikling:
+    []  PDE loss:
+        [] EQ loos:
+            [x]  RHS (17/04)
+            [x]  Lambda (17/04)
+            [x]  Profile region (17/4)
+            []  Scale problem med lambda (Normaliser)
+            []  Valideret
+        [] IC loss
+        [] Boundery
+            [] Neumann
+            [] Dirichlich
+    []  Colocation points
 
-    spg til Alexander (gennemgå parametre)
-    model structur (find i literatur, samle det hele i en model)
-    colocation point,
-    updater: Ic. til funk, Boundery skal læses fra inp fil (konstant, konstant hældning),
-    Få fra Alexander: hvordan man læser parametre til lambda termer, og hvor de er aktive
-    Opdater colocation point normal fordelt eller vægt normal fordelt
+
+Rapport skriving:
+    [] Kom nu i gang for helvede
