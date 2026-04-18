@@ -1,9 +1,8 @@
 teori
 
-simulatorer/BOUT/
+simulatorer/BOUT
 simulatorer/BANT-dev/data
 
-SciML/min_version/BOUT.dmp.0.nc
 
 # Python-generated files
 __pycache__/
