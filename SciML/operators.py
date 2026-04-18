@@ -16,7 +16,7 @@ def grad(f: Tensor, akse: Tensor, create_graph: bool = True) -> Tensor:
         only_inputs=True,
     )[0]
 
-test = 10
+
 def p_xx(f: Tensor, x: Tensor) -> Tensor:
     return grad(grad(f, x), x)
 
@@ -41,7 +41,7 @@ def laplacian_perp(f: Tensor, x: Tensor, y: Tensor) -> Tensor:
 
 
 def Hd_t(f: Tensor, phi: Tensor, x: Tensor, y: Tensor, t: Tensor, ) -> Tensor:
-    return grad(f, t) + (1.0 / B0) * poisson_bracket(phi, f, x, y)
+    return grad(f, t) + (1.0 / B) * poisson_bracket(phi, f, x, y)
 
 
 def Hd0_t(f: Tensor, phi: Tensor, x: Tensor, y: Tensor, t: Tensor) -> Tensor:

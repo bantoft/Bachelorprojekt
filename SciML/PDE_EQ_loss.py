@@ -18,7 +18,7 @@ def Lambda_termer(n: Tensor, p_e: Tensor, p_i: Tensor, phi: Tensor, x: Tensor, y
     T_e = p_e/(n + 1e-8) # Temp_e: Tensor
     T_i = p_i/(n + 1e-8) # Temp_i: Tensor
     Theta = 3*me*nuei*(p_e - p_i)/mi    # Energy transfer between the electron and ion channels: Tensor
-    w_star = laplacian_perp(phi, x, y) + laplacian_perp(p_i, x, y) # omega^*: Tenspr
+    w_star = laplacian_perp(phi, x, y) + laplacian_perp(p_i, x, y) # omega^*: Tensor
     Relaxationsterm = (
         alpha*(
             tilde(T_e, 0)
@@ -51,7 +51,7 @@ def Lambda_termer(n: Tensor, p_e: Tensor, p_i: Tensor, phi: Tensor, x: Tensor, y
     
     Lambda_pe = (
     5/2*De*laplacian_perp(p_e, x, y)
-    + (16/6-5/2)*div_perp(n*div_perp(T_e, x, y), x, y)
+    + (16/6-5/2)*grad(n*grad(T_e, x), x) + grad(n*grad(T_e, y), y)
     - 9*p_e/(2*tau)
     - T_e/tau_SH 
     - Theta
@@ -81,12 +81,11 @@ def EQ_residuals(n: Tensor, p_e: Tensor, p_i: Tensor, phi: Tensor, x: Tensor, y:
     R_n, R_w, R_pe, R_pi = RHS_residuals(n, p_e, p_i, phi, x, y, t)
     Lambda_n, Lambda_w, Lambda_pe, Lambda_pi = Lambda_termer(n, p_e, p_i, phi, x, y, x_connected)
 
-    scale = 1e-20
     mse = torch.nn.MSELoss()
     loss_dict={
-        'Eq_n': mse(weights['Eq_n']*(R_n-Lambda_n/scale), torch.zeros_like(R_n)),
-        'Eq_w': mse(weights['Eq_w']*(R_w-Lambda_w/scale), torch.zeros_like(R_w)),
-        'Eq_pe': mse(weights['Eq_pe']*(R_pe-Lambda_pe/scale), torch.zeros_like(R_pe)),
-        'Eq_pi': mse(weights['Eq_pi']*(R_pi-Lambda_pi/scale), torch.zeros_like(R_pi)),
+        'Eq_n': mse(weights['Eq_n']*(R_n-Lambda_n), torch.zeros_like(R_n)),
+        'Eq_w': mse(weights['Eq_w']*(R_w-Lambda_w), torch.zeros_like(R_w)),
+        'Eq_pe': mse(weights['Eq_pe']*(R_pe-Lambda_pe), torch.zeros_like(R_pe)),
+        'Eq_pi': mse(weights['Eq_pi']*(R_pi-Lambda_pi), torch.zeros_like(R_pi)),
     }
     return loss_dict

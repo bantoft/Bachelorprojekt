@@ -1,13 +1,11 @@
 # Fdb version 4
-["pdflatex"] 1776420677.75295 "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Hesel_ligningerne/main.tex" "main.pdf" "main" 1776420677.90867 0
-  "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Hesel_ligningerne/main.tex" 1776420677.60838 4998 03ca592e0d96209fb6e8af269470b9f2 ""
+["pdflatex"] 1776524955.57396 "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Hesel_ligningerne/Hesel_ligningerne.tex" "Hesel_ligningerne.pdf" "Hesel_ligningerne" 1776524955.73137 0
+  "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Hesel_ligningerne/Hesel_ligningerne.tex" 1776524955.43391 6276 1b94f628060ee0ab68e69d766436757c ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1775415801 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1775415801 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1775415801 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1775415801 1328 c834bbb027764024c09d3d2bf908b5f0 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1775415801 1324 c910af8c371558dc20f2d7822f66fe64 ""
-  "/usr/share/texmf-dist/fonts/tfm/public/cm/cmbx5.tfm" 1775415801 1332 f817c21a1ba54560425663374f1b651a ""
-  "/usr/share/texmf-dist/fonts/tfm/public/cm/cmbx7.tfm" 1775415801 1336 3125ccb448c1a09074e3aa4a9832f130 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmex10.tfm" 1775415801 992 662f679a0b3d2d53c1b94050fdaa3f50 ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm" 1775415801 1524 4414a8315f39513458b80dfc63bff03a ""
   "/usr/share/texmf-dist/fonts/tfm/public/cm/cmmi6.tfm" 1775415801 1512 f21f83efb36853c0b70002322c1ab3ad ""
@@ -52,10 +50,10 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1775415801 43569 fd570f2fa160877d211e859f687312ba ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1775652305 5384140 9ef23e7d5d9c96d2806f8b40e57f5eef ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1775652298 2968239 c87f3347d7365ce2e979e2521b8a305c ""
-  "main.aux" 1776420677.88587 830 9d775d2fcacd6c6f706486bda31670e7 "pdflatex"
-  "main.tex" 1776420677.60838 4998 03ca592e0d96209fb6e8af269470b9f2 ""
+  "Hesel_ligningerne.aux" 1776524955.70931 2034 8c8509a130a41f3dfc8cf7fa99822cdb "pdflatex"
+  "Hesel_ligningerne.tex" 1776524955.43391 6276 1b94f628060ee0ab68e69d766436757c ""
   (generated)
-  "main.aux"
-  "main.log"
-  "main.pdf"
+  "Hesel_ligningerne.aux"
+  "Hesel_ligningerne.log"
+  "Hesel_ligningerne.pdf"
   (rewritten before read)

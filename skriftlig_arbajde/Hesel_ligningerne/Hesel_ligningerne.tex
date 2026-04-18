@@ -1,0 +1,133 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{Overblik over Hesel ligningerne}
+\author{s224041}
+\date{March 2026}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\section{Standard form}
+
+HESEL ligningerne er givet på følgende form:
+
+\begin{gather}
+    \mathrm{d} _t n + n\mathcal{K}(\phi) - \mathcal{K}(p_e) = \Lambda_n  \label{EQ_n} \\ 
+    \mathrm{d}_t^0 \omega^* + \left\{\phi, p_i \right\} - \mathcal{K}(p_e+p_i)=\Lambda_{\omega^*} \label{EQ_w} \\
+    \frac{3}{2}\mathrm{d} _t p_e + \frac{5}{2}p_e \mathcal{K}(\phi) -\frac{5}{2}\mathcal{K}\left(\frac{p_e^2}{n}\right)= \Lambda_{p_e}\label{EQ_p_e} \\
+    \frac{3}{2}\mathrm{d} _t p_i + \frac{5}{2}p_i \mathcal{K}(\phi) +\frac{5}{2}\mathcal{K}\left(\frac{p_i^2}{n}\right) - p_i\mathcal{K}(p_e+p_i) = \Lambda_{p_i} \label{EQ_p_i}
+\end{gather}
+
+
+\section{Lambda termer}
+Lambda termerne er givet ved:
+\begin{align}
+\Lambda_n =& D_e\nabla_\perp^2 n -\frac{n}{\tau} -\frac{n-n_p}{\tau_p} \notag\\ 
+            &-\alpha\left(\tilde T_e+ \frac{\bar T_e}{\bar n}\tilde n-\tilde\phi\right) \label{L_n}\\ 
+\Lambda_\omega^{*}=& D_i\nabla_\perp^2\omega^{*}-\frac{\omega^{*}}{\tau}+\frac{\rho_s}{L_c}\left[1-\exp\left(\phi_m-\frac{\phi_s}{T_{e,s}}\right)\right] \notag\\
+            &-\alpha\left( \tilde T_e+ \frac{\bar T_e}{\bar n}\tilde n -\tilde\phi \right) \label{L_w}\\
+\Lambda_{p_e} =& \frac{5}{2}D_e\nabla_\perp^2 p_e  + \left(\frac{16}{6} - \frac{5}{2}\right)\nabla\cdot\left(n\nabla_\perp T_e\right) - \frac{9p_e}{2\tau} - \frac{T_e}{\tau^{SH}}-\Theta -\frac{p_e-p_{e,p}}{\tau_p} \notag\\
+            &-\bar T_e \alpha\left( \tilde T_e + \frac{\bar T_e}{\bar n}\tilde n -\tilde\phi \right)\label{L_p_e}\\
+\Lambda_{p_i} =& D_i\nabla_\perp^2 p_i - D_iT_i\nabla_\perp^2n - \frac{9p_i}{2\tau} +\Theta -\frac{p_i-p_{i,p}}{\tau_p} +p_i\Lambda_{\omega^*} \label{L_p_i}
+\end{align}
+
+\section{Funktioner}
+Funktionerne er gevet ved:
+\begin{align*}
+    &n: n(x,y,t): &\text{Tæthed} \\
+    &p_{e,i}: p_{e,i}(x,y,t): &\text{Elektron- og iontryk}  \\
+    &T_{e,i}: T_{e,i}(x,y,t) = p_{e,i}/n: \quad &\text{Elektron- og iontemperatur} \\
+    &\phi: \phi(x,y,t): \quad &\text{Elektrisk potentiale} \\
+    &\omega^*: \omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i: \quad &\text{Vorticitet} \\
+\end{align*}
+
+
+\section{Operatorer}
+Herved er operatorerne defineret med:
+\begin{gather}
+    \mathcal{K}(f)= - \frac{\rho_s}{R}\partial_y f \label{curvature}\\
+    \left\{ f, g\right\} = \partial_x f \partial_y g - \partial_y f \partial_x g \label{poission}\\
+    \nabla = \left(\partial_x, \partial_y, \partial_z \right)^T \label{nabla}\\
+    \nabla_\perp = \left(\partial_x, \partial_y, 0 \right)^T \label{nable_perp}\\
+    \nabla^2 = \left(\partial^2_x, \partial^2_y, \partial^2_z \right)^T\label{nabla2}\\
+    \nabla_\perp^2 = \left(\partial^2_x, \partial^2_y, 0 \right)^T\label{nabla2_perp}\\
+    \mathrm{d}_t^0 f = \partial_t f + \left\{\phi, f \right\} \label{dt0}\\
+    \mathrm{d}_t f = \partial_t f  + \frac{1}{B}  \left\{ \phi , f \right\} \label{dt} \\    
+    \bar f = \frac{1}{L_y}\int_0^{L_y} f \mathrm{d}y \label{bar}\\
+    \tilde f = f - \bar f\label{tilde}\\
+\end{gather}
+
+
+\section{Koeffecienter}
+Samling af koeffecienter:
+\begin{gather}
+    \Theta = \frac{3m_e}{m_i}v_{ei}\left(p_e - p_i\right)\label{Theta}\\
+    \alpha = \frac{2T_{e0}}{v_{ei}m_eL^2_\parallel\omega_{i0}}\label{alpha}\\
+    \phi_m = \ln(\sqrt{m_i/2\pi m_e})\label{phi_m}\\
+\end{gather}
+
+
+\section{Profile region}
+Hvor er profile regionen defineret ved:
+\begin{gather}
+    \frac{n-n_p}{\tau_p}\sigma_{lcfs} \label{profile_n}\\
+    \frac{p_e-p_{e,p}}{\tau_p}\sigma_{lcfs} \label{profile_p_e}\\
+    \frac{p_i-p_{i,p}}{\tau_p}\sigma_{lcfs} \label{profile_p_i}\\
+    \frac{\phi_s}{T_{e,s}} = \frac{\phi(x,y,t)}{T_e(x,y,t)}*\sigma_{connected} \label{phi_s_connected}\\
+    \frac{\phi_s}{T_{e,s}} = \frac{\bar\phi(x,y,t)}{\bar{T_e}(x,y,t)}*\sigma_{disconnected} \label{phi_s_disconnected}\\
+\end{gather}
+
+\begin{gather}
+    \sigma_{lcfs} = \begin{cases}
+        1 & \text{for } x < x\_lcfs  \\
+        0 & \text{for } x > x\_lcfs
+    \end{cases} \label{sigma_lcfs}\\
+    \sigma_{connected} = \begin{cases}
+        1 & \text{for } x < x\_connected  \\
+        0 & \text{for } x \geq x\_connected
+    \end{cases} \label{sigma_connected}\\
+    \sigma_{disconnected} = \begin{cases}
+        1 & \text{for } x < x\_disconnected  \\
+        0 & \text{for } x \geq x\_disconnected
+    \end{cases} \label{sigma_disconnected}
+\end{gather}
+
+
+\section{parametre}
+Parametre for HESEL ligningerne:
+
+\begin{center}
+\begin{tabular}{|c|c|c|l|}
+    \hline
+    \textbf{Log fil def} & \textbf{Symbol} & \textbf{Værdi} & \textbf{Bruges}\\ \hline
+    *bt & B & 1.11 & \ref{curvature}, \ref{dt} \\ \hline
+    me\#\#\# & $m_e$ & $9.109382\text{e}-31$ & \ref{Theta}, \ref{alpha}, \ref{phi_m} \\ \hline
+    mi\# & $m_i$ & $3.345243\text{e}-27$ & \ref{Theta}, \ref{phi_m} \\ \hline
+    Rmajor\#\# & R & $8.800000\text{e}-01$ & \ref{curvature} \\ \hline
+    rhos & $\rho_s$ & $8.929325\text{e}-04$ & \ref{curvature}, \ref{L_w} \\ \hline
+    Te0\#\#  & $T_{e0}$ & $2.980000\text{e}+01$ & \ref{alpha} \\ \hline
+    nuei\#x8 & $v_{ei}$ & $4.379143\text{e}+06$ & \ref{Theta}, \ref{alpha} \\ \hline
+    De\#x8 & $D_e$ & $6.654814\text{e}-02$ & \ref{L_n}, \ref{L_p_e} \\ \hline
+    \#Di\#\# & $D_i$ & $2.851611\text{e}+00$ & \ref{L_w}, \ref{L_p_i} \\ \hline
+    *floor\_n & $n_p$ & $0.005$ & \ref{L_n} \\ \hline
+    *floor\_pe & $p_{e,p}$ & $0.000025$ & \ref{L_p_e} \\ \hline
+    *floor\_pi & $p_{i,p}$ & $0.000025$ & \ref{L_p_i} \\ \hline
+    *floor\_time & $\tau_p$ & $50$ & \ref{L_n}, \ref{L_p_e}, \ref{L_p_i} \\ \hline
+    *force\_time & $\tau$ & $50$ & \ref{L_n}, \ref{L_w}, \ref{L_p_e}, \ref{L_p_i} \\ \hline
+    *x\_lcfs & $\sigma_{lcfs}$ & $0.4$ & \ref{sigma_lcfs} \\ \hline
+    *x\_connected & $\sigma_{connected}$ & $0.4$ & \ref{sigma_connected} \\ \hline
+    *x\_disconnected & $\sigma_{disconnected}$ & $0.4$ & \ref{sigma_disconnected} \\ \hline
+\end{tabular}
+\end{center}
+
+Alt er taget fra BOUT.log.0, og er derfor fundet ved at erstatte det der står i log filen med det der står i tabellen.
+Hvis der står $*$ skal parametret prefixes med $<$Option hesel:$>$ \\ \ignorespaces
+Hvis der står \# findes parametret ved at erstatte \# med mellem rum
+
+
+\end{document}
