@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 from data_loader import make_data_loader, ids_to_inputs
-from PDE_EQ_loss import EQ_residuals as pde_loss
+from SciML.loss.pde_eq import EQ_residuals as pde_loss
 from model import PINN
 from params import *
 

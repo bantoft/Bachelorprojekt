@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader, Dataset
 
-from loss_data import data
+from SciML.loss.data import data
 
 
 class HESELIndexDataset(Dataset):
