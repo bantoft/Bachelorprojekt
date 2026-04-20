@@ -4,7 +4,7 @@ from typing import Any
 import torch
 from torch.utils.data import DataLoader, Dataset
 
-from ..loss_funktion.loss_from_hesel import BOUTHESELSystem
+from loss_funktion.loss_from_hesel import BOUTHESELSystem
 
 
 class HESELIndexDataset(Dataset):

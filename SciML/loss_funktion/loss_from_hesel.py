@@ -4,7 +4,6 @@ import re
 import math
 import torch
 import xarray as xr
-import numpy as np
 import torch.nn.functional as F
 
 from torch import Tensor
@@ -12,10 +11,9 @@ from pathlib import Path
 from dataclasses import asdict
 from typing import Any, Callable, Iterable, Mapping
 
-
-from .api.read_bout import read_bout_inp
-from .api.types import BoundaryCondition, HeselDerivedParameters
 from .api.operators import *
+from .api.read_bout import read_bout_inp
+from utils.types import BoundaryCondition, HeselDerivedParameters
 
 
 DEFAULT_BOUT_HESEL_ROOT = (Path(__file__).resolve().parents[2] / "simulatorer" / "BOUT" / "BOUT-HESEL")
