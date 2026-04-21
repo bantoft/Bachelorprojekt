@@ -1,34 +1,23 @@
-from __future__ import annotations
-
 import torch
-import torch.nn as nn
-
-from .types import nn_mapping
-
+from torch import nn
 
 class PINN(nn.Module):
-    def __init__(self, nn_structure: dict):
+    def __init__(self, structure: dict, param_dim: int):
         super().__init__()
+        self.structure = structure
+        self.param_dim = param_dim
+        layers = []
+        in_features = structure["input_size"] + param_dim
+        for layer in structure["layers"]:
+            out_features = layer["size"]
+            layers.append(nn.Linear(in_features, out_features))
+            layers.append(layer["non_lin_foo"]())
+            in_features = out_features
 
-        self.nn_structure = nn_structure
-        input_size = int(self.nn_structure["input_size"])
-        output_size = int(self.nn_structure["output_size"])
-
-        activation_functions = nn_mapping["activation_functions"]
-        layer_sizes = nn_mapping["layer_sizes"]
-
-        layers: list[nn.Module] = []
-        previous_size = input_size
-        for layer_name in ("layer1", "layer2", "layer3", "layer4"):
-            layer = self.nn_structure[layer_name]
-            hidden_size = layer_sizes[int(layer["size"])]
-            activation = activation_functions[int(layer["activation"])]
-            layers.append(nn.Linear(previous_size, hidden_size))
-            layers.append(activation.__class__())
-            previous_size = hidden_size
-        layers.append(nn.Linear(previous_size, output_size))
-
+        layers.append(nn.Linear(in_features, structure["output_size"]))
         self.network = nn.Sequential(*layers)
 
-    def forward(self, x: torch.Tensor, z: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
-        return self.network(torch.cat((x, z, t), dim=-1))
+    def forward(self, x, params):
+        x_full = torch.cat([x, params], dim=1)
+        return self.network(x_full)
+    

@@ -13,7 +13,7 @@ from typing import Any, Callable, Iterable, Mapping
 
 from .api.operators import *
 from .api.read_bout import read_bout_inp
-from utils.types import BoundaryCondition, HeselDerivedParameters
+from utils.custom_types import BoundaryCondition, HeselDerivedParameters
 
 
 DEFAULT_BOUT_HESEL_ROOT = (Path(__file__).resolve().parents[2] / "simulatorer" / "BOUT" / "BOUT-HESEL")
@@ -257,8 +257,6 @@ class BOUTHESELSystem:
             return float(value.detach().cpu().item())
         return float(value)
 
-    def _bool(self, section: str, key: str) -> bool:
-        return bool(self._resolve_key(section, key))
 
     def _build_parameters(self) -> HeselDerivedParameters:
         e = 1.60e-19
@@ -1104,22 +1102,14 @@ class BOUTHESELSystem:
         z: Tensor | None = None,
         t: Tensor | None = None,
         output_names: Iterable[str] | None = None,
-        return_details: bool = False,
-    ) -> Tensor | dict[str, Any]:
+    ) -> Tensor:
         if x is None or z is None or t is None:
             device = next(model.parameters()).device if hasattr(model, "parameters") else None
             x, z, t = self.make_collocation_grid(device=device)
 
         terms = self.equation_terms(model, x=x, z=z, t=t, output_names=output_names)
-        total, component_losses = mse_dict(terms["residuals"], weights=weights)
+        total, _ = mse_dict(terms["residuals"], weights=weights)
 
-        if return_details:
-            details = {
-                "total": total,
-                "component_losses": component_losses,
-                **terms,
-            }
-            return details
         return total
 
     def bc_loss(
@@ -1131,8 +1121,7 @@ class BOUTHESELSystem:
         z: Tensor | None = None,
         t: Tensor | None = None,
         output_names: Iterable[str] | None = None,
-        return_details: bool = False,
-    ) -> Tensor | dict[str, Any]:
+    ) -> Tensor:
         if x is None or z is None or t is None:
             device = next(model.parameters()).device if hasattr(model, "parameters") else None
             x, z, t = self.make_collocation_grid(device=device)
@@ -1171,17 +1160,7 @@ class BOUTHESELSystem:
             elif vort_outer.kind.startswith("neumann"):
                 residuals["bc_vort_outer"] = grad_x(state["vort"], x, self.parameters.total_x)[:, -1, :, :]
 
-        total, component_losses = mse_dict(residuals, weights=weights)
-        if return_details:
-            return {
-                "total": total,
-                "component_losses": component_losses,
-                "residuals": residuals,
-                "boundary_conditions": {
-                    field: {side: asdict(cond) for side, cond in field_bc.items()}
-                    for field, field_bc in self.boundary_conditions.items()
-                },
-            }
+        total, _ = mse_dict(residuals, weights=weights)
         return total
 
     def ic_loss(
@@ -1192,8 +1171,7 @@ class BOUTHESELSystem:
         x: Tensor | None = None,
         z: Tensor | None = None,
         output_names: Iterable[str] | None = None,
-        return_details: bool = False,
-    ) -> Tensor | dict[str, Any]:
+    ) -> Tensor:
         if x is None or z is None:
             device = next(model.parameters()).device if hasattr(model, "parameters") else None
             x_1d = torch.linspace(0.0, 1.0, 32, device=device)
@@ -1215,14 +1193,7 @@ class BOUTHESELSystem:
         if "vort" in state:
             residuals["ic_vort"] = state["vort"].squeeze(0) - targets["vort"]
 
-        total, component_losses = mse_dict(residuals, weights=weights)
-        if return_details:
-            return {
-                "total": total,
-                "component_losses": component_losses,
-                "residuals": residuals,
-                "targets": targets,
-            }
+        total, _ = mse_dict(residuals, weights=weights)
         return total
 
     def data_loss(
@@ -1235,8 +1206,7 @@ class BOUTHESELSystem:
         z: Tensor | None = None,
         t: Tensor | None = None,
         output_names: Iterable[str] | None = None,
-        return_details: bool = False,
-    ) -> Tensor | dict[str, Any]:
+        ) -> Tensor:
         if x is None or z is None or t is None:
             device = next(model.parameters()).device if hasattr(model, "parameters") else None
             x, z, t = self.make_collocation_grid(device=device)
@@ -1247,13 +1217,6 @@ class BOUTHESELSystem:
             if key in state:
                 residuals[f"data_{key}"] = state[key] - data[key]
 
-        total, component_losses = mse_dict(residuals, weights=weights)
-        if return_details:
-            return {
-                "total": total,
-                "component_losses": component_losses,
-                "residuals": residuals,
-                "data": data,
-            }
+        total, _ = mse_dict(residuals, weights=weights)
         return total
     
