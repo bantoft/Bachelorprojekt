@@ -1,58 +1,187 @@
 # Bachelorprojekt
-This is for product/scientific development for my bachelorprojekt.
 
-## Optimizing nHesel Plasma Simulations using Scientific Machine Learning
+Arbejdsrepository til bachelorprojektet ved DTU om Scientific Machine Learning til plasmasimuleringer.
 
-Bachelor project at the Technical University of Denmark (DTU)
+## Projektet i dag
 
-**Student:**        Andreas Bjarnastein Antoft
-**Supervisor:**     Jesper Løve Hinrich         https://orbit.dtu.dk/en/persons/jesper-løve-hinrich/
-**Supervisor:**     Morten Mørup                https://orbit.dtu.dk/en/persons/morten-mørup/
-**Co-supervisor:**  Alexander Simon Thrysøe     https://orbit.dtu.dk/en/persons/alexander-simon-thrysøe/
-**Period:**         Spring 2026
+Projektet er ikke laengere kun en ide eller en samling noter. Repoet er blevet et samlet arbejdsrum med tre hovedspor:
 
----
+1. `SciML/` indeholder kode til at traene en Physics-Informed Neural Network (PINN) paa data fra `BOUT-HESEL`.
+2. `simulatorer/` indeholder baade en let, egenudviklet PDE-simulator til hurtige eksperimenter og den eksterne BOUT/HESEL-kodebase, som data og fysik er bygget op omkring.
+3. `skriftlig_arbajde/` samler den skriftlige del af bachelorprojektet, herunder projektplan, ligningsnoter og logbog.
 
-## 📌 Project Overview
+Kort sagt er repoet blevet en kombination af forskningskode, simuleringsmiljoe og projektmateriale.
 
-Numerical simulations of plasma edge dynamics are a cornerstone of fusion research, but solving the underlying nonlinear partial differential equations (PDEs) at high spatial and temporal resolution is computationally expensive.
+## Projektfokus
 
-This bachelor project investigates whether **Scientific Machine Learning (SciML)** methods can be used to accelerate or approximate **2D nHesel plasma simulations** without significant loss of physical accuracy. In particular, the project focuses on **Physics-Informed Neural Networks (PINNs)**, where the governing PDEs are explicitly embedded into the learning process.
+Det faglige fokus er stadig at undersoege, om Scientific Machine Learning kan bruges til at modellere eller accelerere 2D nHESEL-lignende plasmaforloeb. Den nuvaerende kodebase peger isaer i retning af:
 
-The goal is to compare classical numerical simulation methods with ML-based surrogate or acceleration models in terms of:
-- Accuracy  
-- Stability  
-- Computational cost  
+- indlaesning af output og konfiguration fra `BOUT-HESEL`
+- afledning af fysiske parametre og randbetingelser direkte fra simulatoropsaetningen
+- traening af et PINN, som predikterer felterne `lnn`, `lnpe`, `lnpi` og `phi`
+- kombination af dataloss og fysikloss, saa modellen baade passer simulerede data og respekterer PDE-strukturen
+- hurtig prototyping af enklere PDE-systemer i et separat, lettere simuleringsmiljoe
 
----
+## Projektdetaljer
 
-## 🧠 Scientific Machiner learning Approach
+**Titel:** Optimizing nHESEL Plasma Simulations using Scientific Machine Learning
+**Institution:** Danmarks Tekniske Universitet (DTU)  
+**Studerende:** Andreas Bjarnastein Antoft  
+**Vejledere:** Jesper Loeve Hinrich, Morten Moerup  
+**Medvejleder:** Alexander Simon Thrysoe  
+**Periode:** Foraar 2026
 
-The physical system is described by a set of coupled PDEs:
-
-\[
-    \bold{\overset{\rightharpoonup}U}(\bold{\overset{\rightharpoonup}x}, t)
-\]
-
-These solutions are approximated using a parameterized neural network:
-
-\[
-    \bold{\overset{\rightharpoonup}U}(\bold{\overset{\rightharpoonup}x}, t) \approx f_\theta(\bold{\overset{\rightharpoonup}x}, t)
-\]
-
-where \( f_\theta \) is trained using physics-informed loss functions incorporating:
-- Governing PDEs  
-- Initial conditions  
-- Boundary conditions  
-
----
-
-## 📂 Repository Structure
+## Repository Structure
 
 ```text
 .
-├── Tekst_filer                 # Gathering all text files
-    ├── For_arbejde.txt         # Diary to keep trak of everythin
-    ├── indberette_projekt.txt  # Pre report of the project
-├── LICENCE     #Standard MIT licence
-└── README.md   #This beauty of a file 
+├── README.md
+├── LICENSE
+├── pyproject.toml              # Python-projekt og afhaengigheder
+├── uv.lock                     # Laast dependency-resolve til uv
+├── SciML/
+│   ├── traening.py             # Entrypoint til PINN-traening
+│   ├── data/                   # Gemte model/data-artefakter
+│   ├── loss_funktion/
+│   │   ├── bout_info.py        # Laeser BOUT-settings og afleder fysikparametre
+│   │   ├── bout_data.py        # Dataset/dataloader oven paa BOUT-output
+│   │   ├── bout_phys.py        # PDE-, rand- og initial-condition-losses
+│   │   └── api/                # Hjaelpefunktioner til laesning og operatorer
+│   └── utils/
+│       ├── model.py            # PINN-modelen
+│       └── custom_types.py     # Dataklasser og konfigurationsstrukturer
+├── simulatorer/
+│   ├── BANT-dev/               # Egen letvaegts 2D-PDE-simulator til prototyper
+│   │   ├── main.py
+│   │   ├── engine/
+│   │   ├── PDE_system/
+│   │   └── visulizer/
+│   └── BOUT/
+│       ├── BOUT-HESEL/         # HESEL-case og output, som SciML-koden laeser fra
+│       └── BOUT-dev/           # BOUT++-kodebase/reference
+└── skriftlig_arbajde/
+    ├── Hesel_ligningerne/      # LaTeX-noter om ligningerne
+    ├── Projektplan/            # Projektplan med figurer og kilder
+    ├── logbog/                 # Loebende arbejdslog
+    ├── opsaetning/             # Miljoe- og setupnoter
+    └── projekt_indberettelse/  # Tidlig projektbeskrivelse
+```
+
+## `SciML/` i praksis
+
+Den nuvaerende SciML-del er bygget op omkring output fra `simulatorer/BOUT/BOUT-HESEL/data/`. Traeningsscriptet:
+
+- laeser BOUT-konfiguration fra `BOUT.settings`
+- laeser felter fra `BOUT.dmp.0.nc`
+- afleder normaliserede fysiske parametre fra simulatoropsaetningen
+- opretter et dataset over rum-tidspunkter og felter
+- traener et PINN med en samlet loss bestaaende af:
+  - dataloss
+  - PDE-residualer
+  - randbetingelser
+  - initialbetingelser
+
+Det betyder, at projektet i sin nuvaerende form er taet koblet til BOUT-HESEL som reference- og datakilde.
+
+## `simulatorer/` i praksis
+
+`simulatorer/BANT-dev/` er et separat eksperimentmiljoe til hurtige numeriske tests. Her kan man afproeve enklere PDE-systemer uden hele BOUT-stakken. Det goer mappen nyttig til:
+
+- hurtig iteration paa diskretisering og tidsintegration
+- toy-modeller som varmeledning eller koblede plasmafelter
+- visualisering af tidsserier gemt som `.npz`
+
+`simulatorer/BOUT/` er derimod den tunge reference-del, som indeholder den eksterne kode og data, der bruges som fysisk fundament for SciML-arbejdet.
+
+## Koer projektet
+
+Projektet bruger `uv` som Python-workflow.
+
+Installer afhaengigheder:
+
+```bash
+uv sync
+```
+
+Koer PINN-traening fra repo-roden:
+
+```bash
+uv run python SciML/træning.py
+```
+
+Hvis du vil logge traeningsloss til Weights & Biases, saet dine miljoevariabler foer du starter:
+
+```bash
+export WANDB_API_KEY="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"
+export WANDB_ENTITY="bantoft-"
+export WANDB_PROJECT="Bachelor_projekt"
+uv run python træning.py
+```
+
+Traeningen logger foelgende metrics for hver batch:
+
+- `train_step/total_loss`
+- `train_step/data_loss`
+- `train_step/eq_loss`
+- `train_step/bc_loss`
+- `train_step/ic_loss`
+
+Derudover bliver epoch-gennemsnit ogsaa gemt som:
+
+- `epoch_summary/total_loss`
+- `epoch_summary/data_loss`
+- `epoch_summary/eq_loss`
+- `epoch_summary/bc_loss`
+- `epoch_summary/ic_loss`
+
+Traeningen bruger ogsaa early stopping efter hver epoch baseret paa `total_loss`. Som standard stopper den, hvis der ikke er forbedring i `10` epochs.
+
+Den bedste model bliver automatisk gemt lokalt i:
+
+```text
+SciML/data/trained_pinn_YYYY-MM-DD_HH-MM-SS.pt
+```
+
+Checkpointet indeholder model-vaegte, netvaerksstruktur, traeningskonfiguration og information om bedste epoch/loss.
+
+Runs kan derefter ses i W&B-dashboardet paa:
+
+```text
+https://wandb.ai/<entity>/<project>
+```
+
+Hvis `WANDB_API_KEY` ikke er sat, koerer scriptet i `offline` mode og logger lokalt. De lokale runs kan uploades senere med:
+
+```bash
+wandb sync wandb/
+```
+
+Koer den lette PDE-simulator:
+
+```bash
+cd simulatorer/BANT-dev
+uv run main.py --system=heat_dif
+```
+
+## Afhaengigheder
+
+`pyproject.toml` peger i oejeblikket paa disse centrale Python-pakker:
+
+- `torch`
+- `numpy`
+- `matplotlib`
+- `numba`
+- `pyarrow`
+- `xbout`
+
+Python-versionen er sat til `>=3.12`.
+
+## Bemærkninger
+
+- Repoet er et arbejdsrepo og ikke et faerdigt bibliotek eller reproducibelt release.
+- Flere mapper indeholder genererede filer, modeller og LaTeX-build artefakter.
+- SciML-koden forventer, at relevante BOUT-HESEL-data findes lokalt i den nuvaerende mappe-struktur.
+
+## Licens
+
+Projektet er udgivet under MIT-licensen. Se [LICENSE](LICENSE).
