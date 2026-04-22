@@ -9,19 +9,10 @@ from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from .api.operators import *
+from .api.read_bout import DEFAULT_BOUT_HESEL_ROOT, mse_dict
 from .bout_info import BOUTHESELInfo
 
 
-DEFAULT_BOUT_HESEL_ROOT = (Path(__file__).resolve().parents[2] / "simulatorer" / "BOUT" / "BOUT-HESEL")
-
-def mse_dict(residuals: Mapping[str, Tensor], weights: Mapping[str, float] | None = None) -> Tensor:
-    weights = dict(weights or {})
-    total = torch.tensor(0.0)
-    for name, residual in residuals.items():
-        weight = float(weights.get(name, 1.0))
-        loss = F.mse_loss(weight * residual, torch.zeros_like(residual))
-        total = total + loss
-    return total
 
 class BOUTHESELPhysics:
     def __init__(self, info: BOUTHESELInfo | None = None, root: str | Path = DEFAULT_BOUT_HESEL_ROOT):
@@ -30,17 +21,6 @@ class BOUTHESELPhysics:
         self.boundary_conditions = self.info.boundary_conditions
         self.active_settings = self.info.active_settings
 
-    def evaluate_model(
-        self,
-        model: Callable[..., Mapping[str, Tensor]],
-        x: Tensor,
-        z: Tensor,
-        t: Tensor,
-    ) -> dict[str, Tensor]:
-        return dict(model(x, z, t))
-
-    def _zavg(self, value: Tensor) -> Tensor:
-        return value.mean(dim=2, keepdim=True)
 
     def equation_terms(
         self,
@@ -49,7 +29,7 @@ class BOUTHESELPhysics:
         z: Tensor,
         t: Tensor,
     ) -> dict[str, Any]:
-        state = self.evaluate_model(model, x=x, z=z, t=t)
+        state = dict(model(x, z, t))
 
         params, settings = self.parameters, self.active_settings
         lnn, lnpe, lnpi, phi = state["lnn"], state["lnpe"], state["lnpi"], state["phi"]
@@ -58,7 +38,7 @@ class BOUTHESELPhysics:
         te, ti = torch.exp(lnte), torch.exp(lnti)
         tau = torch.exp(lnti - lnte)
         cs_hot = torch.sqrt(torch.clamp(ti + te, min=1e-12))
-        avg_n, avg_te, avg_ti, avg_phi, avg_tau, avg_cs_hot = (self._zavg(value) for value in (n, te, ti, phi, tau, cs_hot))
+        avg_n, avg_te, avg_ti, avg_phi, avg_tau, avg_cs_hot = (value.mean(dim=2, keepdim=True) for value in (n, te, ti, phi, tau, cs_hot) )
         b_field = self.info.magnetic_field(x)
         inv_b = 1.0 / torch.clamp(b_field, min=1e-12)
 
@@ -304,6 +284,7 @@ class BOUTHESELPhysics:
             result["poisson_residual"] = state["vort"] - vort_from_phi
         return result
 
+
     def eq_loss(
         self,
         model: Callable[..., Mapping[str, Tensor]],
@@ -314,6 +295,7 @@ class BOUTHESELPhysics:
     ) -> Tensor:
         return mse_dict(self.equation_terms(model, x=x, z=z, t=t)["residuals"], weights=weights)
 
+
     def bc_loss(
         self,
         model: Callable[..., Mapping[str, Tensor]],
@@ -322,7 +304,9 @@ class BOUTHESELPhysics:
         t: Tensor,
         weights: Mapping[str, float] | None = None,
     ) -> Tensor:
-        state = self.evaluate_model(model, x=x, z=z, t=t)
+        
+        state = dict(model(x, z, t))
+
         residuals: dict[str, Tensor] = {}
         for field in ("lnn", "lnpe", "lnpi", "phi", "vort"):
             if field not in state or field not in self.boundary_conditions:
@@ -336,6 +320,7 @@ class BOUTHESELPhysics:
                     residuals[key] = grad_x(state[field], x, self.parameters.total_x)[:, idx, :, :]
         return mse_dict(residuals, weights=weights)
 
+
     def ic_loss(
         self,
         model: Callable[..., Mapping[str, Tensor]],
@@ -345,7 +330,7 @@ class BOUTHESELPhysics:
         weights: Mapping[str, float] | None = None,
     ) -> Tensor:
         t0 = torch.zeros_like(t, requires_grad=True)
-        state = self.evaluate_model(model, x=x, z=z, t=t0)
+        state = dict(model(x, z, t0))
         targets = self.info.initial_state_targets(x.squeeze(0), z.squeeze(0))
         residuals = {
             "ic_lnn": state["lnn"].squeeze(0) - targets["lnn"],
@@ -357,5 +342,3 @@ class BOUTHESELPhysics:
             residuals["ic_vort"] = state["vort"].squeeze(0) - targets["vort"]
         return mse_dict(residuals, weights=weights)
 
-
-__all__ = ["BOUTHESELPhysics"]

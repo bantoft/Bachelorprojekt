@@ -71,26 +71,3 @@ class HeselDerivedParameters:
     norm_taushi: float
     norm_lc: float
     norm_lb: float
-
-@dataclass
-class TrainConfig:
-    # hyperparameters
-    epochs: int = 2
-    batch_size: int = 2048
-    lr: float = 1e-3
-    seed: int = 42
-    # logging and saving
-    print_every: int = 1
-    save_data: int = 0
-    batch_log_path: str = "SciML/data/training_batch_log.parquet"
-    # weight distribution
-    w_data: float = 1.0
-    w_eq: float = 1.0
-    w_bc: float = 1.0
-    w_ic: float = 1.0
-
-
-nn_mapping = {
-    "activation_functions": [nn.ELU(), nn.GELU(), nn.LogSigmoid(), nn.Sigmoid(), nn.SiLU(), nn.Tanh(), nn.Tanhshrink()],
-    "layer_sizes": [16, 32, 64, 128, 256, 512],
-}

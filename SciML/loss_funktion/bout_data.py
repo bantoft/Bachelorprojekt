@@ -4,25 +4,8 @@ from pathlib import Path
 from typing import Any
 import torch
 from torch.utils.data import DataLoader, Dataset
+from .api.read_bout import DEFAULT_BOUT_HESEL_ROOT, DEFAULT_FIELDS, normalize_ids
 import xarray as xr
-
-DEFAULT_BOUT_HESEL_ROOT = (Path(__file__).resolve().parents[2] / "simulatorer" / "BOUT" / "BOUT-HESEL")
-DEFAULT_FIELDS = ("lnn", "lnpe", "lnpi", "vort")
-
-
-def _normalize_ids(
-    x_ids: torch.Tensor,
-    z_ids: torch.Tensor,
-    t_ids: torch.Tensor,
-    nt: int,
-    nx: int,
-    nz: int,
-):
-    return (
-        (x_ids.float() / max(nx - 1, 1)).unsqueeze(1),
-        (z_ids.float() / max(nz - 1, 1)).unsqueeze(1),
-        (t_ids.float() / max(nt - 1, 1)).unsqueeze(1),
-    )
 
 
 class BOUTHESELData(Dataset):
@@ -62,7 +45,7 @@ class BOUTHESELData(Dataset):
         )
 
     def ids_to_inputs(self, x_ids: torch.Tensor, z_ids: torch.Tensor, t_ids: torch.Tensor):
-        return _normalize_ids(x_ids, z_ids, t_ids, nt=self.nt, nx=self.nx, nz=self.nz)
+        return normalize_ids(x_ids, z_ids, t_ids, nt=self.nt, nx=self.nx, nz=self.nz)
 
     def make_loader(
         self,
@@ -79,5 +62,3 @@ class BOUTHESELData(Dataset):
             drop_last=drop_last,
         )
 
-
-__all__ = ["BOUTHESELData", "DEFAULT_FIELDS"]

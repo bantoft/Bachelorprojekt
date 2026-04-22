@@ -1,89 +1,16 @@
 from __future__ import annotations
 
 import math
-from sympy import re
-import re
 import xarray as xr
 import torch
-import torch.nn.functional as F
 
 from torch import Tensor
 from pathlib import Path
 from dataclasses import asdict
-from typing import Any, Mapping, Callable
-from utils.custom_types import BoundaryCondition, HeselDerivedParameters
+from typing import Any, Mapping
 
-from .api.read_bout import read_bout_inp
-
-def _parse_literal(value: str):
-    text = value.strip()
-    lower = text.lower()
-    if lower == "true":
-        return True
-    if lower == "false":
-        return False
-
-    try:
-        if any(ch in text for ch in [".", "e", "E"]):
-            return float(text)
-        return int(text)
-    except ValueError:
-        return None
-
-def _safe_sqrt(x: float | Tensor) -> float | Tensor:
-    if torch.is_tensor(x):
-        return torch.sqrt(torch.clamp(x, min=1e-12))
-    return math.sqrt(max(float(x), 1e-12))
-
-def _safe_log(x: float | Tensor) -> float | Tensor:
-    if torch.is_tensor(x):
-        return torch.log(torch.clamp(x, min=1e-12))
-    return math.log(max(float(x), 1e-12))
-
-def _torch_or_math_unary(
-    tensor_fn: Callable[[Tensor], Tensor],
-    math_fn: Callable[[float], float],
-) -> Callable[[float | Tensor], float | Tensor]:
-    def wrapper(x: float | Tensor) -> float | Tensor:
-        if torch.is_tensor(x):
-            return tensor_fn(x)
-        return math_fn(float(x))
-
-    return wrapper
-
-def _mixmode_seed(seed: float) -> float:
-    seed = abs(float(seed))
-    niter = 11 + (23 + round(seed)) % 79
-    a = 0.01
-    b = 1.23456789
-    x = (a + math.fmod(seed, b)) / (b + 2.0 * a)
-    for _ in range(niter):
-        x = 3.99 * x * (1.0 - x)
-    return x
-
-def _mixmode(arg: float | Tensor, seed: float = 0.5) -> float | Tensor:
-    if torch.is_tensor(arg):
-        result = torch.zeros_like(arg)
-    else:
-        result = 0.0
-
-    for i in range(14):
-        phase = math.pi * (2.0 * _mixmode_seed(seed + i) - 1.0)
-        weight = 1.0 / (1.0 + abs(i - 4)) ** 2
-        result = result + weight * torch.cos(i * arg + phase) if torch.is_tensor(arg) else result + weight * math.cos(i * arg + phase)
-    return result
-
-def _as_tensor_like(value: float | Tensor, like: Tensor) -> Tensor:
-    if torch.is_tensor(value):
-        return value.to(device=like.device, dtype=like.dtype)
-    return torch.tensor(value, device=like.device, dtype=like.dtype)
-
-
-DEFAULT_BOUT_HESEL_ROOT = (Path(__file__).resolve().parents[2] / "simulatorer" / "BOUT" / "BOUT-HESEL")
-REF_PATTERN = re.compile(r"\b([A-Za-z_]\w*):([A-Za-z_]\w*)\b")
-BOUNDARY_PATTERN = re.compile(r"^(?P<kind>[A-Za-z_]\w*)(?:\((?P<expr>.*)\))?$")
-IDENTIFIER_PATTERN = re.compile(r"\b([A-Za-z_]\w*)\b")
-    
+from .api.bout_struct import BoundaryCondition, HeselDerivedParameters
+from .api.read_bout import *
 
 
 class BOUTHESELInfo:
@@ -157,7 +84,7 @@ class BOUTHESELInfo:
     ) -> Any:
         variables = dict(variables or {})
         expr = expr.strip().replace("^", "**")
-        literal = _parse_literal(expr)
+        literal = parse_literal(expr)
         if literal is not None:
             return literal
 
@@ -203,14 +130,14 @@ class BOUTHESELInfo:
             {"__builtins__": {}},
             {
                 "__ref": _ref,
-                "sqrt": _safe_sqrt,
-                "tanh": _torch_or_math_unary(torch.tanh, math.tanh),
-                "exp": _torch_or_math_unary(torch.exp, math.exp),
-                "log": _safe_log,
-                "sin": _torch_or_math_unary(torch.sin, math.sin),
-                "cos": _torch_or_math_unary(torch.cos, math.cos),
-                "abs": _torch_or_math_unary(torch.abs, abs),
-                "mixmode": _mixmode,
+                "sqrt": safe_sqrt,
+                "tanh": torch_or_math_unary(torch.tanh, math.tanh),
+                "exp": torch_or_math_unary(torch.exp, math.exp),
+                "log": safe_log,
+                "sin": torch_or_math_unary(torch.sin, math.sin),
+                "cos": torch_or_math_unary(torch.cos, math.cos),
+                "abs": torch_or_math_unary(torch.abs, abs),
+                "mixmode": mixmode,
                 "pi": math.pi,
                 **local_symbols,
                 **variables,
@@ -330,7 +257,7 @@ class BOUTHESELInfo:
             "function",
             variables={"x": x, "z": z if z is not None else torch.zeros_like(x), "y": torch.zeros_like(x), "t": t if t is not None else torch.zeros_like(x)},
         )
-        value = value if torch.is_tensor(value) else _as_tensor_like(float(value), x)
+        value = value if torch.is_tensor(value) else as_tensor_like(float(value), x)
         scale = float(self._resolve_key(section, "scale")) if "scale" in self.cfg[section] else 1.0
         return scale * value
 
@@ -338,14 +265,14 @@ class BOUTHESELInfo:
         z = z if z is not None else torch.zeros_like(x)
         profiles = {name: self.resolve_profile(name, x=x, z=z) for name in ("init_n", "init_pe", "init_pi", "sigma_open", "sigma_closed", "sigma_force")}
         profiles["seed_n"] = self.resolve_profile("seed_n", x=x, z=z) if "seed_n" in self.cfg else torch.zeros_like(x)
-        profiles["lnn0_from_input"] = _safe_log(profiles["init_n"] + profiles["seed_n"])
-        profiles["lnpe0_from_input"] = _safe_log(profiles["init_pe"])
-        profiles["lnpi0_from_input"] = _safe_log(profiles["init_pi"])
+        profiles["lnn0_from_input"] = safe_log(profiles["init_n"] + profiles["seed_n"])
+        profiles["lnpe0_from_input"] = safe_log(profiles["init_pe"])
+        profiles["lnpi0_from_input"] = safe_log(profiles["init_pi"])
         return profiles
 
     def magnetic_field(self, x: Tensor) -> Tensor:
         xr = self._resolve_key("hesel", "xr", variables={"x": x, "z": torch.zeros_like(x), "y": torch.zeros_like(x), "t": torch.zeros_like(x)})
-        xr = xr if torch.is_tensor(xr) else _as_tensor_like(float(xr), x)
+        xr = xr if torch.is_tensor(xr) else as_tensor_like(float(xr), x)
         numerator = self.parameters.rmajor + self.parameters.rminor
         return numerator / (numerator + self.parameters.rhos * xr)
 
@@ -399,5 +326,3 @@ class BOUTHESELInfo:
         profiles = self.initial_profiles(x=x, z=z)
         return {"lnn": profiles["lnn0_from_input"], "lnpe": profiles["lnpe0_from_input"], "lnpi": profiles["lnpi0_from_input"], "phi": torch.zeros_like(x), "vort": torch.zeros_like(x)}
 
-
-__all__ = ["BOUTHESELInfo"]

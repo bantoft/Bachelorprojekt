@@ -1,0 +1,76 @@
+_wandb:
+    value:
+        cli_version: 0.26.0
+        e:
+            ea18j3ko8sluloqlssr8fvaco6o8yg5j:
+                codePath: SciML/træning.py
+                codePathLocal: træning.py
+                cpu_count: 8
+                cpu_count_logical: 16
+                cudaVersion: "13.2"
+                disk:
+                    /:
+                        total: "959725387776"
+                        used: "64660844544"
+                email: andreasantoft244@gmail.com
+                executable: /home/andreas_a/Desktop/Bachelorprojekt/.venv/bin/python3
+                git:
+                    commit: 5e303466933d835054081260d240e0fc3c534704
+                    remote: https://github.com/bantoft/Bachelorprojekt.git
+                gpu: NVIDIA GeForce RTX 5060
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Blackwell
+                      cudaCores: 3840
+                      memoryTotal: "8546942976"
+                      name: NVIDIA GeForce RTX 5060
+                      uuid: GPU-f6e53fd9-b99c-d3a1-443e-b8377a03a7a4
+                host: somebody
+                memory:
+                    total: "16321662976"
+                os: Linux-6.19.11-arch1-1-x86_64-with-glibc2.43
+                program: /home/andreas_a/Desktop/Bachelorprojekt/SciML/træning.py
+                python: CPython 3.12.13
+                root: /home/andreas_a/Desktop/Bachelorprojekt/SciML
+                startedAt: "2026-04-22T11:27:15.336224Z"
+                writerId: ea18j3ko8sluloqlssr8fvaco6o8yg5j
+        m: []
+        python_version: 3.12.13
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 2
+                - 16
+                - 61
+                - 62
+            "4": 3.12.13
+            "5": 0.26.0
+            "12": 0.26.0
+            "13": linux-x86_64
+batch_size:
+    value: 1024
+device:
+    value: cuda
+early_stopping_min_delta:
+    value: 0.01
+early_stopping_patience:
+    value: 3
+epochs:
+    value: 10
+incl_data:
+    value: true
+lr:
+    value: 0.0001
+model_path:
+    value: /home/andreas_a/Desktop/Bachelorprojekt/SciML/data/trained_pinn_2026-04-22_13-27-14.pt
+w_bc:
+    value: 1
+w_data:
+    value: 1
+w_eq:
+    value: 1
+w_ic:
+    value: 1
