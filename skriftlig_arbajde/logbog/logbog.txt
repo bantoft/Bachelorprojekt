@@ -1,3 +1,44 @@
+############################ TODO liste
+TODO:
+Literatur:
+    []  Artikler om PINN til plasma
+    []  PDE_in_Action 6.2-
+    []  PDEs_Numerical_Simulation
+
+Produkt udvikling:
+    []  PDE loss:
+        []  Valideret
+        [x]  EQ loos:
+            [x]  RHS (17/04)
+            [x]  Lambda (17/04)
+            [x]  Profile region (17/04)
+            [x]  Scale problem med lambda (Normaliser) (22/04)
+        [x] IC loss (22/04)
+        [x] Boundery (22/04)
+            [x] Neumann (22/04)
+            [x] Dirichlich (22/04)
+    []  Oprydning i kode
+        []  trænigs parametre til data klasse
+        []  bout-info
+    []  Colocation points
+        [x] Alle uniforme (17/04)
+        []  Vælg punkter smartere
+            []  (y/z) Uniform-fordelt
+            []  x Normalt-fordelt omkring profile region
+            []  t Cummolativt-fordelt fra t=0 til t=T
+    []  Træning
+        []  Validering
+        [x]  Få det til at køre (22/04)
+        [x]  Få det til at konvergere (22/04)
+        []  Få det til at generalisere
+    []  Kør realt eksempel med varienrende parametre og under genrealistiske forhold
+    []  Stich data rigtigt sammen med overlap på 2
+
+Rapport skriving:
+    [] Kom nu i gang for helvede
+
+
+
 Fault detection for critical patientns, Early Warning Systems
 
 Bachelor Idé
@@ -252,43 +293,3 @@ DONE:
             classem skal returnere liste af RHS
             }
 
-
-
-
-############################ TODO liste
-TODO:
-Literatur:
-    []  Artikler om PINN til plasma
-    []  PDE_in_Action 6.2-
-    []  PDEs_Numerical_Simulation
-
-Produkt udvikling:
-    []  PDE loss:
-        []  Valideret
-        [x]  EQ loos:
-            [x]  RHS (17/04)
-            [x]  Lambda (17/04)
-            [x]  Profile region (17/04)
-            [x]  Scale problem med lambda (Normaliser) (22/04)
-        [x] IC loss (22/04)
-        [x] Boundery (22/04)
-            [x] Neumann (22/04)
-            [x] Dirichlich (22/04)
-    []  Oprydning i kode
-        []  trænigs parametre til data klasse
-        []  bout-info
-    []  Colocation points
-        [x] Alle uniforme (17/04)
-        []  Vælg punkter smartere
-            []  (y/z) Uniform-fordelt
-            []  x Normalt-fordelt omkring profile region
-            []  t Cummolativt-fordelt fra t=0 til t=T
-    []  Træning
-        []  Validering
-        [x]  Få det til at køre (22/04)
-        [x]  Få det til at konvergere (22/04)
-        []  Få det til at generalisere
-    []  Kør realt eksempel med varienrende parametre og under genrealistiske forhold
-
-Rapport skriving:
-    [] Kom nu i gang for helvede
