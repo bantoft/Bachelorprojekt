@@ -3,24 +3,19 @@ from __future__ import annotations
 import torch
 
 from torch import Tensor
-import torch.nn.functional as F
-
-from pathlib import Path
 from typing import Any, Callable, Mapping
 
 from .api.operators import *
-from .api.read_bout import DEFAULT_BOUT_HESEL_ROOT, mse_dict
 from .bout_info import BOUTHESELInfo
-
+from .api.read_bout import mse_dict
 
 
 class BOUTHESELPhysics:
-    def __init__(self, info: BOUTHESELInfo | None = None, root: str | Path = DEFAULT_BOUT_HESEL_ROOT):
-        self.info = info or BOUTHESELInfo(root)
+    def __init__(self, info: BOUTHESELInfo):
+        self.info = info
         self.parameters = self.info.parameters
         self.boundary_conditions = self.info.boundary_conditions
         self.active_settings = self.info.active_settings
-
 
     def equation_terms(
         self,

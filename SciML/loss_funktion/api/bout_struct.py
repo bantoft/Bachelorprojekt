@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from torch import nn
 
 
 @dataclass

@@ -14,8 +14,8 @@ from .api.read_bout import *
 
 
 class BOUTHESELInfo:
-    def __init__(self, root: str | Path = DEFAULT_BOUT_HESEL_ROOT):
-        self.root = Path(root).resolve()
+    def __init__(self, root: Path = DEFAULT_BOUT_HESEL_ROOT):
+        self.root = root
         self.dump_path = self.root / "data" / "BOUT.dmp.0.nc"
         self.settings_path = self.root / "data" / "BOUT.settings"
         self.source_paths = {

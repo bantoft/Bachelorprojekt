@@ -40,15 +40,14 @@ def train(
 
     info = BOUTHESELInfo(root)
     physics = BOUTHESELPhysics(info)
-    dataset = BOUTHESELData(
-        info,
-        fields=("lnn", "lnpe", "lnpi", "phi"),
-    )
+    dataset = BOUTHESELData(info)
+
     loader = dataset.make_loader(
         batch_size=batch_size,
         shuffle=True,
         drop_last=True,
     )
+    
     parameters = torch.tensor(astuple(info.parameters), dtype=torch.float32, device=device)
     model = PINN(NN_STRUCTURE, parameters).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
