@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import math
 from copy import deepcopy
-from dataclasses import astuple
 from pathlib import Path
 
 import torch
 import wandb
+from torch.utils.data import DataLoader, random_split
 
 from utils.model import PINN
 from loss_funktion.bout_data import BOUTHESELData
@@ -16,6 +16,7 @@ from utils.training_helpers import (
     TrainConfig,
     _physics_only_training_step,
     _training_step,
+    _validation_data_loss,
     _log_step,
     _default_model_path,
     _init_wandb,
@@ -26,15 +27,53 @@ from utils.training_helpers import (
 def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, BOUTHESELData]:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_path = _default_model_path()
+    collocation_shape = {
+        "num_t": config.collocation_num_t,
+        "num_x": config.collocation_num_x,
+        "num_z": config.collocation_num_z,
+    }
+    ic_shape = {
+        "num_x": config.ic_num_x,
+        "num_z": config.ic_num_z,
+    }
 
     info = BOUTHESELInfo(config.root)
     physics = BOUTHESELPhysics(info)
     dataset = BOUTHESELData(info)
-    loader = dataset.make_loader(batch_size=config.batch_size, shuffle=True) if config.incl_data else None
-    physics_steps_per_epoch = len(loader) if loader is not None else max(1, math.ceil(len(dataset) / config.batch_size))
+    train_loader = None
+    val_loader = None
+    train_dataset = dataset
+    physics_dataset_len = len(dataset)
 
-    parameters = torch.tensor(astuple(info.parameters), dtype=torch.float32, device=device)
-    model = PINN(NN_STRUCTURE, parameters).to(device)
+    if config.incl_data:
+        if not 0.0 <= config.val_split < 1.0:
+            raise ValueError(f"val_split skal være i intervallet [0, 1), fik {config.val_split}")
+
+        if len(dataset) > 1 and config.val_split > 0.0:
+            val_size = max(1, int(len(dataset) * config.val_split))
+            train_size = len(dataset) - val_size
+            if train_size <= 0:
+                train_size = 1
+                val_size = len(dataset) - train_size
+
+            split_seed = 42
+            train_dataset, val_dataset = random_split(
+                dataset,
+                [train_size, val_size],
+                generator=torch.Generator().manual_seed(split_seed),
+            )
+
+            train_loader = DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True, num_workers=1, drop_last=False)
+            val_loader = DataLoader(val_dataset, batch_size=config.batch_size, shuffle=False, num_workers=1, drop_last=False)
+            physics_dataset_len = len(train_dataset)
+            print(f"Validation aktiv: train={len(train_dataset)} samples, val={len(val_dataset)} samples (val_split={config.val_split:.2f})")
+        else:
+            train_loader = dataset.make_loader(batch_size=config.batch_size, shuffle=True)
+
+    physics_steps_per_epoch = len(train_loader) if train_loader is not None else max(1, math.ceil(physics_dataset_len / config.batch_size))
+
+    model = PINN(NN_STRUCTURE).to(device)
+    model.set_output_scaling(info.standardization_stats)
     optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
 
     training_config = {
@@ -46,10 +85,14 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
         "w_eq": config.w_eq,
         "w_bc": config.w_bc,
         "w_ic": config.w_ic,
+        "val_split": config.val_split,
         "device": str(device),
         "early_stopping_patience": config.early_stopping_patience,
         "early_stopping_min_delta": config.early_stopping_min_delta,
         "model_path": str(model_path),
+        "standardized_fields": list(info.standardization_stats.keys()),
+        "collocation_shape": collocation_shape,
+        "ic_shape": ic_shape,
     }
 
     run = _init_wandb(config=training_config)
@@ -62,11 +105,6 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
     stopped_early = False
     completed_epochs = 0
 
-    x_eq, z_eq, t_eq = info.make_collocation_grid(device=device)
-    x_ic = x_eq[:1].clone().detach().requires_grad_(True)
-    z_ic = z_eq[:1].clone().detach().requires_grad_(True)
-    t_ic = t_eq[:1].clone().detach().requires_grad_(True)
-
     model.train()
     print(f"Training on device: {device}")
 
@@ -76,7 +114,11 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
             steps = 0
 
             if config.incl_data:
-                for batch in loader:
+                if train_loader is None:
+                    raise RuntimeError("train_loader blev ikke initialiseret selvom incl_data=True")
+                for batch in train_loader:
+                    x_eq, z_eq, t_eq = dataset.make_collocation_grid(device=device, **collocation_shape)
+                    x_ic, z_ic, t_ic = dataset.make_initial_condition_grid(device=device, **ic_shape)
                     losses = _training_step(
                         model=model,
                         physics=physics,
@@ -103,6 +145,8 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
                     _log_step(epoch, steps, global_step, losses)
             else:
                 for _ in range(physics_steps_per_epoch):
+                    x_eq, z_eq, t_eq = dataset.make_collocation_grid(device=device, **collocation_shape)
+                    x_ic, z_ic, t_ic = dataset.make_initial_condition_grid(device=device, **ic_shape)
                     losses = _physics_only_training_step(
                         model=model,
                         physics=physics,
@@ -125,8 +169,22 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
                     _log_step(epoch, steps, global_step, losses)
 
             averages = {name: value / steps for name, value in totals.items()}
+            val_data_loss = None
+            if val_loader is not None:
+                val_total = 0.0
+                val_steps = 0
+                for batch in val_loader:
+                    val_total += _validation_data_loss(
+                        model=model,
+                        dataset=dataset,
+                        batch=batch,
+                        device=device,
+                    )
+                    val_steps += 1
+                val_data_loss = val_total / max(val_steps, 1)
+
             completed_epochs = epoch
-            print(
+            epoch_msg = (
                 f"Epoch {epoch}/{config.epochs} | "
                 f"total={averages['total']:.4e} | "
                 f"data={averages['data']:.4e} | "
@@ -134,6 +192,9 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
                 f"bc={averages['bc']:.4e} | "
                 f"ic={averages['ic']:.4e}"
             )
+            if val_data_loss is not None:
+                epoch_msg += f" | val_data={val_data_loss:.4e}"
+            print(epoch_msg)
 
             if (best_total_loss - averages["total"]) > config.early_stopping_min_delta:
                 best_total_loss = averages["total"]
@@ -151,6 +212,7 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
                     "epoch_summary/eq_loss": averages["eq"],
                     "epoch_summary/bc_loss": averages["bc"],
                     "epoch_summary/ic_loss": averages["ic"],
+                    **({"epoch_summary/val_data_loss": val_data_loss} if val_data_loss is not None else {}),
                     "epoch_summary/best_total_loss": best_total_loss,
                     "epoch_summary/epochs_without_improvement": epochs_without_improvement,
                 },
@@ -193,25 +255,30 @@ NN_STRUCTURE = {
     "output_size": 4,
     "output_names": ("lnn", "lnpe", "lnpi", "phi"),
     "layers": [
-        {"size": 64, "non_lin_foo": torch.nn.Tanh},
-        {"size": 64, "non_lin_foo": torch.nn.Tanh},
-        {"size": 64, "non_lin_foo": torch.nn.Tanh},
-        {"size": 64, "non_lin_foo": torch.nn.Tanh},
+        {"size": 128, "non_lin_foo": torch.nn.Tanh},
+        {"size": 128, "non_lin_foo": torch.nn.SiLU},
+        {"size": 128, "non_lin_foo": torch.nn.Tanh},
     ],
 }
 
 config = TrainConfig(
     epochs=13,
     batch_size=2048,
-    lr=1e-4,
-    root=Path(__file__).resolve().parents[1] / "simulatorer" / "BOUT" / "BOUT-HESEL" / "data2",
+    lr=1e-3,
+    root=Path(__file__).resolve().parents[1] / "simulatorer" / "BOUT" / "BOUT-HESEL" / "data",
     incl_data=True,
     w_data=1.0,
     w_eq=1.0,
     w_bc=1.0,
     w_ic=1.0,
-    early_stopping_patience=1,
-    early_stopping_min_delta=1e-2
+    val_split=0.1,
+    early_stopping_patience=3,
+    early_stopping_min_delta=1e-2,
+    collocation_num_t=16,
+    collocation_num_x=16,
+    collocation_num_z=16,
+    ic_num_x=32,
+    ic_num_z=64,
 )
 
 

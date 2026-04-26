@@ -109,14 +109,18 @@ Koer PINN-traening fra repo-roden:
 uv run python SciML/træning.py
 ```
 
-Hvis du vil logge traeningsloss til Weights & Biases, saet dine miljoevariabler foer du starter:
+Hvis du vil logge traeningsloss til Weights & Biases, opret en lokal `.env` fil i repo-roden:
 
 ```bash
-export WANDB_API_KEY="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"
-export WANDB_ENTITY="bantoft-"
-export WANDB_PROJECT="Bachelor_projekt"
-uv run python træning.py
+cat > .env << 'EOF'
+WANDB_API_KEY="din_noegle_her"
+WANDB_ENTITY="bantoft-"
+WANDB_PROJECT="Bachelor_projekt"
+EOF
+uv run python SciML/træning.py
 ```
+
+Traeningskoden indlaeser automatisk `.env`, saa du ikke behoever at koere `export` manuelt hver gang.
 
 Traeningen logger foelgende metrics for hver batch:
 

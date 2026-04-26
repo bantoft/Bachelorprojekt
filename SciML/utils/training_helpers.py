@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Literal, cast
 
 import torch
 import torch.nn.functional as F
@@ -12,8 +14,34 @@ from loss_funktion.bout_data import BOUTHESELData
 from loss_funktion.bout_phys import BOUTHESELPhysics
 from utils.model import PINN
 
-WANDB_PROJECT = "Bachelor_projekt"
-WANDB_MODE = "offline"
+def _load_local_env() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    env_paths = [repo_root / ".env", repo_root / "SciML" / ".env"]
+    for env_path in env_paths:
+        if not env_path.exists():
+            continue
+
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key:
+                os.environ.setdefault(key, value)
+
+
+_load_local_env()
+
+WANDB_PROJECT = os.getenv("WANDB_PROJECT", "Bachelor_projekt")
+WANDB_ENTITY = os.getenv("WANDB_ENTITY")
+
+_configured_mode = os.getenv("WANDB_MODE")
+if _configured_mode is None:
+    _configured_mode = "online" if os.getenv("WANDB_API_KEY") else "offline"
+WANDB_MODE = cast(Literal["online", "offline", "disabled", "shared"], _configured_mode)
 
 
 @dataclass
@@ -27,8 +55,14 @@ class TrainConfig:
     w_eq: float
     w_bc: float
     w_ic: float
+    val_split: float
     early_stopping_patience: int
     early_stopping_min_delta: float
+    collocation_num_t: int
+    collocation_num_x: int
+    collocation_num_z: int
+    ic_num_x: int
+    ic_num_z: int
 
 
 def _data_loss(
@@ -37,6 +71,7 @@ def _data_loss(
     batch: tuple[torch.Tensor, ...],
     device: torch.device,
 ) -> torch.Tensor:
+    # Batch now encodes one-step-ahead supervision in standardized output space.
     x_ids, z_ids, t_ids, lnn, lnpe, lnpi, phi = batch
     x_data, z_data, t_data = dataset.ids_to_inputs(x_ids, z_ids, t_ids)
     x_data = x_data.to(device=device, dtype=torch.float32)
@@ -88,6 +123,22 @@ def _training_step(
         "bc": float(loss_bc.item()),
         "ic": float(loss_ic.item()),
     }
+
+
+def _validation_data_loss(
+    *,
+    model: PINN,
+    dataset: BOUTHESELData,
+    batch: tuple[torch.Tensor, ...],
+    device: torch.device,
+) -> float:
+    model_was_training = model.training
+    model.eval()
+    with torch.no_grad():
+        loss = _data_loss(model, dataset, batch, device)
+    if model_was_training:
+        model.train()
+    return float(loss.item())
 
 
 def _physics_only_training_step(
@@ -143,6 +194,7 @@ def _log_step(epoch: int, batch: int, global_step: int, losses: dict[str, float]
 def _init_wandb(*, config: dict[str, object]):
     return wandb.init(
         project=WANDB_PROJECT,
+        entity=WANDB_ENTITY,
         mode=WANDB_MODE,
         config=config,
     )
@@ -178,6 +230,7 @@ def _save_checkpoint(
     torch.save(
         {
             "model_state_dict": model.state_dict(),
+            "output_scaling": model.export_output_scaling() if hasattr(model, "export_output_scaling") else None,
             "nn_structure": _serialize_nn_structure(nn_structure),
             "training_config": training_config,
             "best_epoch": best_epoch,

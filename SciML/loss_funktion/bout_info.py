@@ -191,6 +191,8 @@ OPTIONAL_SETTING_DEFAULTS: dict[tuple[str, str], bool | float | int] = {
     ("hesel", "test_vort_cross_term"): False,
 }
 
+STANDARDIZED_FIELDS = ("lnn", "lnpe", "lnpi", "phi")
+
 
 class BOUTHESELInfo:
     def __init__(self, data_folder_path: Path):
@@ -198,6 +200,7 @@ class BOUTHESELInfo:
 
         self.settings = self._read_settings()
         self.data = self._load_data()
+        self.standardization_stats = self._build_standardization_stats()
         self.parameters = self._build_parameters()
         self.boundary_conditions = self._build_boundary_conditions()
         self.active_settings = self._build_active_settings()
@@ -272,6 +275,65 @@ class BOUTHESELInfo:
         slicer = [slice(None)] * values.ndim
         slicer[axis] = slice(min(overlap, int(values.shape[axis])), None)
         data[name] = torch.cat((previous, values[tuple(slicer)]), dim=axis)
+
+    def _build_standardization_stats(self) -> dict[str, dict[str, float]]:
+        stats: dict[str, dict[str, float]] = {}
+        for name in STANDARDIZED_FIELDS:
+            values = torch.as_tensor(self.data[name], dtype=torch.float32)
+            mean = float(values.mean().item())
+            variance = float(values.var(unbiased=False).item())
+            std = math.sqrt(max(variance, 1e-12))
+            stats[name] = {"mean": mean, "variance": variance, "std": std}
+        return stats
+
+    def standardize_field(self, name: str, values: Any) -> Tensor:
+        tensor = torch.as_tensor(values)
+        if name not in self.standardization_stats:
+            return tensor
+
+        stats = self.standardization_stats[name]
+        mean = torch.as_tensor(stats["mean"], device=tensor.device, dtype=tensor.dtype)
+        std = torch.as_tensor(stats["std"], device=tensor.device, dtype=tensor.dtype)
+        return (tensor - mean) / std
+
+    def destandardize_field(self, name: str, values: Any) -> Tensor:
+        tensor = torch.as_tensor(values)
+        if name not in self.standardization_stats:
+            return tensor
+
+        stats = self.standardization_stats[name]
+        mean = torch.as_tensor(stats["mean"], device=tensor.device, dtype=tensor.dtype)
+        std = torch.as_tensor(stats["std"], device=tensor.device, dtype=tensor.dtype)
+        return tensor * std + mean
+
+    def standardize_state(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
+        return {
+            name: self.standardize_field(name, values) if name in self.standardization_stats else values
+            for name, values in state.items()
+        }
+
+    def destandardize_state(self, state: dict[str, Tensor]) -> dict[str, Tensor]:
+        return {
+            name: self.destandardize_field(name, values) if name in self.standardization_stats else values
+            for name, values in state.items()
+        }
+
+    @property
+    def num_time_points(self) -> int:
+        return int(torch.as_tensor(self.data["t_array"]).shape[0])
+
+    @property
+    def normalized_time_step(self) -> float:
+        return 1.0 / max(self.num_time_points - 1, 1)
+
+    @property
+    def max_stepper_input_time(self) -> float:
+        if self.num_time_points <= 1:
+            return 0.0
+        return (self.num_time_points - 2) / max(self.num_time_points - 1, 1)
+
+    def stepper_target_time(self, t: Tensor) -> Tensor:
+        return torch.clamp(t + self.normalized_time_step, max=1.0)
 
     def _setting_value(self, section: str, key: str) -> Any:
         section_settings = self.settings.get(section, {})
@@ -509,27 +571,6 @@ class BOUTHESELInfo:
     def magnetic_field(self, x: Tensor) -> Tensor:
         return self._interp_dump_1d(self.data["B"], x)
 
-    def make_collocation_grid(
-        self,
-        device: torch.device,
-        dtype: torch.dtype = torch.float32,
-    ) -> tuple[Tensor, Tensor, Tensor]:
-        nx = min(32, int(self.data["lnn"].shape[1]))
-        nz = min(64, int(self.data["lnn"].shape[-1]))
-        nt = min(4, int(self.data["t_array"].shape[0]))
-
-        t_grid, x_grid, z_grid = torch.meshgrid(
-            torch.linspace(0.0, 1.0, nt, device=device, dtype=dtype),
-            torch.linspace(0.0, 1.0, nx, device=device, dtype=dtype),
-            torch.linspace(0.0, 1.0, nz, device=device, dtype=dtype),
-            indexing="ij",
-        )
-        return (
-            x_grid.unsqueeze(-1).clone().detach().requires_grad_(True),
-            z_grid.unsqueeze(-1).clone().detach().requires_grad_(True),
-            t_grid.unsqueeze(-1).clone().detach().requires_grad_(True),
-        )
-
     def _interp_dump_1d(self, values: Any, x: Tensor) -> Tensor:
         field = torch.as_tensor(values, device=x.device, dtype=x.dtype).flatten()
         if field.ndim != 1:
@@ -572,8 +613,26 @@ class BOUTHESELInfo:
         x_interp_high = (1.0 - wx) * v01 + wx * v11
         return (1.0 - wz) * x_interp_low + wz * x_interp_high
 
-    def initial_state_targets(self, x: Tensor, z: Tensor) -> dict[str, Tensor]:
-        return {
-            name: self._interp_dump_2d(self.data[name][0, :, :], x, z)
+    def state_targets(
+        self,
+        x: Tensor,
+        z: Tensor,
+        time_index: int = 0,
+        standardized: bool = False,
+    ) -> dict[str, Tensor]:
+        time_idx = max(0, min(int(time_index), self.num_time_points - 1))
+        targets = {
+            name: self._interp_dump_2d(self.data[name][time_idx, :, :], x, z)
             for name in INITIAL_STATE_KEYS
         }
+        if not standardized:
+            return targets
+        return self.standardize_state(targets)
+
+    def initial_state_targets(
+        self,
+        x: Tensor,
+        z: Tensor,
+        standardized: bool = False,
+    ) -> dict[str, Tensor]:
+        return self.state_targets(x=x, z=z, time_index=0, standardized=standardized)

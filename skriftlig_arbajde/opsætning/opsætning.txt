@@ -50,7 +50,7 @@ make -j16
 #Kør simulation#
 ################
 cd simulator/BOUT-HESEL
-mpirun -np 4 ./hesel -d data
+mpirun -np 4 ./hesel -d data2
 
 
 ############
@@ -63,3 +63,10 @@ python3 -m venv ignore_mappe/bsc_venv
 source ignore_mappe/bsc_venv/bin/activate
 pip install --upgrade pip
 pip install -r req.txt
+
+
+
+spack install -j16 hdf5
+spack install -j16 netcdf-c
+spack install -j16 parallel-netcdf ^openmpi
+spack install -j16 fftw@3.3.10 +mpi ^openmpi

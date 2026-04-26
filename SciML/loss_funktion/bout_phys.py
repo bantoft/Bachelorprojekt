@@ -17,6 +17,17 @@ class BOUTHESELPhysics:
         self.boundary_conditions = self.info.boundary_conditions
         self.active_settings = self.info.active_settings
 
+    def _predict_physical_state(
+        self,
+        model: Callable[..., Mapping[str, Tensor]],
+        x: Tensor,
+        z: Tensor,
+        t: Tensor,
+    ) -> dict[str, Tensor]:
+        if hasattr(model, "predict_physical"):
+            return dict(model.predict_physical(x, z, t))
+        return self.info.destandardize_state(dict(model(x, z, t)))
+
     def equation_terms(
         self,
         model: Callable[..., Mapping[str, Tensor]],
@@ -24,7 +35,8 @@ class BOUTHESELPhysics:
         z: Tensor,
         t: Tensor,
     ) -> dict[str, Any]:
-        state = dict(model(x, z, t))
+        state = self._predict_physical_state(model, x, z, t)
+        t_eval = self.info.stepper_target_time(t)
 
         params, settings = self.parameters, self.active_settings
         right_handed_coord = bool(settings["right_handed_coord"])
@@ -263,7 +275,7 @@ class BOUTHESELPhysics:
             if not not_p_force:
                 forcing_multiplier = torch.ones_like(pi)
                 if h_mode:
-                    t_phys = t * params.total_t
+                    t_phys = t_eval * params.total_t
                     forcing_multiplier = 1.0 + (ramp_a - 1.0) / 2.0 * (torch.tanh((t_phys - ramp_t0) / ramp_trans) - torch.tanh((t_phys - ramp_t0 - ramp_peak) / ramp_trans))
                 force_pe, force_pi = sigma_force * (init_pe - pe) / params.force_time, sigma_force * (init_pi * forcing_multiplier - pi) / params.force_time
                 forcing["lnpe"] = forcing["lnpe"] + force_pe / torch.clamp(pe, min=1e-12)
@@ -312,7 +324,7 @@ class BOUTHESELPhysics:
         z: Tensor,
         t: Tensor,
     ) -> Tensor:
-        state = dict(model(x, z, t))
+        state = self._predict_physical_state(model, x, z, t)
 
         residuals: dict[str, Tensor] = {}
         for field in ("lnn", "lnpe", "lnpi", "phi"):
@@ -334,8 +346,8 @@ class BOUTHESELPhysics:
         t: Tensor,
     ) -> Tensor:
         t0 = torch.zeros_like(t, requires_grad=True)
-        state = dict(model(x, z, t0))
-        targets = self.info.initial_state_targets(x.squeeze(0), z.squeeze(0))
+        state = self._predict_physical_state(model, x, z, t0)
+        targets = self.info.state_targets(x.squeeze(0), z.squeeze(0), time_index=1)
         residuals = {
             "ic_lnn": state["lnn"].squeeze(0) - targets["lnn"],
             "ic_lnpe": state["lnpe"].squeeze(0) - targets["lnpe"],

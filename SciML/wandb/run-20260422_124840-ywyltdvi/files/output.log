@@ -1,9 +1,0 @@
-Training on device: cuda
-Epoch 1/10 | total=1.7060e+01 | data=4.0531e+00 | eq=2.5678e-03 | bc=5.4115e+00 | ic=7.5925e+00
-Epoch 2/10 | total=4.3411e+00 | data=5.1943e-01 | eq=1.1739e-03 | bc=7.9981e-01 | ic=3.0207e+00
-Epoch 3/10 | total=4.0531e+00 | data=4.8246e-01 | eq=1.6032e-03 | bc=6.1169e-01 | ic=2.9573e+00
-Epoch 4/10 | total=4.0532e+00 | data=4.8238e-01 | eq=1.6038e-03 | bc=6.1132e-01 | ic=2.9579e+00
-Epoch 5/10 | total=4.0533e+00 | data=4.8245e-01 | eq=1.6032e-03 | bc=6.1130e-01 | ic=2.9580e+00
-Epoch 6/10 | total=4.0531e+00 | data=4.8191e-01 | eq=1.6035e-03 | bc=6.1077e-01 | ic=2.9588e+00
-Early stopping ved epoch 6. Bedste total_loss var 4.0531e+00 ved epoch 3.
-Gemte bedste model til /home/andreas_a/Desktop/Bachelorprojekt/SciML/data/trained_pinn_2026-04-22_12-48-38.pt
