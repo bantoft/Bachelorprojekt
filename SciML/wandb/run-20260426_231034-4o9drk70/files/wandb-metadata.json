@@ -1,0 +1,40 @@
+{
+  "os": "Linux-6.19.13-arch1-1-x86_64-with-glibc2.43",
+  "python": "CPython 3.12.13",
+  "startedAt": "2026-04-26T21:10:34.515496Z",
+  "program": "/home/andreas_a/Desktop/Bachelorprojekt/SciML/træning.py",
+  "codePath": "SciML/træning.py",
+  "codePathLocal": "træning.py",
+  "git": {
+    "remote": "https://github.com/bantoft/Bachelorprojekt.git",
+    "commit": "6dc3dcd1338ad6ad191e78b52bcf8071171829e8"
+  },
+  "email": "andreasantoft244@gmail.com",
+  "root": "/home/andreas_a/Desktop/Bachelorprojekt/SciML",
+  "host": "somebody",
+  "executable": "/home/andreas_a/Desktop/Bachelorprojekt/.venv/bin/python3",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 5060",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "959725387776",
+      "used": "77338247168"
+    }
+  },
+  "memory": {
+    "total": "16321654784"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 5060",
+      "memoryTotal": "8546942976",
+      "cudaCores": 3840,
+      "architecture": "Blackwell",
+      "uuid": "GPU-f6e53fd9-b99c-d3a1-443e-b8377a03a7a4"
+    }
+  ],
+  "cudaVersion": "13.2",
+  "writerId": "10a115uifxc60lgcahqn4tgv9putxt5e"
+}
