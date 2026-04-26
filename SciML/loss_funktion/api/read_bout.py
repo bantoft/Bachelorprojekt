@@ -1,42 +1,17 @@
 from __future__ import annotations
 
-
 import math
 import re
+import torch.nn.functional as F
 import torch
 
-import torch.nn.functional as F
-
 from torch import Tensor
-from pathlib import Path
 from typing import Callable, Mapping
 
-
-
-DEFAULT_BOUT_HESEL_ROOT = (Path(__file__).resolve().parents[2] / "simulatorer" / "BOUT" / "BOUT-HESEL")
 REF_PATTERN = re.compile(r"\b([A-Za-z_]\w*):([A-Za-z_]\w*)\b")
 BOUNDARY_PATTERN = re.compile(r"^(?P<kind>[A-Za-z_]\w*)(?:\((?P<expr>.*)\))?$")
 IDENTIFIER_PATTERN = re.compile(r"\b([A-Za-z_]\w*)\b")
-DEFAULT_FIELDS = ("lnn", "lnpe", "lnpi", "vort")
-
-
-def read_bout_inp(path):
-    section = "root"
-    data = {section: {}}
-    for raw in Path(path).read_text(encoding="utf-8").splitlines():
-        line = raw.split("#", 1)[0].strip()
-        if not line:
-            continue
-        if line.startswith("[") and line.endswith("]"):
-            section = line[1:-1].strip()
-            data.setdefault(section, {})
-            continue
-        if "=" in line:
-            k, v = line.split("=", 1)
-            data[section][k.strip()] = v.strip()
-    return data
-
-
+DEFAULT_FIELDS = ("lnn", "lnpe", "lnpi", "phi")
 
 def parse_literal(value: str):
     text = value.strip()
@@ -96,10 +71,7 @@ def mixmode(arg: float | Tensor, seed: float = 0.5) -> float | Tensor:
         result = result + weight * torch.cos(i * arg + phase) if torch.is_tensor(arg) else result + weight * math.cos(i * arg + phase)
     return result
 
-def as_tensor_like(value: float | Tensor, like: Tensor) -> Tensor:
-    if torch.is_tensor(value):
-        return value.to(device=like.device, dtype=like.dtype)
-    return torch.tensor(value, device=like.device, dtype=like.dtype)
+
 
 
 def normalize_ids(
@@ -116,11 +88,11 @@ def normalize_ids(
         (t_ids.float() / max(nt - 1, 1)).unsqueeze(1),
     )
 
-def mse_dict(residuals: Mapping[str, Tensor], weights: Mapping[str, float] | None = None) -> Tensor:
-    weights = dict(weights or {})
-    total = torch.tensor(0.0)
-    for name, residual in residuals.items():
-        weight = float(weights.get(name, 1.0))
-        loss = F.mse_loss(weight * residual, torch.zeros_like(residual))
+
+def mse_dict(residuals: Mapping[str, Tensor]) -> Tensor:
+    first_residual = next(iter(residuals.values()))
+    total = torch.zeros((), device=first_residual.device, dtype=first_residual.dtype)
+    for residual in residuals.values():
+        loss = F.mse_loss(residual, torch.zeros_like(residual))
         total = total + loss
     return total

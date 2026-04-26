@@ -44,8 +44,3 @@ def d2dxdz(f: Tensor, x: Tensor, z: Tensor, x_scale: float, z_scale: float) -> T
 
 def laplacian_perp(f: Tensor, x: Tensor, z: Tensor, x_scale: float, z_scale: float) -> Tensor:
     return d2dx2(f, x, x_scale) + d2dz2(f, z, z_scale)
-
-
-def dot_perp(ax: Tensor, az: Tensor, bx: Tensor, bz: Tensor) -> Tensor:
-    return ax * bx + az * bz
-

@@ -1,75 +1,98 @@
 from __future__ import annotations
 
 import math
-import xarray as xr
 import torch
+import xarray as xr
 
-from torch import Tensor
 from pathlib import Path
-from dataclasses import asdict
+from torch import Tensor
 from typing import Any, Mapping
 
 from .api.bout_struct import BoundaryCondition, HeselDerivedParameters
-from .api.read_bout import *
+from .api.read_bout import (
+    BOUNDARY_PATTERN,
+    IDENTIFIER_PATTERN,
+    REF_PATTERN,
+    mixmode,
+    parse_literal,
+    safe_log,
+    safe_sqrt,
+    torch_or_math_unary,
+)
 
 
 class BOUTHESELInfo:
-    def __init__(self, root: Path = DEFAULT_BOUT_HESEL_ROOT):
-        self.root = root
-        self.dump_path = self.root / "data" / "BOUT.dmp.0.nc"
-        self.settings_path = self.root / "data" / "BOUT.settings"
-        self.source_paths = {
-            "hesel_cxx": self.root / "hesel.cxx",
-            "hesel_hxx": self.root / "hesel.hxx",
-            "hesel_parameters_cxx": self.root / "HeselParameters" / "HeselParameters.cxx",
-            "hesel_parameters_hxx": self.root / "HeselParameters" / "HeselParameters.hxx",
-        }
-        self.cfg = read_bout_inp(self.settings_path)
-        self.dump_data = self._load_dump()
+    def __init__(self, hesel_path: Path, data_folder_name: str):
+        self.root = Path(hesel_path).resolve()
+        self.folder = data_folder_name
+
+        self.settings = self._read_settings()
+        self.data = self._load_data()
         self.parameters = self._build_parameters()
         self.boundary_conditions = self._build_boundary_conditions()
         self.active_settings = self._build_active_settings()
 
-    def _load_dump(self) -> dict[str, Any]:
-        needed_vars = [
-            "lnn",
-            "lnpe",
-            "lnpi",
-            "vort",
-            "phi",
-            "init_n",
-            "init_pe",
-            "init_pi",
-            "sigma_open",
-            "sigma_closed",
-            "sigma_force",
-            "B",
-            "t_array",
-        ]
-        with xr.open_dataset(self.dump_path, engine="netcdf4") as ds:
-            data: dict[str, Any] = {}
-            for name in needed_vars:
-                if name not in ds:
-                    continue
-                arr = ds[name]
-                data[name] = (arr.squeeze("y", drop=True) if "y" in arr.dims else arr).values
-            return data
+
+    def _read_settings(self):
+        settings_path = self.root / self.folder / r"BOUT.settings"
+        section = "root"
+        data = {section: {}}
+        for raw in Path(settings_path).read_text(encoding="utf-8").splitlines():
+            line = raw.split("#", 1)[0].strip()
+            if not line: continue
+            if line.startswith("[") and line.endswith("]"):
+                section = line[1:-1].strip()
+                data.setdefault(section, {})
+                continue
+            if "=" in line:
+                k, v = line.split("=", 1)
+                data[section][k.strip()] = v.strip()
+        return data
+    
+    def _load_data(self) -> dict[str, Any]:
+        needed_vars = ["lnn", "lnpe", "lnpi", "vort", "phi", "init_n", "init_pe", "init_pi", "sigma_open", "sigma_closed", "sigma_force", "B", "t_array"]
+        overlap = 2
+        dump_paths = sorted((self.root / self.folder).glob("BOUT.dmp.*.nc"))
+
+        data: dict[str, Any] = {}
+        for data_path in dump_paths:
+            with xr.open_dataset(data_path, engine="netcdf4") as df:
+                for name in needed_vars:
+                    if name not in df: continue
+                    arr = df[name].squeeze("y", drop=True) if "y" in df[name].dims else df[name]
+                    values = torch.as_tensor(arr.values)
+                    if name == "t_array":
+                        data.setdefault(name, values)
+                        continue
+
+                    prev = data.get(name)
+                    if prev is None:
+                        data[name] = values
+                        continue
+                    if "x" not in arr.dims:
+                        continue
+
+                    axis = arr.dims.index("x")
+                    slicer = [slice(None)] * values.ndim
+                    slicer[axis] = slice(min(overlap, int(values.shape[axis])), None)
+                    data[name] = torch.cat((prev, values[tuple(slicer)]), dim=axis)
+        return data
 
     def _resolve_key(
         self,
         section: str,
         key: str,
-        variables: Mapping[str, Any] | None = None,
+        variables: Mapping[str, Any],
         stack: tuple[tuple[str, str], ...] = (),
     ) -> Any:
-        if section not in self.cfg or key not in self.cfg[section]:
+        if section not in self.settings or key not in self.settings[section]:
             raise KeyError(f"Unknown BOUT setting {section}:{key}")
         node = (section, key)
         if node in stack:
             chain = " -> ".join(f"{s}:{k}" for s, k in stack + (node,))
             raise ValueError(f"Cyclic BOUT expression detected: {chain}")
         return self._eval_expression(
-            expr=self.cfg[section][key],
+            expr=self.settings[section][key],
             current_section=section,
             variables=variables,
             stack=stack + (node,),
@@ -79,10 +102,10 @@ class BOUTHESELInfo:
         self,
         expr: str,
         current_section: str,
-        variables: Mapping[str, Any] | None = None,
+        variables: Mapping[str, Any],
         stack: tuple[tuple[str, str], ...] = (),
     ) -> Any:
-        variables = dict(variables or {})
+        variables = dict(variables)
         expr = expr.strip().replace("^", "**")
         literal = parse_literal(expr)
         if literal is not None:
@@ -115,15 +138,12 @@ class BOUTHESELInfo:
 
         local_symbols: dict[str, Any] = {}
         for section_name in (current_section, "root"):
-            if section_name not in self.cfg:
+            if section_name not in self.settings:
                 continue
             for key_name in tokens:
-                if key_name not in self.cfg[section_name] or (section_name, key_name) in stack or key_name in local_symbols:
+                if key_name not in self.settings[section_name] or (section_name, key_name) in stack or key_name in local_symbols:
                     continue
-                try:
-                    local_symbols[key_name] = self._resolve_key(section_name, key_name, variables=variables, stack=stack)
-                except Exception:
-                    continue
+                local_symbols[key_name] = self._resolve_key(section_name, key_name, variables=variables, stack=stack)
 
         return eval(
             rewritten,
@@ -145,7 +165,7 @@ class BOUTHESELInfo:
         )
 
     def _scalar(self, section: str, key: str) -> float:
-        value = self._resolve_key(section, key)
+        value = self._resolve_key(section, key, {})
         if isinstance(value, bool):
             return float(value)
         if torch.is_tensor(value):
@@ -158,7 +178,9 @@ class BOUTHESELInfo:
         e, epso, me, mp, pi_const = 1.60e-19, 8.85e-12, 9.1093816e-31, 1.67262158e-27, math.pi
         bt, q, te0, ti0, n0, lconn, rmajor, rminor = (self._scalar("hesel", key) for key in ("bt", "q", "te0", "ti0", "n0", "lconn", "rmajor", "rminor"))
         a, z, mach, z_eff, x_lcfs, x_wall, force_time, floor_time = (self._scalar("hesel", key) for key in ("a", "z", "mach", "z_eff", "x_lcfs", "x_wall", "force_time", "floor_time"))
-        floor_n, floor_pe, floor_pi, n_bck, te_bck, ti_bck, d_lcfs, d_wall, d_force, wall_amp = (self._scalar("hesel", key) for key in ("floor_n", "floor_pe", "floor_pi", "n_bck", "te_bck", "ti_bck", "d_lcfs", "d_wall", "d_force", "wall_amp"))
+        floor_n, floor_pe, floor_pi = (self._scalar("hesel", key) for key in ("floor_n", "floor_pe", "floor_pi"))
+        n_bck, te_bck, ti_bck = (self._scalar("hesel", key) for key in ("n_bck", "te_bck", "ti_bck"))
+        d_lcfs, d_wall, d_force, wall_amp = (self._scalar("hesel", key) for key in ("d_lcfs", "d_wall", "d_force", "wall_amp"))
         total_x = float(self._eval_expression("mesh:xl", current_section="root", variables={"x": 1.0}))
         total_z = float(self._eval_expression("mesh:zl", current_section="root", variables={"z": 1.0}))
         total_t = self._scalar("root", "t_end")
@@ -200,33 +222,43 @@ class BOUTHESELInfo:
         )
 
     def _parse_boundary(self, section: str, key: str) -> BoundaryCondition:
-        raw = self.cfg[section][key].strip()
+        raw = self.settings[section][key].strip()
         match = BOUNDARY_PATTERN.match(raw)
         if match is None:
-            return BoundaryCondition(raw=raw, kind=raw, value=None, source_section=section, source_key=key)
+            raise ValueError(f"Could not parse boundary condition {section}:{key}={raw}")
         expr = match.group("expr")
-        value = None
-        if expr:
-            try:
-                resolved = self._eval_expression(expr, current_section=section)
-                value = float(resolved.detach().cpu().item()) if torch.is_tensor(resolved) else float(resolved) if isinstance(resolved, (int, float, bool)) else None
-            except Exception:
-                value = None
+        value = 0.0
+        if expr is not None:
+            resolved = self._eval_expression(expr, current_section=section, variables={})
+            if torch.is_tensor(resolved):
+                value = float(resolved.detach().cpu().item())
+            else:
+                value = float(resolved)
         return BoundaryCondition(raw=raw, kind=match.group("kind"), value=value, source_section=section, source_key=key)
 
     def _build_boundary_conditions(self) -> dict[str, dict[str, BoundaryCondition]]:
-        bc: dict[str, dict[str, BoundaryCondition]] = {}
-        for field in ("lnn", "lnpe", "lnpi", "vort"):
-            if field not in self.cfg:
-                continue
-            bc[field] = {
+        bc: dict[str, dict[str, BoundaryCondition]] = {
+            field: {
                 side: self._parse_boundary(field, key)
                 for side, key in (("inner", "bndry_xin"), ("outer", "bndry_xout"))
-                if key in self.cfg[field]
             }
+            for field in ("lnn", "lnpe", "lnpi", "vort")
+        }
         bc["phi"] = {
-            "inner": BoundaryCondition(raw=f"laplace:inner_boundary_flags={self.cfg.get('laplace', {}).get('inner_boundary_flags', '0')}", kind="dirichlet", value=0.0, source_section="laplace", source_key="inner_boundary_flags"),
-            "outer": BoundaryCondition(raw=f"laplace:outer_boundary_flags={self.cfg.get('laplace', {}).get('outer_boundary_flags', '0')}", kind="neumann", value=0.0, source_section="laplace", source_key="outer_boundary_flags"),
+            "inner": BoundaryCondition(
+                raw=f"laplace:inner_boundary_flags={self.settings['laplace']['inner_boundary_flags']}",
+                kind="dirichlet",
+                value=0.0,
+                source_section="laplace",
+                source_key="inner_boundary_flags",
+            ),
+            "outer": BoundaryCondition(
+                raw=f"laplace:outer_boundary_flags={self.settings['laplace']['outer_boundary_flags']}",
+                kind="neumann",
+                value=0.0,
+                source_section="laplace",
+                source_key="outer_boundary_flags",
+            ),
         }
         return bc
 
@@ -235,36 +267,28 @@ class BOUTHESELInfo:
             "right_handed_coord", "interchange_dynamics", "parallel_dynamics", "perpendicular_dynamics", "invert_w_star", "force_profiles", "floor_profiles",
             "parallel_sheath_damping", "parallel_advection_damping", "parallel_conduction", "parallel_drift_wave", "reciprocal_approx", "collisional_model",
             "perpend_heat_exchange", "perpend_viscous_heating", "ti_over_te", "diffusion_coeff", "qdelta_approx", "double_curvature_coeff", "h_mode",
+            "test_vort_cross_term", "ramp_a", "ramp_t0", "ramp_trans", "ramp_peak",
             "not_n_force", "not_p_force", "power_source", "particle_source", "parallel_transport", "plasma_neutral_interactions",
         ]
-        return {key: self._resolve_key("hesel", key) for key in keys if key in self.cfg.get("hesel", {})}
+        return {key: self._resolve_key("hesel", key, {}) for key in keys}
 
-    def summary(self) -> dict[str, Any]:
-        return {
-            "root": str(self.root),
-            "paths": {key: str(path) for key, path in self.source_paths.items()},
-            "config": {"settings_path": str(self.settings_path), "dump_path": str(self.dump_path) if self.dump_path.exists() else None},
-            "active_settings": self.active_settings,
-            "boundary_conditions": {field: {side: asdict(cond) for side, cond in field_bc.items()} for field, field_bc in self.boundary_conditions.items()},
-            "derived_parameters": asdict(self.parameters),
-        }
 
-    def resolve_profile(self, section: str, x: Tensor, z: Tensor | None = None, t: Tensor | None = None) -> Tensor:
-        if section not in self.cfg or "function" not in self.cfg[section]:
-            return torch.zeros_like(x)
+    def resolve_profile(self, section: str, x: Tensor, z: Tensor, t: Tensor) -> Tensor:
         value = self._resolve_key(
             section,
             "function",
-            variables={"x": x, "z": z if z is not None else torch.zeros_like(x), "y": torch.zeros_like(x), "t": t if t is not None else torch.zeros_like(x)},
+            variables={"x": x, "z": z, "y": torch.zeros_like(x), "t": t},
         )
-        value = value if torch.is_tensor(value) else as_tensor_like(float(value), x)
-        scale = float(self._resolve_key(section, "scale")) if "scale" in self.cfg[section] else 1.0
+        scale = float(self._resolve_key(section, "scale", {}))
         return scale * value
 
-    def initial_profiles(self, x: Tensor, z: Tensor | None = None) -> dict[str, Tensor]:
-        z = z if z is not None else torch.zeros_like(x)
-        profiles = {name: self.resolve_profile(name, x=x, z=z) for name in ("init_n", "init_pe", "init_pi", "sigma_open", "sigma_closed", "sigma_force")}
-        profiles["seed_n"] = self.resolve_profile("seed_n", x=x, z=z) if "seed_n" in self.cfg else torch.zeros_like(x)
+    def initial_profiles(self, x: Tensor, z: Tensor) -> dict[str, Tensor]:
+        zero_t = torch.zeros_like(x)
+        profiles = {
+            name: self.resolve_profile(name, x=x, z=z, t=zero_t)
+            for name in ("init_n", "init_pe", "init_pi", "sigma_open", "sigma_closed", "sigma_force")
+        }
+        profiles["seed_n"] = self.resolve_profile("seed_n", x=x, z=z, t=zero_t)
         profiles["lnn0_from_input"] = safe_log(profiles["init_n"] + profiles["seed_n"])
         profiles["lnpe0_from_input"] = safe_log(profiles["init_pe"])
         profiles["lnpi0_from_input"] = safe_log(profiles["init_pi"])
@@ -272,24 +296,17 @@ class BOUTHESELInfo:
 
     def magnetic_field(self, x: Tensor) -> Tensor:
         xr = self._resolve_key("hesel", "xr", variables={"x": x, "z": torch.zeros_like(x), "y": torch.zeros_like(x), "t": torch.zeros_like(x)})
-        xr = xr if torch.is_tensor(xr) else as_tensor_like(float(xr), x)
         numerator = self.parameters.rmajor + self.parameters.rminor
         return numerator / (numerator + self.parameters.rhos * xr)
 
     def make_collocation_grid(
         self,
-        sample_shape: tuple[int, int, int] | None = None,
-        device: torch.device | None = None,
+        device: torch.device,
         dtype: torch.dtype = torch.float32,
     ) -> tuple[Tensor, Tensor, Tensor]:
-        if sample_shape is None:
-            nx, nz, nt = 32, 64, 4
-            if self.dump_data:
-                ref = self.dump_data.get("lnn", self.dump_data.get("phi"))
-                nx, nz = min(nx, int(ref.shape[1])), min(nz, int(ref.shape[-1]))
-                nt = min(nt, int(self.dump_data.get("t_array", [0, 1, 2, 3]).shape[0]))
-        else:
-            nt, nx, nz = sample_shape
+        nx = min(32, int(self.data["lnn"].shape[1]))
+        nz = min(64, int(self.data["lnn"].shape[-1]))
+        nt = min(4, int(self.data["t_array"].shape[0]))
         t_grid, x_grid, z_grid = torch.meshgrid(
             torch.linspace(0.0, 1.0, nt, device=device, dtype=dtype),
             torch.linspace(0.0, 1.0, nx, device=device, dtype=dtype),
@@ -315,14 +332,10 @@ class BOUTHESELInfo:
         return (1.0 - wz) * ((1.0 - wx) * v00 + wx * v10) + wz * ((1.0 - wx) * v01 + wx * v11)
 
     def initial_state_targets(self, x: Tensor, z: Tensor) -> dict[str, Tensor]:
-        if self.dump_data and {"lnn", "lnpe", "lnpi", "phi"}.issubset(self.dump_data):
-            return {
-                "lnn": self._interp_dump_2d(self.dump_data["lnn"][0, :, :], x, z),
-                "lnpe": self._interp_dump_2d(self.dump_data["lnpe"][0, :, :], x, z),
-                "lnpi": self._interp_dump_2d(self.dump_data["lnpi"][0, :, :], x, z),
-                "phi": self._interp_dump_2d(self.dump_data["phi"][0, :, :], x, z),
-                "vort": self._interp_dump_2d(self.dump_data["vort"][0, :, :], x, z) if "vort" in self.dump_data else torch.zeros_like(x),
-            }
-        profiles = self.initial_profiles(x=x, z=z)
-        return {"lnn": profiles["lnn0_from_input"], "lnpe": profiles["lnpe0_from_input"], "lnpi": profiles["lnpi0_from_input"], "phi": torch.zeros_like(x), "vort": torch.zeros_like(x)}
-
+        return {
+            "lnn": self._interp_dump_2d(self.data["lnn"][0, :, :], x, z),
+            "lnpe": self._interp_dump_2d(self.data["lnpe"][0, :, :], x, z),
+            "lnpi": self._interp_dump_2d(self.data["lnpi"][0, :, :], x, z),
+            "phi": self._interp_dump_2d(self.data["phi"][0, :, :], x, z),
+            "vort": self._interp_dump_2d(self.data["vort"][0, :, :], x, z),
+        }

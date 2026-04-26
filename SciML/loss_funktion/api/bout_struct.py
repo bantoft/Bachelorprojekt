@@ -6,7 +6,7 @@ from dataclasses import dataclass
 class BoundaryCondition:
     raw: str
     kind: str
-    value: float | None
+    value: float
     source_section: str
     source_key: str
 

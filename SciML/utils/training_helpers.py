@@ -1,40 +1,150 @@
 from __future__ import annotations
 
-import os
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
 import torch
+import torch.nn.functional as F
 import wandb
 
+from loss_funktion.bout_data import BOUTHESELData
+from loss_funktion.bout_phys import BOUTHESELPhysics
+from utils.model import PINN
 
-def _init_wandb(
+WANDB_PROJECT = "Bachelor_projekt"
+WANDB_MODE = "offline"
+
+
+@dataclass
+class TrainConfig:
+    epochs: int
+    batch_size: int
+    lr: float
+    root: Path
+    data_folder: str
+    incl_data: bool
+    w_data: float
+    w_eq: float
+    w_bc: float
+    w_ic: float
+    early_stopping_patience: int
+    early_stopping_min_delta: float
+
+
+def _data_loss(
+    model: PINN,
+    dataset: BOUTHESELData,
+    batch: tuple[torch.Tensor, ...],
+    device: torch.device,
+) -> torch.Tensor:
+    x_ids, z_ids, t_ids, lnn, lnpe, lnpi, phi = batch
+    x_data, z_data, t_data = dataset.ids_to_inputs(x_ids, z_ids, t_ids)
+    x_data = x_data.to(device=device, dtype=torch.float32)
+    z_data = z_data.to(device=device, dtype=torch.float32)
+    t_data = t_data.to(device=device, dtype=torch.float32)
+    targets = {
+        "lnn": lnn.to(device=device, dtype=torch.float32).view(-1, 1),
+        "lnpe": lnpe.to(device=device, dtype=torch.float32).view(-1, 1),
+        "lnpi": lnpi.to(device=device, dtype=torch.float32).view(-1, 1),
+        "phi": phi.to(device=device, dtype=torch.float32).view(-1, 1),
+    }
+    predictions = model(x_data, z_data, t_data)
+    return torch.stack([F.mse_loss(predictions[name], targets[name]) for name in targets]).sum()
+
+
+def _training_step(
     *,
-    use_wandb: bool,
-    wandb_project: str,
-    wandb_entity: str | None,
-    wandb_mode: str | None,
-    config: dict[str, object],
-):
-    if not use_wandb:
-        return None
+    model: PINN,
+    physics: BOUTHESELPhysics,
+    dataset: BOUTHESELData,
+    batch: tuple[torch.Tensor, ...],
+    device: torch.device,
+    optimizer: torch.optim.Optimizer,
+    x_eq: torch.Tensor,
+    z_eq: torch.Tensor,
+    t_eq: torch.Tensor,
+    x_ic: torch.Tensor,
+    z_ic: torch.Tensor,
+    t_ic: torch.Tensor,
+    w_data: float,
+    w_eq: float,
+    w_bc: float,
+    w_ic: float,
+) -> dict[str, float]:
+    loss_data = _data_loss(model, dataset, batch, device)
+    loss_eq = physics.eq_loss(model, x_eq, z_eq, t_eq)
+    loss_bc = physics.bc_loss(model, x_eq, z_eq, t_eq)
+    loss_ic = physics.ic_loss(model, x_ic, z_ic, t_ic)
+    loss = w_data * loss_data + w_eq * loss_eq + w_bc * loss_bc + w_ic * loss_ic
 
-    project = os.environ.get("WANDB_PROJECT", wandb_project)
-    entity = wandb_entity or os.environ.get("WANDB_ENTITY")
-    mode = wandb_mode or os.environ.get("WANDB_MODE") or (
-        "online" if os.environ.get("WANDB_API_KEY") else "offline"
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    return {
+        "total": float(loss.item()),
+        "data": float(loss_data.item()),
+        "eq": float(loss_eq.item()),
+        "bc": float(loss_bc.item()),
+        "ic": float(loss_ic.item()),
+    }
+
+
+def _physics_only_training_step(
+    *,
+    model: PINN,
+    physics: BOUTHESELPhysics,
+    device: torch.device,
+    optimizer: torch.optim.Optimizer,
+    x_eq: torch.Tensor,
+    z_eq: torch.Tensor,
+    t_eq: torch.Tensor,
+    x_ic: torch.Tensor,
+    z_ic: torch.Tensor,
+    t_ic: torch.Tensor,
+    w_eq: float,
+    w_bc: float,
+    w_ic: float,
+) -> dict[str, float]:
+    loss_data = torch.zeros((), device=device)
+    loss_eq = physics.eq_loss(model, x_eq, z_eq, t_eq)
+    loss_bc = physics.bc_loss(model, x_eq, z_eq, t_eq)
+    loss_ic = physics.ic_loss(model, x_ic, z_ic, t_ic)
+    loss = w_eq * loss_eq + w_bc * loss_bc + w_ic * loss_ic
+
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    return {
+        "total": float(loss.item()),
+        "data": float(loss_data.item()),
+        "eq": float(loss_eq.item()),
+        "bc": float(loss_bc.item()),
+        "ic": float(loss_ic.item()),
+    }
+
+
+def _log_step(epoch: int, batch: int, global_step: int, losses: dict[str, float]) -> None:
+    wandb.log(
+        {
+            "epoch": epoch,
+            "batch": batch,
+            "train_step/total_loss": losses["total"],
+            "train_step/data_loss": losses["data"],
+            "train_step/eq_loss": losses["eq"],
+            "train_step/bc_loss": losses["bc"],
+            "train_step/ic_loss": losses["ic"],
+        },
+        step=global_step,
     )
 
-    if mode == "offline":
-        print(
-            "W&B kører i offline mode, fordi WANDB_API_KEY ikke er sat. "
-            "Kør `wandb sync wandb/` senere for at uploade runs."
-        )
 
+def _init_wandb(*, config: dict[str, object]):
     return wandb.init(
-        project=project,
-        entity=entity,
-        mode=mode,
+        project=WANDB_PROJECT,
+        mode=WANDB_MODE,
         config=config,
     )
 

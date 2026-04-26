@@ -5,9 +5,9 @@ import torch
 from torch import Tensor
 from typing import Any, Callable, Mapping
 
-from .api.operators import *
-from .bout_info import BOUTHESELInfo
+from .api.operators import d2dx2, d2dxdz, d2dz2, grad_t, grad_x, grad_z, laplacian_perp
 from .api.read_bout import mse_dict
+from .bout_info import BOUTHESELInfo
 
 
 class BOUTHESELPhysics:
@@ -27,6 +27,32 @@ class BOUTHESELPhysics:
         state = dict(model(x, z, t))
 
         params, settings = self.parameters, self.active_settings
+        right_handed_coord = bool(settings["right_handed_coord"])
+        double_curvature_coeff = bool(settings["double_curvature_coeff"])
+        interchange_dynamics = bool(settings["interchange_dynamics"])
+        test_vort_cross_term = bool(settings["test_vort_cross_term"])
+        ti_over_te = int(settings["ti_over_te"])
+        diffusion_coeff = int(settings["diffusion_coeff"])
+        collisional_model = int(settings["collisional_model"])
+        perpend_heat_exchange = bool(settings["perpend_heat_exchange"])
+        qdelta_approx = int(settings["qdelta_approx"])
+        perpend_viscous_heating = bool(settings["perpend_viscous_heating"])
+        perpendicular_dynamics = bool(settings["perpendicular_dynamics"])
+        parallel_dynamics = bool(settings["parallel_dynamics"])
+        parallel_advection_damping = int(settings["parallel_advection_damping"])
+        parallel_sheath_damping = int(settings["parallel_sheath_damping"])
+        parallel_conduction = int(settings["parallel_conduction"])
+        parallel_drift_wave = int(settings["parallel_drift_wave"])
+        reciprocal_approx = int(settings["reciprocal_approx"])
+        force_profiles = bool(settings["force_profiles"])
+        not_n_force = bool(settings["not_n_force"])
+        not_p_force = bool(settings["not_p_force"])
+        h_mode = bool(settings["h_mode"])
+        ramp_a = float(settings["ramp_a"])
+        ramp_t0 = float(settings["ramp_t0"])
+        ramp_trans = float(settings["ramp_trans"])
+        ramp_peak = float(settings["ramp_peak"])
+        floor_profiles = bool(settings["floor_profiles"])
         lnn, lnpe, lnpi, phi = state["lnn"], state["lnpe"], state["lnpi"], state["phi"]
         n, pe, pi = torch.exp(lnn), torch.exp(lnpe), torch.exp(lnpi)
         lnte, lnti = lnpe - lnn, lnpi - lnn
@@ -44,31 +70,30 @@ class BOUTHESELPhysics:
         dlnti_dx, dlnti_dz = grad_x(lnti, x, params.total_x), grad_z(lnti, z, params.total_z)
         ddt_lnn, ddt_lnpe, ddt_lnpi = grad_t(lnn, t, params.total_t), grad_t(lnpe, t, params.total_t), grad_t(lnpi, t, params.total_t)
         vort_from_phi = laplacian_perp(phi + pi, x, z, params.total_x, params.total_z)
-        vort = state["vort"] if "vort" in state else vort_from_phi
+        vort = vort_from_phi
         ddt_vort = grad_t(vort, t, params.total_t)
 
         def brackets(f: Tensor, g: Tensor) -> Tensor:
             bracket = grad_x(f, x, params.total_x) * grad_z(g, z, params.total_z) - grad_z(f, z, params.total_z) * grad_x(g, x, params.total_x)
-            return -bracket if bool(settings.get("right_handed_coord", False)) else bracket
+            return -bracket if right_handed_coord else bracket
 
         def curvature(f: Tensor) -> Tensor:
-            curv = (2.0 if bool(settings.get("double_curvature_coeff", False)) else 1.0) * params.rhos / (params.rmajor + params.rminor) * grad_z(f, z, params.total_z)
-            return -curv if bool(settings.get("right_handed_coord", False)) else curv
+            curv = (2.0 if double_curvature_coeff else 1.0) * params.rhos / (params.rmajor + params.rminor) * grad_z(f, z, params.total_z)
+            return -curv if right_handed_coord else curv
 
         sigma = self.info.initial_profiles(x=x, z=z)
         sigma_open, sigma_closed, sigma_force = sigma["sigma_open"], sigma["sigma_closed"], sigma["sigma_force"]
         init_n, init_pe, init_pi = sigma["init_n"], sigma["init_pe"], sigma["init_pi"]
         interchange = {name: torch.zeros_like(vort if name == "vort" else lnn) for name in ("lnn", "lnpe", "lnpi", "vort")}
-        if bool(settings.get("interchange_dynamics", True)):
+        if interchange_dynamics:
             interchange["lnn"] = -inv_b * brackets(phi, lnn) - curvature(phi) + curvature(te) + curvature(lnn) * te
             interchange["lnpe"] = -inv_b * brackets(phi, lnpe) - 5.0 / 3.0 * curvature(phi) + 5.0 / 3.0 * curvature(te) + 5.0 / 3.0 * curvature(lnpe) * te
             interchange["lnpi"] = -inv_b * brackets(phi, lnpi) - 5.0 / 3.0 * curvature(phi) - 5.0 / 3.0 * curvature(ti) - 5.0 / 3.0 * curvature(lnpi) * ti + 2.0 / 3.0 * curvature(pe + pi)
             interchange["vort"] = -brackets(phi, vort) + curvature(pe + pi)
-            if not bool(settings.get("test_vort_cross_term", False)):
+            if not test_vort_cross_term:
                 interchange["vort"] = interchange["vort"] - brackets(dphi_dx, dpi_dx) - brackets(dphi_dz, dpi_dz)
 
-        ti_rcpte = torch.full_like(tau, params.ti0 / params.te0) if int(settings.get("ti_over_te", 3)) == 1 else avg_tau if int(settings.get("ti_over_te", 3)) == 2 else tau
-        diffusion_coeff = int(settings.get("diffusion_coeff", 1))
+        ti_rcpte = torch.full_like(tau, params.ti0 / params.te0) if ti_over_te == 1 else avg_tau if ti_over_te == 2 else tau
         if diffusion_coeff == 1:
             de, di = torch.full_like(n, params.norm_de), torch.full_like(n, params.norm_di)
         elif diffusion_coeff == 2:
@@ -86,7 +111,6 @@ class BOUTHESELPhysics:
 
         de, di = de * params.z_eff, di * params.z_eff
         dn = de * (1.0 + ti_rcpte)
-        collisional_model = int(settings.get("collisional_model", 2))
         if collisional_model == 0:
             collisional = {name: torch.zeros_like(term) for name, term in interchange.items()}
             u_r_x = torch.zeros_like(n)
@@ -129,9 +153,8 @@ class BOUTHESELPhysics:
             raise ValueError("Unsupported collisional_model option from BOUT-HESEL.")
 
         heat_exchange = {name: torch.zeros_like(term) for name, term in interchange.items()}
-        if bool(settings.get("perpend_heat_exchange", True)):
+        if perpend_heat_exchange:
             q_resist_rcppi = u_r_x * (dlnn_dx + dlnti_dx) + u_r_z * (dlnn_dz + dlnti_dz)
-            qdelta_approx = int(settings.get("qdelta_approx", 3))
             if qdelta_approx == 0:
                 qdelta_rcppe = torch.zeros_like(n)
             elif qdelta_approx == 1:
@@ -148,25 +171,24 @@ class BOUTHESELPhysics:
             heat_exchange["lnpi"] = 2.0 / 3.0 * q_resist_rcppi + 2.0 / 3.0 * qdelta_rcppe / torch.clamp(ti_rcpte, min=1e-12)
 
         viscous = {name: torch.zeros_like(term) for name, term in interchange.items()}
-        if bool(settings.get("perpend_viscous_heating", True)):
+        if perpend_viscous_heating:
             field_sum = phi + pi
             qviscous = 3.0 / 10.0 * di * ((d2dx2(field_sum, x, params.total_x) - d2dz2(field_sum, z, params.total_z)) ** 2 + 4.0 * d2dxdz(field_sum, x, z, params.total_x, params.total_z) ** 2) / torch.clamp(ti, min=1e-12)
             viscous["lnpi"] = 2.0 / 3.0 * qviscous
 
         perpendicular = {name: collisional[name] + heat_exchange[name] + viscous[name] for name in interchange}
-        if not bool(settings.get("perpendicular_dynamics", True)):
+        if not perpendicular_dynamics:
             perpendicular = {name: torch.zeros_like(term) for name, term in interchange.items()}
 
         parallel = {name: torch.zeros_like(term) for name, term in interchange.items()}
-        if bool(settings.get("parallel_dynamics", True)):
-            advection_mode = int(settings.get("parallel_advection_damping", 3))
-            if advection_mode == 0:
+        if parallel_dynamics:
+            if parallel_advection_damping == 0:
                 damp_advection = torch.zeros_like(n)
-            elif advection_mode == 1:
+            elif parallel_advection_damping == 1:
                 damp_advection = torch.full_like(n, 1.0 / params.norm_taun)
-            elif advection_mode == 2:
+            elif parallel_advection_damping == 2:
                 damp_advection = avg_cs_hot / params.norm_taun
-            elif advection_mode == 3:
+            elif parallel_advection_damping == 3:
                 damp_advection = cs_hot / params.norm_taun
             else:
                 raise ValueError("Unsupported parallel_advection_damping option from BOUT-HESEL.")
@@ -175,48 +197,44 @@ class BOUTHESELPhysics:
             parallel["lnpi"] = parallel["lnpi"] - 2.0 / 3.0 * 9.0 / 2.0 * sigma_open * damp_advection
             parallel["vort"] = parallel["vort"] - sigma_open * damp_advection * vort
 
-            sheath_mode = int(settings.get("parallel_sheath_damping", 3))
-            if sheath_mode == 0:
+            if parallel_sheath_damping == 0:
                 damp_sheath = torch.zeros_like(n)
-            elif sheath_mode == 1:
+            elif parallel_sheath_damping == 1:
                 damp_sheath = 1.0 / params.norm_lc * (1.0 - torch.exp(params.bohm_potential - avg_phi / torch.clamp(avg_te, min=1e-12)))
-            elif sheath_mode == 2:
+            elif parallel_sheath_damping == 2:
                 damp_sheath = avg_cs_hot / params.norm_lc * (1.0 - torch.exp(params.bohm_potential - avg_phi / torch.clamp(avg_te, min=1e-12)))
-            elif sheath_mode == 3:
+            elif parallel_sheath_damping == 3:
                 damp_sheath = cs_hot / params.norm_lc * (1.0 - torch.exp(params.bohm_potential - phi / torch.clamp(te, min=1e-12)))
             else:
                 raise ValueError("Unsupported parallel_sheath_damping option from BOUT-HESEL.")
             parallel["lnpi"] = parallel["lnpi"] + 2.0 / 3.0 * sigma_open * damp_sheath
             parallel["vort"] = parallel["vort"] + sigma_open * damp_sheath
 
-            conduction_mode = int(settings.get("parallel_conduction", 1))
-            if conduction_mode == 0:
+            if parallel_conduction == 0:
                 damp_she = torch.zeros_like(n)
                 damp_shi = torch.zeros_like(n)
-            elif conduction_mode == 1:
+            elif parallel_conduction == 1:
                 damp_she = te * te * torch.sqrt(torch.clamp(te, min=1e-12)) / params.norm_taushe
                 damp_shi = torch.zeros_like(n)
-            elif conduction_mode == 2:
+            elif parallel_conduction == 2:
                 damp_she = te * te * torch.sqrt(torch.clamp(te, min=1e-12)) / params.norm_taushe
                 damp_shi = ti * ti * torch.sqrt(torch.clamp(ti, min=1e-12)) / params.norm_taushi
             else:
                 raise ValueError("Unsupported parallel_conduction option from BOUT-HESEL.")
 
             pert_n, pert_te, pert_phi = n - avg_n, te - avg_te, phi - avg_phi
-            driftwave_mode = int(settings.get("parallel_drift_wave", 1))
-            if driftwave_mode == 0:
+            if parallel_drift_wave == 0:
                 driftwave = torch.zeros_like(n)
-            elif driftwave_mode == 1:
+            elif parallel_drift_wave == 1:
                 driftwave = (pert_te + pert_n * (avg_te / torch.clamp(avg_n, min=1e-12)) - pert_phi) / params.norm_taudw
-            elif driftwave_mode == 2:
+            elif parallel_drift_wave == 2:
                 driftwave = (pert_te + pert_n * (avg_te / torch.clamp(avg_n, min=1e-12)) - pert_phi) / params.norm_taudw * avg_te * torch.sqrt(torch.clamp(avg_te, min=1e-12))
-            elif driftwave_mode == 3:
+            elif parallel_drift_wave == 3:
                 driftwave = (pert_te + pert_n * (avg_te / torch.clamp(avg_n, min=1e-12)) - pert_phi) / params.norm_taudw * te * torch.sqrt(torch.clamp(te, min=1e-12))
             else:
                 raise ValueError("Unsupported parallel_drift_wave option from BOUT-HESEL.")
             parallel["vort"] = parallel["vort"] - sigma_closed * driftwave
 
-            reciprocal_approx = int(settings.get("reciprocal_approx", 3))
             if reciprocal_approx == 1:
                 parallel["lnpe"] = parallel["lnpe"] - 2.0 / 3.0 * sigma_open * damp_she
                 parallel["lnpi"] = parallel["lnpi"] - 2.0 / 3.0 * sigma_open * damp_shi
@@ -239,13 +257,12 @@ class BOUTHESELPhysics:
                 raise ValueError("Unsupported reciprocal_approx option from BOUT-HESEL.")
 
         forcing = {name: torch.zeros_like(term) for name, term in interchange.items()}
-        if bool(settings.get("force_profiles", True)):
-            if not bool(settings.get("not_n_force", False)):
+        if force_profiles:
+            if not not_n_force:
                 forcing["lnn"] = forcing["lnn"] + sigma_force * (init_n / torch.clamp(n, min=1e-12) - 1.0) / params.force_time
-            if not bool(settings.get("not_p_force", False)):
+            if not not_p_force:
                 forcing_multiplier = torch.ones_like(pi)
-                if bool(settings.get("h_mode", False)):
-                    ramp_a, ramp_t0, ramp_trans, ramp_peak = (float(settings.get(key, default)) for key, default in (("ramp_a", 2.0), ("ramp_t0", 0.0), ("ramp_trans", 5000.0), ("ramp_peak", 50000.0)))
+                if h_mode:
                     t_phys = t * params.total_t
                     forcing_multiplier = 1.0 + (ramp_a - 1.0) / 2.0 * (torch.tanh((t_phys - ramp_t0) / ramp_trans) - torch.tanh((t_phys - ramp_t0 - ramp_peak) / ramp_trans))
                 force_pe, force_pi = sigma_force * (init_pe - pe) / params.force_time, sigma_force * (init_pi * forcing_multiplier - pi) / params.force_time
@@ -253,7 +270,7 @@ class BOUTHESELPhysics:
                 forcing["lnpi"] = forcing["lnpi"] + force_pi / torch.clamp(pi, min=1e-12)
 
         floor_terms = {name: torch.zeros_like(term) for name, term in interchange.items()}
-        if bool(settings.get("floor_profiles", False)):
+        if floor_profiles:
             floor_terms["lnn"] = floor_terms["lnn"] + torch.where(n < params.floor_n, (params.floor_n / torch.clamp(n, min=1e-12) - 1.0) / params.floor_time, torch.zeros_like(n))
             floor_terms["lnpe"] = floor_terms["lnpe"] + torch.where(pe < params.floor_pe, (params.floor_pe / torch.clamp(pe, min=1e-12) - 1.0) / params.floor_time, torch.zeros_like(pe))
             floor_terms["lnpi"] = floor_terms["lnpi"] + torch.where(pi < params.floor_pi, (params.floor_pi / torch.clamp(pi, min=1e-12) - 1.0) / params.floor_time, torch.zeros_like(pi))
@@ -275,8 +292,6 @@ class BOUTHESELPhysics:
                 "eq_vort": ddt_vort - rhs_terms["vort"] - lambda_terms["vort"],
             },
         }
-        if "vort" in state:
-            result["poisson_residual"] = state["vort"] - vort_from_phi
         return result
 
 
@@ -286,9 +301,8 @@ class BOUTHESELPhysics:
         x: Tensor,
         z: Tensor,
         t: Tensor,
-        weights: Mapping[str, float] | None = None,
     ) -> Tensor:
-        return mse_dict(self.equation_terms(model, x=x, z=z, t=t)["residuals"], weights=weights)
+        return mse_dict(self.equation_terms(model, x=x, z=z, t=t)["residuals"])
 
 
     def bc_loss(
@@ -297,23 +311,19 @@ class BOUTHESELPhysics:
         x: Tensor,
         z: Tensor,
         t: Tensor,
-        weights: Mapping[str, float] | None = None,
     ) -> Tensor:
-        
         state = dict(model(x, z, t))
 
         residuals: dict[str, Tensor] = {}
-        for field in ("lnn", "lnpe", "lnpi", "phi", "vort"):
-            if field not in state or field not in self.boundary_conditions:
-                continue
+        for field in ("lnn", "lnpe", "lnpi", "phi"):
             for side, idx in (("inner", 0), ("outer", -1)):
                 bc = self.boundary_conditions[field][side]
                 key = f"bc_{field}_{side}"
                 if bc.kind.startswith("dirichlet"):
-                    residuals[key] = state[field][:, idx, :, :] - (0.0 if bc.value is None else bc.value)
+                    residuals[key] = state[field][:, idx, :, :] - bc.value
                 elif bc.kind.startswith("neumann"):
                     residuals[key] = grad_x(state[field], x, self.parameters.total_x)[:, idx, :, :]
-        return mse_dict(residuals, weights=weights)
+        return mse_dict(residuals)
 
 
     def ic_loss(
@@ -322,7 +332,6 @@ class BOUTHESELPhysics:
         x: Tensor,
         z: Tensor,
         t: Tensor,
-        weights: Mapping[str, float] | None = None,
     ) -> Tensor:
         t0 = torch.zeros_like(t, requires_grad=True)
         state = dict(model(x, z, t0))
@@ -333,7 +342,4 @@ class BOUTHESELPhysics:
             "ic_lnpi": state["lnpi"].squeeze(0) - targets["lnpi"],
             "ic_phi": state["phi"].squeeze(0) - targets["phi"],
         }
-        if "vort" in state:
-            residuals["ic_vort"] = state["vort"].squeeze(0) - targets["vort"]
-        return mse_dict(residuals, weights=weights)
-
+        return mse_dict(residuals)

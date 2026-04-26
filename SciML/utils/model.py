@@ -2,13 +2,11 @@ import torch
 from torch import nn
 from torch import Tensor
 
-
-
 class PINN(nn.Module):
     def __init__(self, structure: dict, parameters: Tensor):
         super().__init__()
         self.structure = structure
-        self.output_names = tuple(structure.get("output_names", ("lnn", "lnpe", "lnpi", "phi")))
+        self.output_names = tuple(structure["output_names"])
         params = parameters.detach().reshape(1, -1).float()
         self.register_buffer("param_tensor", params)
         layers = []
@@ -28,4 +26,3 @@ class PINN(nn.Module):
         params = params.view(*((1,) * (inputs.ndim - 1)), -1).expand(*inputs.shape[:-1], -1)
         out = self.network(torch.cat([inputs, params], dim=-1))
         return {name: out[..., i : i + 1] for i, name in enumerate(self.output_names)}
-    

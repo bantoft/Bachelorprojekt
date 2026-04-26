@@ -1,24 +1,19 @@
 from __future__ import annotations
 
 import torch
-
 from .bout_info import BOUTHESELInfo
 from torch.utils.data import DataLoader, Dataset
-from .api.read_bout import  DEFAULT_FIELDS, normalize_ids
-
-
+from .api.read_bout import DEFAULT_FIELDS, normalize_ids
 
 class BOUTHESELData(Dataset):
     def __init__(self, info: BOUTHESELInfo):
         self.info = info
         self.fields = DEFAULT_FIELDS
-        self.dump_data = self.info.dump_data
-        self.nt, self.nx, self.nz = self.dump_data[self.fields[0]].shape
-
+        self.data = self.info.data
+        self.nt, self.nx, self.nz = self.data[self.fields[0]].shape
 
     def __len__(self) -> int:
         return self.nt * self.nx * self.nz
-
 
     def __getitem__(self, idx: int):
         idx = int(idx)
@@ -28,7 +23,10 @@ class BOUTHESELData(Dataset):
             torch.tensor(x_id, dtype=torch.long),
             torch.tensor(z_id, dtype=torch.long),
             torch.tensor(t_id, dtype=torch.long),
-            *[torch.tensor(self.dump_data[name][t_id, x_id, z_id], dtype=torch.float32) for name in self.fields],
+            *[
+                torch.as_tensor(self.data[name][t_id, x_id, z_id], dtype=torch.float32)
+                for name in self.fields
+            ],
         )
 
 
@@ -39,8 +37,8 @@ class BOUTHESELData(Dataset):
         self,
         batch_size: int,
         shuffle: bool = True,
-        num_workers: int = 1,
-        drop_last: bool = True,
+        num_workers: int = 0,
+        drop_last: bool = False,
     ):
         return DataLoader(
             self,
@@ -49,4 +47,3 @@ class BOUTHESELData(Dataset):
             num_workers=num_workers,
             drop_last=drop_last,
         )
-
