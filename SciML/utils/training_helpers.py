@@ -22,7 +22,6 @@ class TrainConfig:
     batch_size: int
     lr: float
     root: Path
-    data_folder: str
     incl_data: bool
     w_data: float
     w_eq: float

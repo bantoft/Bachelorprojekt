@@ -27,7 +27,7 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_path = _default_model_path()
 
-    info = BOUTHESELInfo(config.root, config.data_folder)
+    info = BOUTHESELInfo(config.root)
     physics = BOUTHESELPhysics(info)
     dataset = BOUTHESELData(info)
     loader = dataset.make_loader(batch_size=config.batch_size, shuffle=True) if config.incl_data else None
@@ -41,7 +41,6 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
         "epochs": config.epochs,
         "batch_size": config.batch_size,
         "lr": config.lr,
-        "data_folder": config.data_folder,
         "incl_data": config.incl_data,
         "w_data": config.w_data,
         "w_eq": config.w_eq,
@@ -202,12 +201,11 @@ NN_STRUCTURE = {
 }
 
 config = TrainConfig(
-    epochs=10,
+    epochs=13,
     batch_size=2048,
     lr=1e-4,
-    root=Path(__file__).resolve().parents[1] / "simulatorer" / "BOUT" / "BOUT-HESEL",
-    data_folder="data",
-    incl_data=False,
+    root=Path(__file__).resolve().parents[1] / "simulatorer" / "BOUT" / "BOUT-HESEL" / "data2",
+    incl_data=True,
     w_data=1.0,
     w_eq=1.0,
     w_bc=1.0,

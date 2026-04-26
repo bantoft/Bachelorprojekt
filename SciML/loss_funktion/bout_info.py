@@ -1,30 +1,200 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
+from typing import Any
+
 import torch
 import xarray as xr
-
-from pathlib import Path
 from torch import Tensor
-from typing import Any, Mapping
 
 from .api.bout_struct import BoundaryCondition, HeselDerivedParameters
-from .api.read_bout import (
-    BOUNDARY_PATTERN,
-    IDENTIFIER_PATTERN,
-    REF_PATTERN,
-    mixmode,
-    parse_literal,
-    safe_log,
-    safe_sqrt,
-    torch_or_math_unary,
+from .api.read_bout import BOUNDARY_PATTERN, parse_literal, safe_log
+
+DUMP_ALIASES = {
+    "Bt": "bt",
+    "Te0": "te0",
+    "Ti0": "ti0",
+    "Rmajor": "rmajor",
+    "Rminor": "rminor",
+    "Mach": "mach",
+    "B0": "b0",
+    "A": "a",
+    "Z": "z",
+}
+
+NEEDED_VARS = (
+    "lnn",
+    "lnpe",
+    "lnpi",
+    "vort",
+    "phi",
+    "init_n",
+    "init_pe",
+    "init_pi",
+    "sigma_open",
+    "sigma_closed",
+    "sigma_force",
+    "B",
+    "dx",
+    "dz",
+    "t_array",
+    "force_time",
+    "floor_time",
+    "floor_n",
+    "floor_pe",
+    "floor_pi",
+    "bt",
+    "Bt",
+    "rmajor",
+    "Rmajor",
+    "rminor",
+    "Rminor",
+    "q",
+    "te0",
+    "Te0",
+    "ti0",
+    "Ti0",
+    "n0",
+    "b0",
+    "B0",
+    "a",
+    "A",
+    "z",
+    "Z",
+    "lconn",
+    "lblob",
+    "mach",
+    "Mach",
+    "neoclass_correction_factor",
+    "x_lcfs",
+    "x_wall",
+    "oci",
+    "nuii",
+    "nuei",
+    "nuee",
+    "rhoe",
+    "rhos",
 )
+
+DIRECT_PARAMETER_KEYS = (
+    "bt",
+    "q",
+    "te0",
+    "ti0",
+    "n0",
+    "lconn",
+    "rmajor",
+    "rminor",
+    "a",
+    "z",
+    "mach",
+    "x_lcfs",
+    "x_wall",
+    "force_time",
+    "floor_time",
+    "floor_n",
+    "floor_pe",
+    "floor_pi",
+)
+
+SETTING_PARAMETER_KEYS = (
+    "z_eff",
+    "n_bck",
+    "te_bck",
+    "ti_bck",
+    "d_lcfs",
+    "d_wall",
+    "d_force",
+    "wall_amp",
+)
+
+TRANSPORT_PARAMETER_KEYS = (
+    "b0",
+    "oci",
+    "rhoe",
+    "rhos",
+    "nuei",
+    "nuii",
+    "nuee",
+    "neoclass_correction_factor",
+    "lblob",
+)
+
+INITIAL_PROFILE_KEYS = (
+    "init_n",
+    "init_pe",
+    "init_pi",
+    "sigma_open",
+    "sigma_closed",
+    "sigma_force",
+)
+
+INITIAL_STATE_KEYS = ("lnn", "lnpe", "lnpi", "phi", "vort")
+
+ACTIVE_SETTING_KEYS = (
+    "right_handed_coord",
+    "interchange_dynamics",
+    "parallel_dynamics",
+    "perpendicular_dynamics",
+    "invert_w_star",
+    "force_profiles",
+    "floor_profiles",
+    "parallel_sheath_damping",
+    "parallel_advection_damping",
+    "parallel_conduction",
+    "parallel_drift_wave",
+    "reciprocal_approx",
+    "collisional_model",
+    "perpend_heat_exchange",
+    "perpend_viscous_heating",
+    "ti_over_te",
+    "diffusion_coeff",
+    "qdelta_approx",
+    "double_curvature_coeff",
+    "h_mode",
+    "test_vort_cross_term",
+    "ramp_a",
+    "ramp_t0",
+    "ramp_trans",
+    "ramp_peak",
+    "not_n_force",
+    "not_p_force",
+    "power_source",
+    "particle_source",
+    "parallel_transport",
+    "plasma_neutral_interactions",
+)
+
+INNER_BOUNDARY_TARGETS = {
+    "lnn": ("init_n", "n_inner"),
+    "lnpe": ("init_pe", "pe_inner"),
+    "lnpi": ("init_pi", "pi_inner"),
+}
+
+OPTIONAL_SETTING_DEFAULTS: dict[tuple[str, str], bool | float | int] = {
+    ("hesel", "n_bck"): 0.0,
+    ("hesel", "te_bck"): 0.0,
+    ("hesel", "ti_bck"): 0.0,
+    ("hesel", "double_curvature_coeff"): False,
+    ("hesel", "h_mode"): False,
+    ("hesel", "invert_w_star"): False,
+    ("hesel", "not_n_force"): False,
+    ("hesel", "not_p_force"): False,
+    ("hesel", "parallel_transport"): False,
+    ("hesel", "particle_source"): False,
+    ("hesel", "power_source"): False,
+    ("hesel", "ramp_a"): 2.0,
+    ("hesel", "ramp_peak"): 50000.0,
+    ("hesel", "ramp_t0"): 0.0,
+    ("hesel", "ramp_trans"): 5000.0,
+    ("hesel", "test_vort_cross_term"): False,
+}
 
 
 class BOUTHESELInfo:
-    def __init__(self, hesel_path: Path, data_folder_name: str):
-        self.root = Path(hesel_path).resolve()
-        self.folder = data_folder_name
+    def __init__(self, data_folder_path: Path):
+        self.folder_path = data_folder_path
 
         self.settings = self._read_settings()
         self.data = self._load_data()
@@ -32,175 +202,181 @@ class BOUTHESELInfo:
         self.boundary_conditions = self._build_boundary_conditions()
         self.active_settings = self._build_active_settings()
 
+    def _read_settings(self) -> dict[str, dict[str, str]]:
+        settings_path = self.folder_path / "BOUT.settings"
+        current_section = "root"
+        settings: dict[str, dict[str, str]] = {current_section: {}}
 
-    def _read_settings(self):
-        settings_path = self.root / self.folder / r"BOUT.settings"
-        section = "root"
-        data = {section: {}}
-        for raw in Path(settings_path).read_text(encoding="utf-8").splitlines():
-            line = raw.split("#", 1)[0].strip()
-            if not line: continue
+        for raw_line in settings_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.split("#", 1)[0].strip()
+            if not line:
+                continue
+
             if line.startswith("[") and line.endswith("]"):
-                section = line[1:-1].strip()
-                data.setdefault(section, {})
+                current_section = line[1:-1].strip()
+                settings.setdefault(current_section, {})
                 continue
-            if "=" in line:
-                k, v = line.split("=", 1)
-                data[section][k.strip()] = v.strip()
-        return data
-    
+
+            if "=" not in line:
+                continue
+
+            key, value = line.split("=", 1)
+            settings[current_section][key.strip()] = value.strip()
+
+        return settings
+
     def _load_data(self) -> dict[str, Any]:
-        needed_vars = ["lnn", "lnpe", "lnpi", "vort", "phi", "init_n", "init_pe", "init_pi", "sigma_open", "sigma_closed", "sigma_force", "B", "t_array"]
-        overlap = 2
-        dump_paths = sorted((self.root / self.folder).glob("BOUT.dmp.*.nc"))
-
         data: dict[str, Any] = {}
-        for data_path in dump_paths:
-            with xr.open_dataset(data_path, engine="netcdf4") as df:
-                for name in needed_vars:
-                    if name not in df: continue
-                    arr = df[name].squeeze("y", drop=True) if "y" in df[name].dims else df[name]
-                    values = torch.as_tensor(arr.values)
-                    if name == "t_array":
-                        data.setdefault(name, values)
+
+        for data_path in sorted(self.folder_path.glob("BOUT.dmp.*.nc")):
+            with xr.open_dataset(data_path, engine="netcdf4") as dataset:
+                for name in NEEDED_VARS:
+                    if name not in dataset:
                         continue
 
-                    prev = data.get(name)
-                    if prev is None:
-                        data[name] = values
-                        continue
-                    if "x" not in arr.dims:
-                        continue
+                    variable = dataset[name]
+                    array = variable.squeeze("y", drop=True) if "y" in variable.dims else variable
+                    canonical_name = DUMP_ALIASES.get(name, name)
+                    values = torch.as_tensor(array.values)
+                    self._merge_dump_values(
+                        data=data,
+                        name=canonical_name,
+                        dims=tuple(array.dims),
+                        values=values,
+                    )
 
-                    axis = arr.dims.index("x")
-                    slicer = [slice(None)] * values.ndim
-                    slicer[axis] = slice(min(overlap, int(values.shape[axis])), None)
-                    data[name] = torch.cat((prev, values[tuple(slicer)]), dim=axis)
         return data
 
-    def _resolve_key(
+    def _merge_dump_values(
         self,
-        section: str,
-        key: str,
-        variables: Mapping[str, Any],
-        stack: tuple[tuple[str, str], ...] = (),
-    ) -> Any:
-        if section not in self.settings or key not in self.settings[section]:
-            raise KeyError(f"Unknown BOUT setting {section}:{key}")
-        node = (section, key)
-        if node in stack:
-            chain = " -> ".join(f"{s}:{k}" for s, k in stack + (node,))
-            raise ValueError(f"Cyclic BOUT expression detected: {chain}")
-        return self._eval_expression(
-            expr=self.settings[section][key],
-            current_section=section,
-            variables=variables,
-            stack=stack + (node,),
-        )
+        *,
+        data: dict[str, Any],
+        name: str,
+        dims: tuple[str, ...],
+        values: Tensor,
+        overlap: int = 2,
+    ) -> None:
+        if name == "t_array":
+            data.setdefault(name, values)
+            return
 
-    def _eval_expression(
-        self,
-        expr: str,
-        current_section: str,
-        variables: Mapping[str, Any],
-        stack: tuple[tuple[str, str], ...] = (),
-    ) -> Any:
-        variables = dict(variables)
-        expr = expr.strip().replace("^", "**")
+        previous = data.get(name)
+        if previous is None:
+            data[name] = values
+            return
+
+        if "x" not in dims:
+            return
+
+        axis = dims.index("x")
+        slicer = [slice(None)] * values.ndim
+        slicer[axis] = slice(min(overlap, int(values.shape[axis])), None)
+        data[name] = torch.cat((previous, values[tuple(slicer)]), dim=axis)
+
+    def _setting_value(self, section: str, key: str) -> Any:
+        section_settings = self.settings.get(section, {})
+        if key not in section_settings:
+            default = OPTIONAL_SETTING_DEFAULTS.get((section, key))
+            if default is not None:
+                return default
+            raise KeyError(key)
+
+        expr = section_settings[key].strip()
         literal = parse_literal(expr)
-        if literal is not None:
-            return literal
-
-        def _ref(section_name: str, key_name: str) -> Any:
-            return self._resolve_key(section_name, key_name, variables=variables, stack=stack)
-
-        rewritten = REF_PATTERN.sub(r'__ref("\1", "\2")', expr)
-        tokens = {
-            token
-            for token in IDENTIFIER_PATTERN.findall(REF_PATTERN.sub(" ", expr))
-            if token
-            not in {
-                "__ref",
-                "sqrt",
-                "tanh",
-                "exp",
-                "log",
-                "sin",
-                "cos",
-                "abs",
-                "mixmode",
-                "pi",
-                "true",
-                "false",
-            }
-            and token not in variables
-        }
-
-        local_symbols: dict[str, Any] = {}
-        for section_name in (current_section, "root"):
-            if section_name not in self.settings:
-                continue
-            for key_name in tokens:
-                if key_name not in self.settings[section_name] or (section_name, key_name) in stack or key_name in local_symbols:
-                    continue
-                local_symbols[key_name] = self._resolve_key(section_name, key_name, variables=variables, stack=stack)
-
-        return eval(
-            rewritten,
-            {"__builtins__": {}},
-            {
-                "__ref": _ref,
-                "sqrt": safe_sqrt,
-                "tanh": torch_or_math_unary(torch.tanh, math.tanh),
-                "exp": torch_or_math_unary(torch.exp, math.exp),
-                "log": safe_log,
-                "sin": torch_or_math_unary(torch.sin, math.sin),
-                "cos": torch_or_math_unary(torch.cos, math.cos),
-                "abs": torch_or_math_unary(torch.abs, abs),
-                "mixmode": mixmode,
-                "pi": math.pi,
-                **local_symbols,
-                **variables,
-            },
-        )
+        if literal is None:
+            raise ValueError(
+                f"Expected literal BOUT setting for {section}:{key}, got {expr!r}"
+            )
+        return literal
 
     def _scalar(self, section: str, key: str) -> float:
-        value = self._resolve_key(section, key, {})
+        value = self._setting_value(section, key)
         if isinstance(value, bool):
             return float(value)
         if torch.is_tensor(value):
             if value.numel() != 1:
-                raise ValueError(f"Expected scalar for {section}:{key}, got tensor with shape {value.shape}")
+                raise ValueError(
+                    f"Expected scalar for {section}:{key}, got tensor with shape {value.shape}"
+                )
             return float(value.detach().cpu().item())
         return float(value)
 
-    def _build_parameters(self) -> HeselDerivedParameters:
-        e, epso, me, mp, pi_const = 1.60e-19, 8.85e-12, 9.1093816e-31, 1.67262158e-27, math.pi
-        bt, q, te0, ti0, n0, lconn, rmajor, rminor = (self._scalar("hesel", key) for key in ("bt", "q", "te0", "ti0", "n0", "lconn", "rmajor", "rminor"))
-        a, z, mach, z_eff, x_lcfs, x_wall, force_time, floor_time = (self._scalar("hesel", key) for key in ("a", "z", "mach", "z_eff", "x_lcfs", "x_wall", "force_time", "floor_time"))
-        floor_n, floor_pe, floor_pi = (self._scalar("hesel", key) for key in ("floor_n", "floor_pe", "floor_pi"))
-        n_bck, te_bck, ti_bck = (self._scalar("hesel", key) for key in ("n_bck", "te_bck", "ti_bck"))
-        d_lcfs, d_wall, d_force, wall_amp = (self._scalar("hesel", key) for key in ("d_lcfs", "d_wall", "d_force", "wall_amp"))
-        total_x = float(self._eval_expression("mesh:xl", current_section="root", variables={"x": 1.0}))
-        total_z = float(self._eval_expression("mesh:zl", current_section="root", variables={"z": 1.0}))
-        total_t = self._scalar("root", "t_end")
+    def _data_scalar(self, name: str) -> float:
+        value = self.data[name]
+        if torch.is_tensor(value):
+            value = value.detach().cpu()
+            if value.numel() == 1:
+                return float(value.item())
+            return float(value.to(dtype=torch.float64).mean().item())
+        return float(value)
 
-        b0 = bt * rmajor / (rmajor + rminor)
+    def _scalar_from_dump_or_setting(
+        self,
+        dump_key: str,
+        section: str,
+        setting_key: str,
+    ) -> float:
+        if dump_key in self.data:
+            return self._data_scalar(dump_key)
+        return self._scalar(section, setting_key)
+
+    def _pick(self, mapping: dict[str, float], *keys: str) -> tuple[float, ...]:
+        return tuple(mapping[key] for key in keys)
+
+    def _domain_extents(self) -> tuple[float, float, float]:
+        dx = torch.as_tensor(self.data["dx"], dtype=torch.float64).flatten()
+        total_x = float(dx[:-1].sum().item()) if dx.numel() > 1 else float(dx.sum().item())
+        total_z = self._data_scalar("dz") * max(int(self.data["lnn"].shape[-1]) - 1, 1)
+        total_t = float(torch.as_tensor(self.data["t_array"], dtype=torch.float64)[-1].item())
+        return total_x, total_z, total_t
+
+    def _build_parameters(self) -> HeselDerivedParameters:
+        e = 1.60e-19
+        epso = 8.85e-12
+        me = 9.1093816e-31
+        mp = 1.67262158e-27
+        pi_const = math.pi
+
+        values = {
+            name: self._scalar_from_dump_or_setting(name, "hesel", name)
+            for name in DIRECT_PARAMETER_KEYS
+        }
+        values.update({name: self._scalar("hesel", name) for name in SETTING_PARAMETER_KEYS})
+
+        total_x, total_z, total_t = self._domain_extents()
+
+        a, z, mach = self._pick(values, "a", "z", "mach")
+        x_lcfs, x_wall = self._pick(values, "x_lcfs", "x_wall")
+        bt, q, te0, ti0, n0 = self._pick(values, "bt", "q", "te0", "ti0", "n0")
+        lconn, rmajor, rminor = self._pick(values, "lconn", "rmajor", "rminor")
+        force_time, floor_time = self._pick(values, "force_time", "floor_time")
+        floor_n, floor_pe, floor_pi = self._pick(
+            values, "floor_n", "floor_pe", "floor_pi"
+        )
+        z_eff, n_bck, te_bck, ti_bck = self._pick(
+            values, "z_eff", "n_bck", "te_bck", "ti_bck"
+        )
+        d_lcfs, d_wall, d_force, wall_amp = self._pick(
+            values, "d_lcfs", "d_wall", "d_force", "wall_amp"
+        )
+
+        transport = {name: self._data_scalar(name) for name in TRANSPORT_PARAMETER_KEYS}
+        b0 = transport["b0"]
+        oci = transport["oci"]
+        rhoe = transport["rhoe"]
+        rhos = transport["rhos"]
+        nuei = transport["nuei"]
+        nuii = transport["nuii"]
+        nuee = transport["nuee"]
+        neoclass_correction_factor = transport["neoclass_correction_factor"]
+        lblob = transport["lblob"]
+
         mi = a * mp
         cs = math.sqrt(e * te0 / mi)
-        oci = e * z * b0 / mi
-        rhoe = math.sqrt(e * te0 / me) / (e * b0 / me)
         rhoi = math.sqrt(e * ti0 / mi) / oci
-        rhos = cs / oci
         debye = math.sqrt(epso * e * te0 / (e * e * n0))
         collog = math.log(12.0 * pi_const * n0 * debye**3 / z)
-        nuei = math.sqrt(2.0) * n0 * z * z * e**4 * collog / (12.0 * math.sqrt(pi_const**3) * math.sqrt(me) * math.sqrt((e * te0) ** 3) * epso * epso)
-        nuii = n0 * z**4 * e**4 * collog / (12.0 * math.sqrt(pi_const**3) * epso * epso * math.sqrt(mi) * math.sqrt((e * ti0) ** 3))
-        nuee = nuii / (z**4) * math.sqrt(mi / me) * math.sqrt((ti0 / te0) ** 3)
-        neoclass_override = self._scalar("hesel", "neoclass_correction_factor")
-        neoclass_correction_factor = 1.0 + neoclass_override if neoclass_override >= 0.0 else 1.0 + rmajor / rminor * q * q
-        lblob_setting = self._scalar("hesel", "lblob")
-        lblob = lblob_setting if lblob_setting > 0.0 else q * rmajor
+
         bohm_potential = math.log(math.sqrt(mi / (2.0 * pi_const * me)))
         de_phys = neoclass_correction_factor * rhoe * rhoe * nuei
         di_phys = neoclass_correction_factor * rhoi * rhoi * nuii
@@ -214,37 +390,89 @@ class BOUTHESELInfo:
         taushi = lconn * lconn * n0 / chi_i_par
 
         return HeselDerivedParameters(
-            e=e, epso=epso, me=me, mp=mp, pi=pi_const, bt=bt, q=q, te0=te0, ti0=ti0, n0=n0, lconn=lconn, rmajor=rmajor, rminor=rminor, a=a, z=z, mach=mach, z_eff=z_eff,
-            x_lcfs=x_lcfs, x_wall=x_wall, force_time=force_time, floor_time=floor_time, floor_n=floor_n, floor_pe=floor_pe, floor_pi=floor_pi, n_bck=n_bck, te_bck=te_bck, ti_bck=ti_bck,
-            d_lcfs=d_lcfs, d_wall=d_wall, d_force=d_force, wall_amp=wall_amp, total_x=total_x, total_z=total_z, total_t=total_t, b0=b0, mi=mi, cs=cs, oci=oci, rhoe=rhoe, rhoi=rhoi,
-            rhos=rhos, collog=collog, nuei=nuei, nuii=nuii, nuee=nuee, neoclass_correction_factor=neoclass_correction_factor, lblob=lblob, bohm_potential=bohm_potential, norm_de=norm_de,
-            norm_di=norm_di, norm_eta=3.0 / 10.0 * norm_di, norm_taun=taun * oci, norm_taudw=taudw * oci, norm_taushe=taushe * oci, norm_taushi=taushi * oci, norm_lc=lconn / rhos, norm_lb=lblob / rhos,
+            e=e,
+            epso=epso,
+            me=me,
+            mp=mp,
+            pi=pi_const,
+            bt=bt,
+            q=q,
+            te0=te0,
+            ti0=ti0,
+            n0=n0,
+            lconn=lconn,
+            rmajor=rmajor,
+            rminor=rminor,
+            a=a,
+            z=z,
+            mach=mach,
+            z_eff=z_eff,
+            x_lcfs=x_lcfs,
+            x_wall=x_wall,
+            force_time=force_time,
+            floor_time=floor_time,
+            floor_n=floor_n,
+            floor_pe=floor_pe,
+            floor_pi=floor_pi,
+            n_bck=n_bck,
+            te_bck=te_bck,
+            ti_bck=ti_bck,
+            d_lcfs=d_lcfs,
+            d_wall=d_wall,
+            d_force=d_force,
+            wall_amp=wall_amp,
+            total_x=total_x,
+            total_z=total_z,
+            total_t=total_t,
+            b0=b0,
+            mi=mi,
+            cs=cs,
+            oci=oci,
+            rhoe=rhoe,
+            rhoi=rhoi,
+            rhos=rhos,
+            collog=collog,
+            nuei=nuei,
+            nuii=nuii,
+            nuee=nuee,
+            neoclass_correction_factor=neoclass_correction_factor,
+            lblob=lblob,
+            bohm_potential=bohm_potential,
+            norm_de=norm_de,
+            norm_di=norm_di,
+            norm_eta=3.0 / 10.0 * norm_di,
+            norm_taun=taun * oci,
+            norm_taudw=taudw * oci,
+            norm_taushe=taushe * oci,
+            norm_taushi=taushi * oci,
+            norm_lc=lconn / rhos,
+            norm_lb=lblob / rhos,
         )
 
-    def _parse_boundary(self, section: str, key: str) -> BoundaryCondition:
-        raw = self.settings[section][key].strip()
-        match = BOUNDARY_PATTERN.match(raw)
-        if match is None:
-            raise ValueError(f"Could not parse boundary condition {section}:{key}={raw}")
-        expr = match.group("expr")
-        value = 0.0
-        if expr is not None:
-            resolved = self._eval_expression(expr, current_section=section, variables={})
-            if torch.is_tensor(resolved):
-                value = float(resolved.detach().cpu().item())
-            else:
-                value = float(resolved)
-        return BoundaryCondition(raw=raw, kind=match.group("kind"), value=value, source_section=section, source_key=key)
-
     def _build_boundary_conditions(self) -> dict[str, dict[str, BoundaryCondition]]:
-        bc: dict[str, dict[str, BoundaryCondition]] = {
+        inner_values = {
+            field: safe_log(self._scalar(section, key))
+            for field, (section, key) in INNER_BOUNDARY_TARGETS.items()
+        }
+        inner_values["vort"] = 0.0
+
+        boundary_conditions: dict[str, dict[str, BoundaryCondition]] = {
             field: {
-                side: self._parse_boundary(field, key)
-                for side, key in (("inner", "bndry_xin"), ("outer", "bndry_xout"))
+                side: BoundaryCondition(
+                    raw=self.settings[field][setting_key].strip(),
+                    kind=self._boundary_kind(self.settings[field][setting_key].strip()),
+                    value=inner_values[field] if side == "inner" else 0.0,
+                    source_section=field,
+                    source_key=setting_key,
+                )
+                for side, setting_key in (
+                    ("inner", "bndry_xin"),
+                    ("outer", "bndry_xout"),
+                )
             }
             for field in ("lnn", "lnpe", "lnpi", "vort")
         }
-        bc["phi"] = {
+        boundary_conditions["phi"] = {
             "inner": BoundaryCondition(
                 raw=f"laplace:inner_boundary_flags={self.settings['laplace']['inner_boundary_flags']}",
                 kind="dirichlet",
@@ -260,44 +488,26 @@ class BOUTHESELInfo:
                 source_key="outer_boundary_flags",
             ),
         }
-        return bc
+        return boundary_conditions
+
+    def _boundary_kind(self, raw: str) -> str:
+        match = BOUNDARY_PATTERN.match(raw)
+        if match is None:
+            raise ValueError(f"Could not parse boundary condition: {raw}")
+        return match.group("kind")
 
     def _build_active_settings(self) -> dict[str, Any]:
-        keys = [
-            "right_handed_coord", "interchange_dynamics", "parallel_dynamics", "perpendicular_dynamics", "invert_w_star", "force_profiles", "floor_profiles",
-            "parallel_sheath_damping", "parallel_advection_damping", "parallel_conduction", "parallel_drift_wave", "reciprocal_approx", "collisional_model",
-            "perpend_heat_exchange", "perpend_viscous_heating", "ti_over_te", "diffusion_coeff", "qdelta_approx", "double_curvature_coeff", "h_mode",
-            "test_vort_cross_term", "ramp_a", "ramp_t0", "ramp_trans", "ramp_peak",
-            "not_n_force", "not_p_force", "power_source", "particle_source", "parallel_transport", "plasma_neutral_interactions",
-        ]
-        return {key: self._resolve_key("hesel", key, {}) for key in keys}
-
-
-    def resolve_profile(self, section: str, x: Tensor, z: Tensor, t: Tensor) -> Tensor:
-        value = self._resolve_key(
-            section,
-            "function",
-            variables={"x": x, "z": z, "y": torch.zeros_like(x), "t": t},
-        )
-        scale = float(self._resolve_key(section, "scale", {}))
-        return scale * value
+        return {
+            key: self._setting_value("hesel", key)
+            for key in ACTIVE_SETTING_KEYS
+        }
 
     def initial_profiles(self, x: Tensor, z: Tensor) -> dict[str, Tensor]:
-        zero_t = torch.zeros_like(x)
-        profiles = {
-            name: self.resolve_profile(name, x=x, z=z, t=zero_t)
-            for name in ("init_n", "init_pe", "init_pi", "sigma_open", "sigma_closed", "sigma_force")
-        }
-        profiles["seed_n"] = self.resolve_profile("seed_n", x=x, z=z, t=zero_t)
-        profiles["lnn0_from_input"] = safe_log(profiles["init_n"] + profiles["seed_n"])
-        profiles["lnpe0_from_input"] = safe_log(profiles["init_pe"])
-        profiles["lnpi0_from_input"] = safe_log(profiles["init_pi"])
-        return profiles
+        del z
+        return {name: self._interp_dump_1d(self.data[name], x) for name in INITIAL_PROFILE_KEYS}
 
     def magnetic_field(self, x: Tensor) -> Tensor:
-        xr = self._resolve_key("hesel", "xr", variables={"x": x, "z": torch.zeros_like(x), "y": torch.zeros_like(x), "t": torch.zeros_like(x)})
-        numerator = self.parameters.rmajor + self.parameters.rminor
-        return numerator / (numerator + self.parameters.rhos * xr)
+        return self._interp_dump_1d(self.data["B"], x)
 
     def make_collocation_grid(
         self,
@@ -307,6 +517,7 @@ class BOUTHESELInfo:
         nx = min(32, int(self.data["lnn"].shape[1]))
         nz = min(64, int(self.data["lnn"].shape[-1]))
         nt = min(4, int(self.data["t_array"].shape[0]))
+
         t_grid, x_grid, z_grid = torch.meshgrid(
             torch.linspace(0.0, 1.0, nt, device=device, dtype=dtype),
             torch.linspace(0.0, 1.0, nx, device=device, dtype=dtype),
@@ -319,23 +530,50 @@ class BOUTHESELInfo:
             t_grid.unsqueeze(-1).clone().detach().requires_grad_(True),
         )
 
+    def _interp_dump_1d(self, values: Any, x: Tensor) -> Tensor:
+        field = torch.as_tensor(values, device=x.device, dtype=x.dtype).flatten()
+        if field.ndim != 1:
+            raise ValueError(
+                f"Expected 1D dump field for interpolation, got shape {tuple(field.shape)}"
+            )
+
+        x_pos = torch.clamp(x.squeeze(-1), 0.0, 1.0) * (field.shape[0] - 1)
+        x0 = x_pos.floor().long().clamp(0, field.shape[0] - 1)
+        x1 = (x0 + 1).clamp(0, field.shape[0] - 1)
+        wx = (x_pos - x0.to(dtype=x.dtype)).unsqueeze(-1)
+        v0 = field[x0].unsqueeze(-1)
+        v1 = field[x1].unsqueeze(-1)
+        return (1.0 - wx) * v0 + wx * v1
+
     def _interp_dump_2d(self, values: Any, x: Tensor, z: Tensor) -> Tensor:
         field = torch.as_tensor(values, device=x.device, dtype=x.dtype)
         if field.ndim != 2:
-            raise ValueError(f"Expected 2D dump field for interpolation, got shape {tuple(field.shape)}")
+            raise ValueError(
+                f"Expected 2D dump field for interpolation, got shape {tuple(field.shape)}"
+            )
+
         x_pos = torch.clamp(x.squeeze(-1), 0.0, 1.0) * (field.shape[0] - 1)
         z_pos = torch.clamp(z.squeeze(-1), 0.0, 1.0) * (field.shape[1] - 1)
-        x0, z0 = x_pos.floor().long().clamp(0, field.shape[0] - 1), z_pos.floor().long().clamp(0, field.shape[1] - 1)
-        x1, z1 = (x0 + 1).clamp(0, field.shape[0] - 1), (z0 + 1).clamp(0, field.shape[1] - 1)
-        wx, wz = (x_pos - x0.to(dtype=x.dtype)).unsqueeze(-1), (z_pos - z0.to(dtype=x.dtype)).unsqueeze(-1)
-        v00, v10, v01, v11 = field[x0, z0].unsqueeze(-1), field[x1, z0].unsqueeze(-1), field[x0, z1].unsqueeze(-1), field[x1, z1].unsqueeze(-1)
-        return (1.0 - wz) * ((1.0 - wx) * v00 + wx * v10) + wz * ((1.0 - wx) * v01 + wx * v11)
+
+        x0 = x_pos.floor().long().clamp(0, field.shape[0] - 1)
+        z0 = z_pos.floor().long().clamp(0, field.shape[1] - 1)
+        x1 = (x0 + 1).clamp(0, field.shape[0] - 1)
+        z1 = (z0 + 1).clamp(0, field.shape[1] - 1)
+
+        wx = (x_pos - x0.to(dtype=x.dtype)).unsqueeze(-1)
+        wz = (z_pos - z0.to(dtype=x.dtype)).unsqueeze(-1)
+
+        v00 = field[x0, z0].unsqueeze(-1)
+        v10 = field[x1, z0].unsqueeze(-1)
+        v01 = field[x0, z1].unsqueeze(-1)
+        v11 = field[x1, z1].unsqueeze(-1)
+
+        x_interp_low = (1.0 - wx) * v00 + wx * v10
+        x_interp_high = (1.0 - wx) * v01 + wx * v11
+        return (1.0 - wz) * x_interp_low + wz * x_interp_high
 
     def initial_state_targets(self, x: Tensor, z: Tensor) -> dict[str, Tensor]:
         return {
-            "lnn": self._interp_dump_2d(self.data["lnn"][0, :, :], x, z),
-            "lnpe": self._interp_dump_2d(self.data["lnpe"][0, :, :], x, z),
-            "lnpi": self._interp_dump_2d(self.data["lnpi"][0, :, :], x, z),
-            "phi": self._interp_dump_2d(self.data["phi"][0, :, :], x, z),
-            "vort": self._interp_dump_2d(self.data["vort"][0, :, :], x, z),
+            name: self._interp_dump_2d(self.data[name][0, :, :], x, z)
+            for name in INITIAL_STATE_KEYS
         }

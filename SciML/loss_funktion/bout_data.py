@@ -37,7 +37,7 @@ class BOUTHESELData(Dataset):
         self,
         batch_size: int,
         shuffle: bool = True,
-        num_workers: int = 0,
+        num_workers: int = 1,
         drop_last: bool = False,
     ):
         return DataLoader(
