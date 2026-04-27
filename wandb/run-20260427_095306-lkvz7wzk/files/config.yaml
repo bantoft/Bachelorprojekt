@@ -1,0 +1,84 @@
+_wandb:
+    value:
+        cli_version: 0.26.0
+        e:
+            sa49nemgqx0gd3dl90q241mv8796oiqe:
+                codePath: SciML/træning.py
+                codePathLocal: SciML/træning.py
+                cpu_count: 20
+                cpu_count_logical: 20
+                disk:
+                    /:
+                        total: "76817485824"
+                        used: "6371590144"
+                email: andreasantoft244@gmail.com
+                executable: /zhome/bf/5/186685/Andreas/Bachelorprojekt/.venv/bin/python
+                git:
+                    commit: 7d3e690d81f89e52745f294ee934aeeb3ff9819b
+                    remote: git@github.com:bantoft/Bachelorprojekt.git
+                host: n-62-29-7
+                memory:
+                    total: "134200455168"
+                os: Linux-6.1.166-1.el9.elrepo.x86_64-x86_64-with-glibc2.34
+                program: /zhome/bf/5/186685/Andreas/Bachelorprojekt/SciML/træning.py
+                python: CPython 3.12.13
+                root: /zhome/bf/5/186685/Andreas/Bachelorprojekt
+                startedAt: "2026-04-27T07:53:06.332626Z"
+                writerId: sa49nemgqx0gd3dl90q241mv8796oiqe
+        m: []
+        python_version: 3.12.13
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 2
+                - 16
+                - 61
+                - 62
+            "4": 3.12.13
+            "5": 0.26.0
+            "12": 0.26.0
+            "13": linux-x86_64
+batch_size:
+    value: 4096
+collocation_shape:
+    value:
+        num_t: 16
+        num_x: 16
+        num_z: 16
+device:
+    value: cpu
+early_stopping_min_delta:
+    value: 0.0001
+early_stopping_patience:
+    value: 10
+epochs:
+    value: 10
+ic_shape:
+    value:
+        num_x: 32
+        num_z: 64
+incl_data:
+    value: true
+lr:
+    value: 0.001
+model_path:
+    value: /zhome/bf/5/186685/Andreas/Bachelorprojekt/SciML/data/trained_pinn_2026-04-27_09-51-55.pt
+standardized_fields:
+    value:
+        - lnn
+        - lnpe
+        - lnpi
+        - phi
+val_split:
+    value: 0.1
+w_bc:
+    value: 1
+w_data:
+    value: 1
+w_eq:
+    value: 1
+w_ic:
+    value: 1

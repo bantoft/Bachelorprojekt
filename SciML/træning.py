@@ -12,16 +12,7 @@ from utils.model import PINN
 from loss_funktion.bout_data import BOUTHESELData
 from loss_funktion.bout_info import BOUTHESELInfo
 from loss_funktion.bout_phys import BOUTHESELPhysics
-from utils.training_helpers import (
-    TrainConfig,
-    _physics_only_training_step,
-    _training_step,
-    _validation_data_loss,
-    _log_step,
-    _default_model_path,
-    _init_wandb,
-    _save_checkpoint,
-)
+from utils.training_helpers import TrainConfig, _physics_only_training_step, _training_step, _validation_data_loss, _log_step, _default_model_path, _init_wandb, _save_checkpoint
 
 
 def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, BOUTHESELData]:
@@ -255,12 +246,12 @@ NN_STRUCTURE = {
     "output_size": 4,
     "output_names": ("lnn", "lnpe", "lnpi", "phi"),
     "layers": [
-        {"size": 64, "non_lin_foo": torch.nn.Tanh},
-        {"size": 64, "non_lin_foo": torch.nn.SiLU},
-        {"size": 64, "non_lin_foo": torch.nn.Tanh},
-        {"size": 64, "non_lin_foo": torch.nn.SiLU},
-        {"size": 64, "non_lin_foo": torch.nn.Tanh},
-        {"size": 64, "non_lin_foo": torch.nn.SiLU},
+        {"size": 256, "non_lin_foo": torch.nn.Tanh},
+        {"size": 256, "non_lin_foo": torch.nn.SiLU},
+        {"size": 256, "non_lin_foo": torch.nn.Tanh},
+        {"size": 256, "non_lin_foo": torch.nn.SiLU},
+        {"size": 256, "non_lin_foo": torch.nn.Tanh},
+        {"size": 256, "non_lin_foo": torch.nn.SiLU},
     ],
 }
 
@@ -273,7 +264,7 @@ config = TrainConfig(
     w_data=1.0,
     w_eq=1.0,
     w_bc=1.0,
-    w_ic=1.0,
+    w_ic=0.0,
     val_split=0.1,
     early_stopping_patience=10,
     early_stopping_min_delta=1e-4,
