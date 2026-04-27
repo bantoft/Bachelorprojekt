@@ -1,0 +1,5 @@
+Training on device: cuda
+Epoch 1/10 | total=8.0581e+00 | data=2.4543e+00 | eq=2.6340e+00 | bc=2.9697e+00 | ic=9.2248e+00 | val_data=1.6407e+00
+Epoch 2/10 | total=1.0364e+00 | data=1.0129e+00 | eq=6.8721e-05 | bc=2.3501e-02 | ic=7.5315e+00 | val_data=7.4676e-01
+Epoch 3/10 | total=1.3396e+00 | data=1.2929e+00 | eq=1.3960e-03 | bc=4.5292e-02 | ic=1.0034e+01 | val_data=5.0308e-01
+Epoch 4/10 | total=3.2911e-01 | data=3.1011e-01 | eq=1.2141e-05 | bc=1.8996e-02 | ic=6.6748e+00 | val_data=2.0630e-01

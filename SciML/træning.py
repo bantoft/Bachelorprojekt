@@ -242,8 +242,8 @@ def train(config: TrainConfig) -> tuple[PINN, BOUTHESELInfo, BOUTHESELPhysics, B
     return model, info, physics, dataset
 
 NN_STRUCTURE = {
-    "input_size": 3,
-    "output_size": 4,
+    "input_size": 3, # Giv alle billeder: 4 kanaler: [128x128x4] -> 3 input features (x, z)
+    "output_size": 4, # [128x128x4] -> 3 input features (x, z)
     "output_names": ("lnn", "lnpe", "lnpi", "phi"),
     "layers": [
         {"size": 256, "non_lin_foo": torch.nn.Tanh},

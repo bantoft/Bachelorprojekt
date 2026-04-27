@@ -33,6 +33,7 @@ Produkt udvikling:
         []  Få det til at generalisere
     []  Kør realt eksempel med varienrende parametre og under genrealistiske forhold
     []  Stich data rigtigt sammen med overlap på 2
+    []  Scaler loss til relativ fejl for data, ic, bc
 
 Rapport skriving:
     [] Kom nu i gang for helvede
