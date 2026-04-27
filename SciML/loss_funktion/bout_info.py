@@ -8,190 +8,17 @@ import torch
 import xarray as xr
 from torch import Tensor
 
-from .api.bout_struct import BoundaryCondition, HeselDerivedParameters
+from .api.bout_struct import (
+    BOUT_INFO_CONFIG,
+    ActiveSettings,
+    BoundaryCondition,
+    BoundaryConditionPair,
+    BoundaryConditions,
+    FieldStats,
+    HeselDerivedParameters,
+    StandardizationStats,
+)
 from .api.read_bout import BOUNDARY_PATTERN, parse_literal, safe_log
-
-DUMP_ALIASES = {
-    "Bt": "bt",
-    "Te0": "te0",
-    "Ti0": "ti0",
-    "Rmajor": "rmajor",
-    "Rminor": "rminor",
-    "Mach": "mach",
-    "B0": "b0",
-    "A": "a",
-    "Z": "z",
-}
-
-NEEDED_VARS = (
-    "lnn",
-    "lnpe",
-    "lnpi",
-    "vort",
-    "phi",
-    "init_n",
-    "init_pe",
-    "init_pi",
-    "sigma_open",
-    "sigma_closed",
-    "sigma_force",
-    "B",
-    "dx",
-    "dz",
-    "t_array",
-    "force_time",
-    "floor_time",
-    "floor_n",
-    "floor_pe",
-    "floor_pi",
-    "bt",
-    "Bt",
-    "rmajor",
-    "Rmajor",
-    "rminor",
-    "Rminor",
-    "q",
-    "te0",
-    "Te0",
-    "ti0",
-    "Ti0",
-    "n0",
-    "b0",
-    "B0",
-    "a",
-    "A",
-    "z",
-    "Z",
-    "lconn",
-    "lblob",
-    "mach",
-    "Mach",
-    "neoclass_correction_factor",
-    "x_lcfs",
-    "x_wall",
-    "oci",
-    "nuii",
-    "nuei",
-    "nuee",
-    "rhoe",
-    "rhos",
-)
-
-DIRECT_PARAMETER_KEYS = (
-    "bt",
-    "q",
-    "te0",
-    "ti0",
-    "n0",
-    "lconn",
-    "rmajor",
-    "rminor",
-    "a",
-    "z",
-    "mach",
-    "x_lcfs",
-    "x_wall",
-    "force_time",
-    "floor_time",
-    "floor_n",
-    "floor_pe",
-    "floor_pi",
-)
-
-SETTING_PARAMETER_KEYS = (
-    "z_eff",
-    "n_bck",
-    "te_bck",
-    "ti_bck",
-    "d_lcfs",
-    "d_wall",
-    "d_force",
-    "wall_amp",
-)
-
-TRANSPORT_PARAMETER_KEYS = (
-    "b0",
-    "oci",
-    "rhoe",
-    "rhos",
-    "nuei",
-    "nuii",
-    "nuee",
-    "neoclass_correction_factor",
-    "lblob",
-)
-
-INITIAL_PROFILE_KEYS = (
-    "init_n",
-    "init_pe",
-    "init_pi",
-    "sigma_open",
-    "sigma_closed",
-    "sigma_force",
-)
-
-INITIAL_STATE_KEYS = ("lnn", "lnpe", "lnpi", "phi", "vort")
-
-ACTIVE_SETTING_KEYS = (
-    "right_handed_coord",
-    "interchange_dynamics",
-    "parallel_dynamics",
-    "perpendicular_dynamics",
-    "invert_w_star",
-    "force_profiles",
-    "floor_profiles",
-    "parallel_sheath_damping",
-    "parallel_advection_damping",
-    "parallel_conduction",
-    "parallel_drift_wave",
-    "reciprocal_approx",
-    "collisional_model",
-    "perpend_heat_exchange",
-    "perpend_viscous_heating",
-    "ti_over_te",
-    "diffusion_coeff",
-    "qdelta_approx",
-    "double_curvature_coeff",
-    "h_mode",
-    "test_vort_cross_term",
-    "ramp_a",
-    "ramp_t0",
-    "ramp_trans",
-    "ramp_peak",
-    "not_n_force",
-    "not_p_force",
-    "power_source",
-    "particle_source",
-    "parallel_transport",
-    "plasma_neutral_interactions",
-)
-
-INNER_BOUNDARY_TARGETS = {
-    "lnn": ("init_n", "n_inner"),
-    "lnpe": ("init_pe", "pe_inner"),
-    "lnpi": ("init_pi", "pi_inner"),
-}
-
-OPTIONAL_SETTING_DEFAULTS: dict[tuple[str, str], bool | float | int] = {
-    ("hesel", "n_bck"): 0.0,
-    ("hesel", "te_bck"): 0.0,
-    ("hesel", "ti_bck"): 0.0,
-    ("hesel", "double_curvature_coeff"): False,
-    ("hesel", "h_mode"): False,
-    ("hesel", "invert_w_star"): False,
-    ("hesel", "not_n_force"): False,
-    ("hesel", "not_p_force"): False,
-    ("hesel", "parallel_transport"): False,
-    ("hesel", "particle_source"): False,
-    ("hesel", "power_source"): False,
-    ("hesel", "ramp_a"): 2.0,
-    ("hesel", "ramp_peak"): 50000.0,
-    ("hesel", "ramp_t0"): 0.0,
-    ("hesel", "ramp_trans"): 5000.0,
-    ("hesel", "test_vort_cross_term"): False,
-}
-
-STANDARDIZED_FIELDS = ("lnn", "lnpe", "lnpi", "phi")
 
 
 class BOUTHESELInfo:
@@ -233,18 +60,17 @@ class BOUTHESELInfo:
 
         for data_path in sorted(self.folder_path.glob("BOUT.dmp.*.nc")):
             with xr.open_dataset(data_path, engine="netcdf4") as dataset:
-                for name in NEEDED_VARS:
+                for name in BOUT_INFO_CONFIG.needed_vars:
                     if name not in dataset:
                         continue
 
                     variable = dataset[name]
                     array = variable.squeeze("y", drop=True) if "y" in variable.dims else variable
-                    canonical_name = DUMP_ALIASES.get(name, name)
                     values = torch.as_tensor(array.values)
                     self._merge_dump_values(
                         data=data,
-                        name=canonical_name,
-                        dims=tuple(array.dims),
+                        name=name,
+                        dims=tuple(str(dim) for dim in array.dims),
                         values=values,
                     )
 
@@ -276,15 +102,15 @@ class BOUTHESELInfo:
         slicer[axis] = slice(min(overlap, int(values.shape[axis])), None)
         data[name] = torch.cat((previous, values[tuple(slicer)]), dim=axis)
 
-    def _build_standardization_stats(self) -> dict[str, dict[str, float]]:
-        stats: dict[str, dict[str, float]] = {}
-        for name in STANDARDIZED_FIELDS:
+    def _build_standardization_stats(self) -> StandardizationStats:
+        stats: dict[str, FieldStats] = {}
+        for name in BOUT_INFO_CONFIG.standardized_fields:
             values = torch.as_tensor(self.data[name], dtype=torch.float32)
             mean = float(values.mean().item())
             variance = float(values.var(unbiased=False).item())
             std = math.sqrt(max(variance, 1e-12))
-            stats[name] = {"mean": mean, "variance": variance, "std": std}
-        return stats
+            stats[name] = FieldStats(mean=mean, variance=variance, std=std)
+        return StandardizationStats(**stats)
 
     def standardize_field(self, name: str, values: Any) -> Tensor:
         tensor = torch.as_tensor(values)
@@ -338,7 +164,7 @@ class BOUTHESELInfo:
     def _setting_value(self, section: str, key: str) -> Any:
         section_settings = self.settings.get(section, {})
         if key not in section_settings:
-            default = OPTIONAL_SETTING_DEFAULTS.get((section, key))
+            default = BOUT_INFO_CONFIG.optional_setting_defaults.get((section, key))
             if default is not None:
                 return default
             raise KeyError(key)
@@ -401,16 +227,16 @@ class BOUTHESELInfo:
 
         values = {
             name: self._scalar_from_dump_or_setting(name, "hesel", name)
-            for name in DIRECT_PARAMETER_KEYS
+            for name in BOUT_INFO_CONFIG.direct_parameter_keys
         }
-        values.update({name: self._scalar("hesel", name) for name in SETTING_PARAMETER_KEYS})
+        values.update({name: self._scalar("hesel", name) for name in BOUT_INFO_CONFIG.setting_parameter_keys})
 
         total_x, total_z, total_t = self._domain_extents()
 
-        a, z, mach = self._pick(values, "a", "z", "mach")
+        a, z, mach = self._pick(values, "A", "Z", "Mach")
         x_lcfs, x_wall = self._pick(values, "x_lcfs", "x_wall")
-        bt, q, te0, ti0, n0 = self._pick(values, "bt", "q", "te0", "ti0", "n0")
-        lconn, rmajor, rminor = self._pick(values, "lconn", "rmajor", "rminor")
+        bt, q, te0, ti0, n0 = self._pick(values, "Bt", "q", "Te0", "Ti0", "n0")
+        lconn, rmajor, rminor = self._pick(values, "lconn", "Rmajor", "Rminor")
         force_time, floor_time = self._pick(values, "force_time", "floor_time")
         floor_n, floor_pe, floor_pi = self._pick(
             values, "floor_n", "floor_pe", "floor_pi"
@@ -422,8 +248,8 @@ class BOUTHESELInfo:
             values, "d_lcfs", "d_wall", "d_force", "wall_amp"
         )
 
-        transport = {name: self._data_scalar(name) for name in TRANSPORT_PARAMETER_KEYS}
-        b0 = transport["b0"]
+        transport = {name: self._data_scalar(name) for name in BOUT_INFO_CONFIG.transport_parameter_keys}
+        b0 = transport["B0"]
         oci = transport["oci"]
         rhoe = transport["rhoe"]
         rhos = transport["rhos"]
@@ -511,46 +337,53 @@ class BOUTHESELInfo:
             norm_lb=lblob / rhos,
         )
 
-    def _build_boundary_conditions(self) -> dict[str, dict[str, BoundaryCondition]]:
+    def _build_boundary_conditions(self) -> BoundaryConditions:
         inner_values = {
-            field: safe_log(self._scalar(section, key))
-            for field, (section, key) in INNER_BOUNDARY_TARGETS.items()
+            field: float(safe_log(self._scalar(section, key)))
+            for field, (section, key) in BOUT_INFO_CONFIG.inner_boundary_targets.items()
         }
         inner_values["vort"] = 0.0
 
-        boundary_conditions: dict[str, dict[str, BoundaryCondition]] = {
-            field: {
-                side: BoundaryCondition(
-                    raw=self.settings[field][setting_key].strip(),
-                    kind=self._boundary_kind(self.settings[field][setting_key].strip()),
-                    value=inner_values[field] if side == "inner" else 0.0,
+        def build_pair(field: str) -> BoundaryConditionPair:
+            return BoundaryConditionPair(
+                inner=BoundaryCondition(
+                    raw=self.settings[field]["bndry_xin"].strip(),
+                    kind=self._boundary_kind(self.settings[field]["bndry_xin"].strip()),
+                    value=inner_values[field],
                     source_section=field,
-                    source_key=setting_key,
-                )
-                for side, setting_key in (
-                    ("inner", "bndry_xin"),
-                    ("outer", "bndry_xout"),
-                )
-            }
-            for field in ("lnn", "lnpe", "lnpi", "vort")
-        }
-        boundary_conditions["phi"] = {
-            "inner": BoundaryCondition(
-                raw=f"laplace:inner_boundary_flags={self.settings['laplace']['inner_boundary_flags']}",
-                kind="dirichlet",
-                value=0.0,
-                source_section="laplace",
-                source_key="inner_boundary_flags",
+                    source_key="bndry_xin",
+                ),
+                outer=BoundaryCondition(
+                    raw=self.settings[field]["bndry_xout"].strip(),
+                    kind=self._boundary_kind(self.settings[field]["bndry_xout"].strip()),
+                    value=0.0,
+                    source_section=field,
+                    source_key="bndry_xout",
+                ),
+            )
+
+        return BoundaryConditions(
+            lnn=build_pair("lnn"),
+            lnpe=build_pair("lnpe"),
+            lnpi=build_pair("lnpi"),
+            vort=build_pair("vort"),
+            phi=BoundaryConditionPair(
+                inner=BoundaryCondition(
+                    raw=f"laplace:inner_boundary_flags={self.settings['laplace']['inner_boundary_flags']}",
+                    kind="dirichlet",
+                    value=0.0,
+                    source_section="laplace",
+                    source_key="inner_boundary_flags",
+                ),
+                outer=BoundaryCondition(
+                    raw=f"laplace:outer_boundary_flags={self.settings['laplace']['outer_boundary_flags']}",
+                    kind="neumann",
+                    value=0.0,
+                    source_section="laplace",
+                    source_key="outer_boundary_flags",
+                ),
             ),
-            "outer": BoundaryCondition(
-                raw=f"laplace:outer_boundary_flags={self.settings['laplace']['outer_boundary_flags']}",
-                kind="neumann",
-                value=0.0,
-                source_section="laplace",
-                source_key="outer_boundary_flags",
-            ),
-        }
-        return boundary_conditions
+        )
 
     def _boundary_kind(self, raw: str) -> str:
         match = BOUNDARY_PATTERN.match(raw)
@@ -558,15 +391,13 @@ class BOUTHESELInfo:
             raise ValueError(f"Could not parse boundary condition: {raw}")
         return match.group("kind")
 
-    def _build_active_settings(self) -> dict[str, Any]:
-        return {
-            key: self._setting_value("hesel", key)
-            for key in ACTIVE_SETTING_KEYS
-        }
+    def _build_active_settings(self) -> ActiveSettings:
+        values = {key: self._setting_value("hesel", key) for key in BOUT_INFO_CONFIG.active_setting_keys}
+        return ActiveSettings(**values)
 
     def initial_profiles(self, x: Tensor, z: Tensor) -> dict[str, Tensor]:
         del z
-        return {name: self._interp_dump_1d(self.data[name], x) for name in INITIAL_PROFILE_KEYS}
+        return {name: self._interp_dump_1d(self.data[name], x) for name in BOUT_INFO_CONFIG.initial_profile_keys}
 
     def magnetic_field(self, x: Tensor) -> Tensor:
         return self._interp_dump_1d(self.data["B"], x)
@@ -623,7 +454,7 @@ class BOUTHESELInfo:
         time_idx = max(0, min(int(time_index), self.num_time_points - 1))
         targets = {
             name: self._interp_dump_2d(self.data[name][time_idx, :, :], x, z)
-            for name in INITIAL_STATE_KEYS
+            for name in BOUT_INFO_CONFIG.initial_state_keys
         }
         if not standardized:
             return targets
@@ -636,3 +467,4 @@ class BOUTHESELInfo:
         standardized: bool = False,
     ) -> dict[str, Tensor]:
         return self.state_targets(x=x, z=z, time_index=0, standardized=standardized)
+
