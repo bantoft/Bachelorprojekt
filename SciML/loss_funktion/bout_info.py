@@ -8,7 +8,7 @@ import torch
 import xarray as xr
 from torch import Tensor
 
-from .api.bout_struct import (
+from api.bout_struct import (
     BOUT_INFO_CONFIG,
     ActiveSettings,
     BoundaryCondition,
@@ -18,7 +18,7 @@ from .api.bout_struct import (
     HeselDerivedParameters,
     StandardizationStats,
 )
-from .api.read_bout import BOUNDARY_PATTERN, parse_literal, safe_log
+from api.read_bout import BOUNDARY_PATTERN, parse_literal, safe_log
 
 
 class BOUTHESELInfo:
@@ -468,3 +468,11 @@ class BOUTHESELInfo:
     ) -> dict[str, Tensor]:
         return self.state_targets(x=x, z=z, time_index=0, standardized=standardized)
 
+
+
+
+if __name__ == "__main__":
+    root = Path(__file__).resolve().parents[2] / "simulatorer" / "BOUT" / "BOUT-HESEL" / "data"
+    info = BOUTHESELInfo(root)
+
+    print(len(info.parameters))
