@@ -9,52 +9,78 @@ from pathlib import Path
 from torch import Tensor
 
 from bout_dump import BOUTHESELInfo
-from operators import grad_x, grad_z, grad_t, laplacian_perp, d2dx2, d2dz2, d2dxdz
+from api.operators import grad_x, grad_z, grad_t, laplacian_perp, d2dx2, d2dz2, d2dxdz
 
 
-class BOUTHESELPhysics_new:
+class BOUTHESELPhysics:
     def __init__(self, info: BOUTHESELInfo):
         self.info = info
-        self.ic = self.ic
-        self.bc = self.bc
+        self.ic = self._ic()
+        self.bc = self._bc()
 
-    def ic(self) -> Tensor:
+    def _ic(self) -> Tensor:
         """
         Returns initial condition: (3, nx)
         """
-        profiles = (self.info.data["init_n"],
-                    self.info.data["init_pe"],
-                    self.info.data["init_pi"],)
-        return torch.stack(profiles, dim=0)
+        # Create tensor from initial functions
+        x_line = torch.linspace(0, self.info.parameters.total_x - 1, self.info.parameters.total_x)
+        ic_n = self.info.functions.init_n_function(x_line)
+        ic_pe = self.info.functions.init_pe_function(x_line)
+        ic_pi = self.info.functions.init_pi_function(x_line)
+        return torch.stack((ic_n, ic_pe, ic_pi), dim=0)
+
     
-    def bc(self):
+    def _bc(self):
         """
         Returns boundary conditions: dict{field: dict{side: (bc_type, value)}}.
         """
         boundary_conditions = {}
         allowed_fields = {"lnn", "lnpe", "lnpi", "vort"}
         for (field, key), value in self.info.settings.items():
-            if field not in allowed_fields or "bndry" not in key: continue
-            side = re.search(r"bndry_(\w+)", key).group(1)
-            bc_type = re.match(r"(\w+)", str(value)).group(1)
-            expr = re.sub(r"^\w+_o\d+\((.*)\)$", r"\1", str(value)).strip()
-            value = eval(expr, {"__builtins__": {}, **vars(math)}) if expr != str(value) else value
-            boundary_conditions.setdefault(field, {})[side] = (bc_type, value)
+            if field not in allowed_fields or "bndry" not in key:
+                continue
+
+            side_match = re.search(r"bndry_(\w+)", key)
+            if side_match is None:
+                continue
+            side = side_match.group(1)
+
+            raw_value = str(value).strip()
+            type_match = re.match(r"(\w+)", raw_value)
+            if type_match is None:
+                continue
+            bc_type = type_match.group(1)
+
+            expr_match = re.match(r"^\w+_o\d+\((.*)\)$", raw_value)
+            if expr_match is not None:
+                expr = expr_match.group(1).strip()
+                parsed_value = eval(expr, {"__builtins__": {}, **vars(math)})
+            else:
+                parsed_value = value
+
+            boundary_conditions.setdefault(field, {})[side] = (bc_type, parsed_value)
         return boundary_conditions
     
-    def equation_terms(
+
+    def _eq(
         self,
         model,
         x: Tensor,
         z: Tensor,
         t: Tensor,
     ):
-        settings = self.info.settings
+        
 
-        state = self._predict_physical_state(model, x, z, t)
+
+        settings = self.info.settings
+        params = self.info.parameters
+
+
+        state = model(t, x, z)
+
+
         t_eval = self.info.stepper_target_time(t)
 
-        params = self.parameters
 
         
         lnn, lnpe, lnpi, phi = state["lnn"], state["lnpe"], state["lnpi"], state["phi"]
@@ -64,9 +90,19 @@ class BOUTHESELPhysics_new:
         tau = torch.exp(lnti - lnte)
         cs_hot = torch.sqrt(torch.clamp(ti + te, min=1e-12))
         avg_n, avg_te, avg_ti, avg_phi, avg_tau, avg_cs_hot = (value.mean(dim=2, keepdim=True) for value in (n, te, ti, phi, tau, cs_hot) )
-        b_field = self.info.magnetic_field(x)
-        inv_b = 1.0 / torch.clamp(b_field, min=1e-12)
+        
 
+        # Laver field lines
+        # Kunne ikke finde funktion for B så tager den der er i data:
+        b_field = self.info.data.B
+        inv_b = 1.0 / torch.clamp(b_field, min=1e-12)
+        
+        x_line = torch.linspace(0, params.total_x - 1, params.total_x)
+        sigma_open = self.info.functions.sigma_open_function(x_line)
+        sigma_closed = self.info.functions.sigma_closed_function(x_line)
+        sigma_force = self.info.functions.sigma_force_function(x_line)
+
+        init_n, init_pe, init_pi = self.ic
         
 
         dphi_dx, dphi_dz = grad_x(phi, x, params.total_x), grad_z(phi, z, params.total_z)
@@ -87,9 +123,6 @@ class BOUTHESELPhysics_new:
             curv = (2.0 if settings["hesel", "double_curvature_coeff"] else 1.0) * params.rhos / (params.rmajor + params.rminor) * grad_z(f, z, params.total_z)
             return -curv if settings["hesel", "right_handed_coord"] else curv
 
-        sigma = self.info.initial_profiles(x=x, z=z)
-        sigma_open, sigma_closed, sigma_force = sigma["sigma_open"], sigma["sigma_closed"], sigma["sigma_force"]
-        init_n, init_pe, init_pi = sigma["init_n"], sigma["init_pe"], sigma["init_pi"]
         interchange = {name: torch.zeros_like(vort if name == "vort" else lnn) for name in ("lnn", "lnpe", "lnpi", "vort")}
         if settings["hesel", "interchange_dynamics"]:
             interchange["lnn"] = -inv_b * brackets(phi, lnn) - curvature(phi) + curvature(te) + curvature(lnn) * te
@@ -269,6 +302,7 @@ class BOUTHESELPhysics_new:
             if not settings["hesel","not_p_force"]:
                 forcing_multiplier = torch.ones_like(pi)
                 if settings["hesel","h_mode"]:
+
                     t_phys = t_eval * params.total_t
                     forcing_multiplier = 1.0 + (settings["hesel","ramp_a"] - 1.0) / 2.0 * (torch.tanh((t_phys - settings["hesel","ramp_t0"]) / settings["hesel","ramp_trans"]) - torch.tanh((t_phys - settings["hesel","ramp_t0"] - settings["hesel","ramp_peak"]) / settings["hesel","ramp_trans"]))
                 force_pe, force_pi = sigma_force * (init_pe - pe) / params.force_time, sigma_force * (init_pi * forcing_multiplier - pi) / params.force_time
@@ -281,27 +315,24 @@ class BOUTHESELPhysics_new:
             floor_terms["lnpe"] = floor_terms["lnpe"] + torch.where(pe < params.floor_pe, (params.floor_pe / torch.clamp(pe, min=1e-12) - 1.0) / params.floor_time, torch.zeros_like(pe))
             floor_terms["lnpi"] = floor_terms["lnpi"] + torch.where(pi < params.floor_pi, (params.floor_pi / torch.clamp(pi, min=1e-12) - 1.0) / params.floor_time, torch.zeros_like(pi))
 
+
         rhs_terms = interchange
-        lambda_terms = {name: perpendicular[name] + parallel[name] + forcing[name] + floor_terms[name] for name in interchange}
-        result = {
-            "state": {
-                **state, "n": n, "pe": pe, "pi": pi, "te": te, "ti": ti, "tau": tau, "vort_from_phi": vort_from_phi, "vort": vort, "B": b_field,
-                "sigma_open": sigma_open, "sigma_closed": sigma_closed, "sigma_force": sigma_force, "init_n": init_n, "init_pe": init_pe, "init_pi": init_pi,
-            },
-            "rhs_terms": rhs_terms,
-            "lambda_terms": lambda_terms,
-            "components": {"interchange": interchange, "perpendicular": perpendicular, "parallel": parallel, "forcing": forcing, "floor": floor_terms},
-            "residuals": {
-                "eq_lnn": ddt_lnn - rhs_terms["lnn"] - lambda_terms["lnn"],
-                "eq_lnpe": ddt_lnpe - rhs_terms["lnpe"] - lambda_terms["lnpe"],
-                "eq_lnpi": ddt_lnpi - rhs_terms["lnpi"] - lambda_terms["lnpi"],
-                "eq_vort": ddt_vort - rhs_terms["vort"] - lambda_terms["vort"],
-            },
+        lambda_terms = {
+            name: perpendicular[name] + parallel[name] + forcing[name] + floor_terms[name]
+            for name in interchange
         }
-        
+
+        return {
+            "eq_lnn": ddt_lnn - rhs_terms["lnn"] - lambda_terms["lnn"],
+            "eq_lnpe": ddt_lnpe - rhs_terms["lnpe"] - lambda_terms["lnpe"],
+            "eq_lnpi": ddt_lnpi - rhs_terms["lnpi"] - lambda_terms["lnpi"],
+            "eq_vort": ddt_vort - rhs_terms["vort"] - lambda_terms["vort"],
+        }
+
 
 
 if __name__ == "__main__":
     root = Path(__file__).resolve().parents[1] / "simulatorer" / "BOUT" / "BOUT-HESEL" / "data2"
     info = BOUTHESELInfo(root)
-    print(info.settings["hesel","ramp_a"])
+    phys = BOUTHESELPhysics(info)
+    print(phys.bc)
