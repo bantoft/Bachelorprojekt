@@ -176,9 +176,12 @@ class param:
     me: float
     mp: float
     pi: float
-    totalt_t: int
-    total_z: int
-    total_x: int
+    totalt_t: float
+    num_t: int
+    total_z: float
+    total_x: float
+    num_z: int
+    num_x: int
     a: int
     b0: float
     bt: float
@@ -295,3 +298,11 @@ class data:
     nuee: Optional[torch.Tensor]
     neoclass_correction_factor: Optional[torch.Tensor]
     lblob: Optional[torch.Tensor]
+
+
+@dataclass
+class standardization:
+    mean: Optional[torch.Tensor] = None
+    std: Optional[torch.Tensor] = None
+
+        

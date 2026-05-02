@@ -1,18 +1,14 @@
 from __future__ import annotations
 
-import re
 import ast
 import math
 import torch
 import xarray
 
 from pathlib import Path
-from types import SimpleNamespace
+from types import SimpleNamespace   
 
-
-from api.dump_helper import *
-
-
+from loss_PDE.api.dump_helper import *
 
 class BOUTHESELInfo:
     def __init__(self, root: Path):
@@ -27,6 +23,7 @@ class BOUTHESELInfo:
         self.functions = self._parse_functions()
         self.data = self._load_data()
         self.parameters = self._build_param()
+        self.standardized = self._std()
 
     def _read(self, path: Path) -> dict[tuple[str, str], str]:
         settings, section = {}, 'root'
@@ -184,7 +181,6 @@ class BOUTHESELInfo:
         return data_obj
 
     def _build_param(self):
-        from types import SimpleNamespace
         
         param = SimpleNamespace()
         param.e = 1.60e-19
@@ -192,9 +188,12 @@ class BOUTHESELInfo:
         param.me = 9.1093816e-31
         param.mp = 1.67262158e-27
         param.pi = math.pi
-        param.totalt_t = self.data.lnn.shape[0]  # type: ignore
-        param.total_z = self.data.lnn.shape[1]  # type: ignore
-        param.total_x = self.data.lnn.shape[2]  # type: ignore
+        param.num_t = self.data.lnn.shape[0]
+        param.totalt_t = float(self.settings["root", "timestep"]) * float(self.settings["root", "nout"])
+        param.num_x = int(self.settings["mesh", "nx"])
+        param.num_z = int(self.settings["mesh", "nz"])
+        param.total_x = float(self.settings["mesh", "lx"])
+        param.total_z = float(self.settings["mesh", "lz"])
 
         def get_param(name: str):
             key = name.lower()
@@ -245,39 +244,19 @@ class BOUTHESELInfo:
                              * param.oci)
         return param
 
-
-
-if __name__ == '__main__':
-    root = Path(__file__).resolve().parents[1] / 'simulatorer' / 'BOUT' / 'BOUT-HESEL' / 'data'
-    info = BOUTHESELInfo(root)
-    # for name, foon in  info.functions.__dict__.items():
-    #     print(name, foon)
-    for name, arr in info.data.__dict__.items():
-        print(name, arr.shape)
-    # for (name, key), value in info.settings.items():
-    #     print(f"{key} ({name}): {value}")
+    def _std(self):
+        return standardization(
+            mean=torch.tensor([
+                self.data.lnn.mean().item(),
+                self.data.lnpe.mean().item(),
+                self.data.lnpi.mean().item(),
+                self.data.phi.mean().item(),
+            ]),
+            std=torch.tensor([
+                self.data.lnn.std().item(),
+                self.data.lnpe.std().item(),
+                self.data.lnpi.std().item(),
+                self.data.phi.std().item(),
+            ]),
+        )
     
-#     "(rel, abs) error of data"
-#     for (name, array) in data.__dict__.items():
-#         x32 = array.float()
-#         abs_err = (array - x32.double()).abs().max()
-
-#         rel_err = (
-#             (array - x32.double()).abs()
-#             / array.abs().clamp(min=1e-12)
-#         ).max()
-#         print(f"({rel_err:.3e}, {abs_err:.3e}) \t {name}")
-
-
-#     param = info.parameters
-#     "(rel, abs) error of parameters"
-#     for (name, value) in param.__dict__.items():
-#         array = torch.as_tensor(value)
-#         x32 = torch.tensor(array, dtype=torch.float32)
-#         abs_err = (array - x32.double()).abs().max()
-
-#         rel_err = (
-#             (array - x32.double()).abs()
-#             / array.abs().clamp(min=1e-12)
-#         ).max()
-#         print(f"({rel_err:.3e}, {abs_err:.3e}) \t {name}")

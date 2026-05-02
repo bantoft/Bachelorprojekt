@@ -1,35 +1,62 @@
 from __future__ import annotations
 
-import torch
 import re
 import math
+import torch
 
 
-from pathlib import Path
 from torch import Tensor
 
-from bout_dump import BOUTHESELInfo
-from api.operators import grad_x, grad_z, grad_t, laplacian_perp, d2dx2, d2dz2, d2dxdz
+from loss_PDE.bout_dump import BOUTHESELInfo
+from loss_PDE.api.operators import grad_x, grad_z, grad_t, laplacian_perp, d2dx2, d2dz2, d2dxdz
 
 
 class BOUTHESELPhysics:
     def __init__(self, info: BOUTHESELInfo):
         self.info = info
+        
+        self.x_line = torch.linspace(0.0, self.info.parameters.total_x, self.info.parameters.num_x)
         self.ic = self._ic()
         self.bc = self._bc()
+        self.bd_res = self._bc_residuals
 
     def _ic(self) -> Tensor:
         """
         Returns initial condition: (3, nx)
         """
         # Create tensor from initial functions
-        x_line = torch.linspace(0, self.info.parameters.total_x - 1, self.info.parameters.total_x)
-        ic_n = self.info.functions.init_n_function(x_line)
-        ic_pe = self.info.functions.init_pe_function(x_line)
-        ic_pi = self.info.functions.init_pi_function(x_line)
-        return torch.stack((ic_n, ic_pe, ic_pi), dim=0)
-
+        ic_n = self.info.functions.init_n_function(self.x_line)
+        ic_pe = self.info.functions.init_pe_function(self.x_line)
+        ic_pi = self.info.functions.init_pi_function(self.x_line)
+        ic_vort = torch.full((self.info.parameters.num_x,), float(self.info.settings[("vort", "function")]),)
+        return torch.stack((ic_n, ic_pe, ic_pi, ic_vort), dim=0)
     
+
+    def _ic_residuals(
+        self,
+        model,
+        x: Tensor,
+        z: Tensor,
+        t: Tensor,
+    ):
+        state = model(0, x, z)
+        pi = torch.exp(state["lnpi"])
+        phi = state["phi"]
+        vort = state.get("vort")
+        params = self.info.parameters
+        if vort is None:
+            vort = laplacian_perp(phi + pi, x, z, params.total_x, params.total_z)
+
+        init_n, init_pe, init_pi, init_vort = self.ic
+
+        return {
+            "ic_n": state["lnn"][0, :, :] - init_n[:, None],
+            "ic_pe": state["lnpe"][0, :, :] - init_pe[:, None],
+            "ic_pi": state["lnpi"][0, :, :] - init_pi[:, None],
+            "ic_vort": vort[0, :, :] - init_vort[:, None],
+        }
+
+
     def _bc(self):
         """
         Returns boundary conditions: dict{field: dict{side: (bc_type, value)}}.
@@ -62,27 +89,53 @@ class BOUTHESELPhysics:
         return boundary_conditions
     
 
-    def _eq(
-        self,
-        model,
-        x: Tensor,
-        z: Tensor,
-        t: Tensor,
-    ):
-        
-
-
-        settings = self.info.settings
+    def _bc_residuals(self, model, x: Tensor, z: Tensor, t: Tensor):
+        state = model(t, x, z)
         params = self.info.parameters
 
+        pi = torch.exp(state["lnpi"])
+        phi = state["phi"]
+        vort = state.get("vort")
+        if vort is None:
+            vort = laplacian_perp(phi + pi, x, z, params.total_x, params.total_z)
 
+        fields = {
+            "lnn": state["lnn"],
+            "lnpe": state["lnpe"],
+            "lnpi": state["lnpi"],
+            "vort": vort,
+        }
+        z_derivatives = {
+            name: grad_z(field, z, params.total_z)
+            for name, field in fields.items()
+        }
+
+        def boundary_slice(field: Tensor, side: str) -> Tensor:
+            z_idx = 0 if side == "xin" else -1
+            if field.ndim < 3:
+                raise ValueError(f"Boundary field for side {side!r} must have at least 3 dimensions, got {field.shape}")
+            return field[:, :, z_idx]
+
+        residuals = {}
+        for field_name, side_map in self.bc.items():
+            field = fields.get(field_name)
+            ddz_field = z_derivatives.get(field_name)
+            if field is None or ddz_field is None:
+                continue
+
+            for side, (bc_type, bc_value) in side_map.items():
+                key = f"bc_{field_name}_{side}"
+                if "dirichlet" in bc_type.lower():
+                    residuals[key] = boundary_slice(field, side) - bc_value
+                elif "neumann" in bc_type.lower():
+                    residuals[key] = boundary_slice(ddz_field, side) - bc_value
+
+        return residuals
+
+    def _eq_residuals(self, model, x: Tensor, z: Tensor, t: Tensor):
+        settings = self.info.settings
+        params = self.info.parameters
         state = model(t, x, z)
-
-
-        t_eval = self.info.stepper_target_time(t)
-
-
-        
         lnn, lnpe, lnpi, phi = state["lnn"], state["lnpe"], state["lnpi"], state["phi"]
         n, pe, pi = torch.exp(lnn), torch.exp(lnpe), torch.exp(lnpi)
         lnte, lnti = lnpe - lnn, lnpi - lnn
@@ -94,15 +147,18 @@ class BOUTHESELPhysics:
 
         # Laver field lines
         # Kunne ikke finde funktion for B så tager den der er i data:
-        b_field = self.info.data.B
+        b_field = self.info.data.B.to(device=n.device, dtype=n.dtype).view(1, -1, 1)
         inv_b = 1.0 / torch.clamp(b_field, min=1e-12)
         
-        x_line = torch.linspace(0, params.total_x - 1, params.total_x)
-        sigma_open = self.info.functions.sigma_open_function(x_line)
-        sigma_closed = self.info.functions.sigma_closed_function(x_line)
-        sigma_force = self.info.functions.sigma_force_function(x_line)
 
-        init_n, init_pe, init_pi = self.ic
+        sigma_open = self.info.functions.sigma_open_function(self.x_line).to(device=n.device, dtype=n.dtype).view(1, -1, 1)
+        sigma_closed = self.info.functions.sigma_closed_function(self.x_line).to(device=n.device, dtype=n.dtype).view(1, -1, 1)
+        sigma_force = self.info.functions.sigma_force_function(self.x_line).to(device=n.device, dtype=n.dtype).view(1, -1, 1)
+
+        init_n, init_pe, init_pi, _ = self.ic
+        init_n = init_n.to(device=n.device, dtype=n.dtype).view(1, -1, 1)
+        init_pe = init_pe.to(device=n.device, dtype=n.dtype).view(1, -1, 1)
+        init_pi = init_pi.to(device=n.device, dtype=n.dtype).view(1, -1, 1)
         
 
         dphi_dx, dphi_dz = grad_x(phi, x, params.total_x), grad_z(phi, z, params.total_z)
@@ -110,10 +166,9 @@ class BOUTHESELPhysics:
         dlnn_dx, dlnn_dz = grad_x(lnn, x, params.total_x), grad_z(lnn, z, params.total_z)
         dlnte_dx, dlnte_dz = grad_x(lnte, x, params.total_x), grad_z(lnte, z, params.total_z)
         dlnti_dx, dlnti_dz = grad_x(lnti, x, params.total_x), grad_z(lnti, z, params.total_z)
-        ddt_lnn, ddt_lnpe, ddt_lnpi = grad_t(lnn, t, params.total_t), grad_t(lnpe, t, params.total_t), grad_t(lnpi, t, params.total_t)
-        vort_from_phi = laplacian_perp(phi + pi, x, z, params.total_x, params.total_z)
-        vort = vort_from_phi
-        ddt_vort = grad_t(vort, t, params.total_t)
+        ddt_lnn, ddt_lnpe, ddt_lnpi = grad_t(lnn, t, params.totalt_t), grad_t(lnpe, t, params.totalt_t), grad_t(lnpi, t, params.totalt_t)
+        vort = laplacian_perp(phi + pi, x, z, params.total_x, params.total_z)
+        ddt_vort = grad_t(vort, t, params.totalt_t)
 
         def brackets(f: Tensor, g: Tensor) -> Tensor:
             bracket = grad_x(f, x, params.total_x) * grad_z(g, z, params.total_z) - grad_z(f, z, params.total_z) * grad_x(g, x, params.total_x)
@@ -303,7 +358,7 @@ class BOUTHESELPhysics:
                 forcing_multiplier = torch.ones_like(pi)
                 if settings["hesel","h_mode"]:
 
-                    t_phys = t_eval * params.total_t
+                    t_phys = t * params.totalt_t
                     forcing_multiplier = 1.0 + (settings["hesel","ramp_a"] - 1.0) / 2.0 * (torch.tanh((t_phys - settings["hesel","ramp_t0"]) / settings["hesel","ramp_trans"]) - torch.tanh((t_phys - settings["hesel","ramp_t0"] - settings["hesel","ramp_peak"]) / settings["hesel","ramp_trans"]))
                 force_pe, force_pi = sigma_force * (init_pe - pe) / params.force_time, sigma_force * (init_pi * forcing_multiplier - pi) / params.force_time
                 forcing["lnpe"] = forcing["lnpe"] + force_pe / torch.clamp(pe, min=1e-12)
@@ -328,11 +383,3 @@ class BOUTHESELPhysics:
             "eq_lnpi": ddt_lnpi - rhs_terms["lnpi"] - lambda_terms["lnpi"],
             "eq_vort": ddt_vort - rhs_terms["vort"] - lambda_terms["vort"],
         }
-
-
-
-if __name__ == "__main__":
-    root = Path(__file__).resolve().parents[1] / "simulatorer" / "BOUT" / "BOUT-HESEL" / "data2"
-    info = BOUTHESELInfo(root)
-    phys = BOUTHESELPhysics(info)
-    print(phys.bc)
