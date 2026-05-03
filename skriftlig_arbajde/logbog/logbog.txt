@@ -19,13 +19,13 @@ Produkt udvikling:
             [x] Dirichlich (22/04)
     []  Oprydning i kode
         []  trænigs parametre til data klasse
-        []  bout-info
+        [x]  bout-info
     []  Colocation points
         [x] Alle uniforme (17/04)
-        []  Vælg punkter smartere
-            []  (y/z) Uniform-fordelt
-            []  x Normalt-fordelt omkring profile region
-            []  t Cummolativt-fordelt fra t=0 til t=T
+        [x]  Vælg punkter smartere
+            [x]  (y/z) Uniform-fordelt
+            [x]  x Normalt-fordelt omkring profile region
+            [x]  t Cummolativt-fordelt fra t=0 til t=T
     []  Træning
         []  Validering
         [x]  Få det til at køre (22/04)
@@ -37,8 +37,18 @@ Produkt udvikling:
 
 Rapport skriving:
     [] Kom nu i gang for helvede
+Artikler:
+    - https://arxiv.org/pdf/physics/9705023 (1997) Neural Networks for Solving Ordinary and Partial Differential Equations
+    - https://arxiv.org/pdf/1711.10561 (2017) Physics Informed Deep Learning (PINN)
+    - https://arxiv.org/pdf/2007.07442 (2020) A Method for Representing Periodic Functions and Enforcing Exactly Periodic Boundary Conditions with Deep Neural Networks
+    - https://arxiv.org/pdf/2402.00326 (2024) PIRATENETS
+    - https://arxiv.org/pdf/2108.08481 (2024) Neural Operator
+    - https://arxiv.org/pdf/2507.08972 (2025) Simulating Three-dimensional Turbulence with Physics-informed Neural Networks
 
 
+
+# Dette var en artikel som copilot selv indsætte
+- https://arxiv.org/pdf/2202.09441 Physics-informed neural networks for plasma physics-
 
 Fault detection for critical patientns, Early Warning Systems
 
@@ -81,7 +91,6 @@ Skriv til afdelingerne
             - Overlæge, PhD, postdoc, Intensiv Terapiklinik
             - Hans-christian.Thorsen-meyer.01@regionh.dk
         ! 
-
 
     Pause
     - ECGhttps://ocw.mit.edu/courses/18-152-introduction-to-partial-differential-equations-fall-2011/
