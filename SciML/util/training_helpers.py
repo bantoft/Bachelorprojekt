@@ -45,6 +45,8 @@ class TrainConfig:
     epochs: int
     lr: float
     root: Path
+    batch_size: int
+    num_workers: int
     eq_weight: float
     early_stopping_patience: int
     early_stopping_min_delta: float
@@ -69,7 +71,6 @@ def _log_step(epoch: int, batch: int, global_step: int, losses: dict[str, float]
             "train_step/ic_loss": losses["ic"],
             "train_step/bc_loss": losses["bc"],
             "train_step/eq_loss": losses["eq"],
-            "train_step/eq_raw_loss": losses["eq_raw"],
         },
         step=global_step,
     )
@@ -92,7 +93,6 @@ def _log_epoch_summary(
         "epoch_summary/ic_loss": averages["ic"],
         "epoch_summary/bc_loss": averages["bc"],
         "epoch_summary/eq_loss": averages["eq"],
-        "epoch_summary/eq_raw_loss": averages["eq_raw"],
         "epoch_summary/best_total_loss": best_total_loss,
         "epoch_summary/epochs_without_improvement": epochs_without_improvement,
     }
@@ -103,7 +103,6 @@ def _log_epoch_summary(
             "epoch_summary/val_ic_loss": val_averages["ic"],
             "epoch_summary/val_bc_loss": val_averages["bc"],
             "epoch_summary/val_eq_loss": val_averages["eq"],
-            "epoch_summary/val_eq_raw_loss": val_averages["eq_raw"],
         })
     if test_averages is not None:
         payload.update({
@@ -112,7 +111,6 @@ def _log_epoch_summary(
             "epoch_summary/test_ic_loss": test_averages["ic"],
             "epoch_summary/test_bc_loss": test_averages["bc"],
             "epoch_summary/test_eq_loss": test_averages["eq"],
-            "epoch_summary/test_eq_raw_loss": test_averages["eq_raw"],
         })
     wandb.log(payload, step=global_step)
 

@@ -13,7 +13,6 @@ def _tensor_aware(math_func, torch_func):
             tensor_args = tuple(arg if torch.is_tensor(arg) else torch.as_tensor(arg) for arg in args)
             return torch_func(*tensor_args)
         return math_func(*args)
-
     return wrapped
 
 

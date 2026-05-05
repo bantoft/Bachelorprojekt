@@ -6,7 +6,7 @@ from torch import nn
 
 from loss_PDE.bout_dump import BOUTHESELInfo
 from loss_PDE.bout_phys import BOUTHESELPhys
-from util.data_loader import BOUTDataset
+from util.data_loader import BOUTDataset, make_time_split_loaders
 from util.model import PINN
 from util.structure import NN_STRUCTURE
 from util.training_helpers import (
@@ -22,20 +22,27 @@ from util.training_helpers import (
 
 
 def move_sample_to_device(sample: dict, device: torch.device) -> dict:
-    moved_sample = {}
-    for key, value in sample.items():
-        if isinstance(value, dict):
-            moved_sample[key] = {
-                name: tensor.to(device)
-                for name, tensor in value.items()
-            }
-            continue
+    if isinstance(sample, dict):
+        return {
+            key: move_sample_to_device(value, device)
+            for key, value in sample.items()
+        }
 
-        tensor = value.to(device)
-        if key in {"x", "z", "t"}:
-            tensor = tensor.detach().requires_grad_(True)
-        moved_sample[key] = tensor
+    moved_sample = {}
+    tensor = sample.to(device)
+    moved_sample = tensor
     return moved_sample
+
+
+def prepare_window_batch(batch: dict, device: torch.device) -> tuple[dict, dict, dict]:
+    previous_sample = move_sample_to_device(batch["previous"], device)
+    current_sample = move_sample_to_device(batch["current"], device)
+    next_sample = move_sample_to_device(batch["next"], device)
+
+    for sample in (previous_sample, current_sample, next_sample):
+        for key in ("x", "z", "t"):
+            sample[key] = sample[key].detach().requires_grad_(True)
+    return previous_sample, current_sample, next_sample
 
 
 def print_tensor_shapes(label: str, tensors: dict[str, torch.Tensor]) -> None:
@@ -127,29 +134,17 @@ def compute_step_losses(
     return losses, artifacts
 
 
-def _make_time_split_ranges(num_time_steps: int) -> tuple[range, range, range, int, int]:
-    train_end = max(int(num_time_steps * 0.8), 3)
-    val_end = max(int(num_time_steps * 0.9), train_end + 3)
-    val_end = min(val_end, num_time_steps)
-
-    train_steps = range(1, max(1, train_end - 1))
-    val_steps = range(train_end + 1, max(train_end + 1, val_end - 1))
-    test_steps = range(val_end + 1, max(val_end + 1, num_time_steps - 1))
-    return train_steps, val_steps, test_steps, train_end, val_end
-
-
 def _evaluate_split(
     *,
-    step_indices: range,
+    loader,
     model: PINN,
     physics: BOUTHESELPhys,
-    dataset: BOUTDataset,
     standardization,
     criterion: nn.Module,
     device: torch.device,
     eq_weight: float,
 ) -> dict[str, float] | None:
-    if len(step_indices) == 0:
+    if loader is None or len(loader.dataset) == 0:
         return None
 
     model_was_training = model.training
@@ -164,10 +159,9 @@ def _evaluate_split(
     }
 
     try:
-        for step_index in step_indices:
-            previous_sample = move_sample_to_device(dataset[step_index - 1], device)
-            current_sample = move_sample_to_device(dataset[step_index], device)
-            next_sample = move_sample_to_device(dataset[step_index + 1], device)
+        for batch in loader:
+            previous_sample, current_sample, next_sample = prepare_window_batch(batch, device)
+            batch_items = next_sample["t"].shape[0]
             losses, _ = compute_step_losses(
                 model=model,
                 physics=physics,
@@ -179,12 +173,12 @@ def _evaluate_split(
                 eq_weight=eq_weight,
             )
             for name in totals:
-                totals[name] += float(losses[name].item())
+                totals[name] += float(losses[name].item()) * batch_items
     finally:
         if model_was_training:
             model.train()
 
-    num_steps = len(step_indices)
+    num_steps = len(loader.dataset)
     return {
         name: value / num_steps
         for name, value in totals.items()
@@ -196,6 +190,8 @@ if __name__ == "__main__":
         epochs=5,
         lr=1e-3,
         root=Path(__file__).parents[1] / "simulatorer/BOUT/BOUT-HESEL/data",
+        batch_size=256,
+        num_workers=2,
         eq_weight=500.0,
         early_stopping_patience=10,
         early_stopping_min_delta=1e-4,
@@ -207,7 +203,13 @@ if __name__ == "__main__":
     info = BOUTHESELInfo(config.root)
     physics = BOUTHESELPhys(info)
     dataset = BOUTDataset(info)
-    train_step_indices, val_step_indices, test_step_indices, train_end, val_end = _make_time_split_ranges(len(dataset))
+    train_loader, val_loader, test_loader, split_info = make_time_split_loaders(
+        dataset,
+        batch_size=config.batch_size,
+        num_workers=config.num_workers,
+    )
+    train_end = split_info["train_time_end_exclusive"]
+    val_end = split_info["val_time_end_exclusive"]
 
     model = PINN(NN_STRUCTURE).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=config.lr)
@@ -246,14 +248,16 @@ if __name__ == "__main__":
             "num_time_steps": len(dataset),
             "train_time_end_exclusive": train_end,
             "val_time_end_exclusive": val_end,
-            "num_train_steps": len(train_step_indices),
-            "num_val_steps": len(val_step_indices),
-            "num_test_steps": len(test_step_indices),
+            "num_train_steps": split_info["num_train_steps"],
+            "num_val_steps": split_info["num_val_steps"],
+            "num_test_steps": split_info["num_test_steps"],
         }],
     }
     training_config = {
         "epochs": config.epochs,
         "lr": config.lr,
+        "batch_size": config.batch_size,
+        "num_workers": config.num_workers,
         "device": str(device),
         "eq_weight": config.eq_weight,
         "early_stopping_patience": config.early_stopping_patience,
@@ -270,9 +274,9 @@ if __name__ == "__main__":
             "test_ratio": 0.1,
             "train_time_end_exclusive": train_end,
             "val_time_end_exclusive": val_end,
-            "num_train_steps": len(train_step_indices),
-            "num_val_steps": len(val_step_indices),
-            "num_test_steps": len(test_step_indices),
+            "num_train_steps": split_info["num_train_steps"],
+            "num_val_steps": split_info["num_val_steps"],
+            "num_test_steps": split_info["num_test_steps"],
         },
     }
     run = _init_wandb(config=training_config)
@@ -296,11 +300,9 @@ if __name__ == "__main__":
                 "eq_raw": 0.0,
             }
 
-            for batch_index, step_index in enumerate(train_step_indices, start=1):
-                previous_sample = move_sample_to_device(dataset[step_index - 1], device)
-                current_sample = move_sample_to_device(dataset[step_index], device)
-                next_sample = move_sample_to_device(dataset[step_index + 1], device)
-
+            for batch_index, batch in enumerate(train_loader, start=1):
+                previous_sample, current_sample, next_sample = prepare_window_batch(batch, device)
+                batch_items = next_sample["t"].shape[0]
                 optimizer.zero_grad()
                 losses, last_artifacts = compute_step_losses(
                     model=model,
@@ -317,31 +319,29 @@ if __name__ == "__main__":
 
                 log_losses = {name: float(value.item()) for name, value in losses.items()}
                 for name in epoch_totals:
-                    epoch_totals[name] += log_losses[name]
+                    epoch_totals[name] += log_losses[name] * batch_items
 
                 global_step += 1
                 _log_step(epoch, batch_index, global_step, log_losses)
 
-            num_steps = len(train_step_indices)
+            num_steps = len(train_loader.dataset)
             averages = {
                 name: value / num_steps
                 for name, value in epoch_totals.items()
             }
             val_averages = _evaluate_split(
-                step_indices=val_step_indices,
+                loader=val_loader,
                 model=model,
                 physics=physics,
-                dataset=dataset,
                 standardization=standardization,
                 criterion=criterion,
                 device=device,
                 eq_weight=config.eq_weight,
             )
             test_averages = _evaluate_split(
-                step_indices=test_step_indices,
+                loader=test_loader,
                 model=model,
                 physics=physics,
-                dataset=dataset,
                 standardization=standardization,
                 criterion=criterion,
                 device=device,
