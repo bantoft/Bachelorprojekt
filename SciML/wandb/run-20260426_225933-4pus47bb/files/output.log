@@ -1,3 +1,0 @@
-Training on device: cuda
-Epoch 1/10 | total=nan | data=nan | eq=nan | bc=nan | ic=nan | val_data=nan
-Gemte bedste model til /home/andreas_a/Desktop/Bachelorprojekt/SciML/data/trained_pinn_2026-04-26_22-59-32.pt
