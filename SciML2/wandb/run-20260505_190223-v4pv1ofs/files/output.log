@@ -1,0 +1,4 @@
+Training on device: cuda
+Time split | train: [0, 247) | val: [247, 278) | test: [278, 309)
+Gemte bedste model til /home/andreas_a/Desktop/Bachelorprojekt/SciML2/data/trained_pinn_2026-05-05_19-02-22.pt
+Gemte training history til /home/andreas_a/Desktop/Bachelorprojekt/SciML2/results/training_history.pt

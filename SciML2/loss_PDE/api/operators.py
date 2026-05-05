@@ -4,9 +4,10 @@ import torch
 
 from torch import Tensor
 
-def grad(f: Tensor, coord: Tensor, scale: float = 1.0, create_graph: bool = True) -> Tensor:
+
+def grad(f: Tensor, coord: Tensor, create_graph: bool = True) -> Tensor:
     if not f.requires_grad:
-        return (coord * 0.0) / scale
+        return coord * 0.0
     raw = torch.autograd.grad(
         f,
         coord,
@@ -18,32 +19,32 @@ def grad(f: Tensor, coord: Tensor, scale: float = 1.0, create_graph: bool = True
     )[0]
     if raw is None:
         raw = coord * 0.0
-    return raw / scale
+    return raw
 
 
-def grad_x(f: Tensor, x: Tensor, x_scale: float) -> Tensor:
-    return grad(f, x, scale=x_scale)
+def grad_x(f: Tensor, x: Tensor) -> Tensor:
+    return grad(f, x)
 
 
-def grad_z(f: Tensor, z: Tensor, z_scale: float) -> Tensor:
-    return grad(f, z, scale=z_scale)
+def grad_z(f: Tensor, z: Tensor) -> Tensor:
+    return grad(f, z)
 
 
-def grad_t(f: Tensor, t: Tensor, t_scale: float) -> Tensor:
-    return grad(f, t, scale=t_scale)
+def grad_t(f: Tensor, t: Tensor) -> Tensor:
+    return grad(f, t)
 
 
-def d2dx2(f: Tensor, x: Tensor, x_scale: float) -> Tensor:
-    return grad_x(grad_x(f, x, x_scale), x, x_scale)
+def d2dx2(f: Tensor, x: Tensor) -> Tensor:
+    return grad_x(grad_x(f, x), x)
 
 
-def d2dz2(f: Tensor, z: Tensor, z_scale: float) -> Tensor:
-    return grad_z(grad_z(f, z, z_scale), z, z_scale)
+def d2dz2(f: Tensor, z: Tensor) -> Tensor:
+    return grad_z(grad_z(f, z), z)
 
 
-def d2dxdz(f: Tensor, x: Tensor, z: Tensor, x_scale: float, z_scale: float) -> Tensor:
-    return grad_z(grad_x(f, x, x_scale), z, z_scale)
+def d2dxdz(f: Tensor, x: Tensor, z: Tensor) -> Tensor:
+    return grad_z(grad_x(f, x), z)
 
 
-def laplacian_perp(f: Tensor, x: Tensor, z: Tensor, x_scale: float, z_scale: float) -> Tensor:
-    return d2dx2(f, x, x_scale) + d2dz2(f, z, z_scale)
+def laplacian_perp(f: Tensor, x: Tensor, z: Tensor) -> Tensor:
+    return d2dx2(f, x) + d2dz2(f, z)

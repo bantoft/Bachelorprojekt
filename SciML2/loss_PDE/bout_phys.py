@@ -7,53 +7,73 @@ import torch
 
 from torch import Tensor
 
+from util.model import PINN
 from loss_PDE.bout_dump import BOUTHESELInfo
 from loss_PDE.api.operators import grad_x, grad_z, grad_t, laplacian_perp, d2dx2, d2dz2, d2dxdz
 
 
-class BOUTHESELPhysics:
+class BOUTHESELPhys:
     def __init__(self, info: BOUTHESELInfo):
         self.info = info
-        
-        self.x_line = torch.linspace(0.0, self.info.parameters.total_x, self.info.parameters.num_x)
+        self.x_line = self.info.x_line
+
+
         self.ic = self._ic()
         self.bc = self._bc()
+        self.ic_res = self._ic_residuals
         self.bd_res = self._bc_residuals
+        self.eq_res = self._eq_residuals
+
+    def _broadcast_x_profile(self, values: Tensor, reference: Tensor) -> Tensor:
+        values = values.to(reference.dtype).to(reference.device)
+        view_shape = (1,) * max(reference.ndim - 3, 0) + (values.shape[0], 1, 1)
+        return values.view(view_shape)
+
+    def _mean_z(self, values: Tensor) -> Tensor:
+        return values.mean(dim=-2, keepdim=True)
+
+    def _boundary_slice(self, field: Tensor, side: str) -> Tensor:
+        x_idx = 0 if side == "xin" else -1
+        return field.select(dim=-3, index=x_idx)
+
+    def _function_x_line(self) -> Tensor:
+        full_length = torch.clamp(self.x_line[-1], min=torch.finfo(self.x_line.dtype).eps)
+        return self.x_line / full_length
+    
 
     def _ic(self) -> Tensor:
         """
         Returns initial condition: (3, nx)
         """
-        # Create tensor from initial functions
-        ic_n = self.info.functions.init_n_function(self.x_line)
-        ic_pe = self.info.functions.init_pe_function(self.x_line)
-        ic_pi = self.info.functions.init_pi_function(self.x_line)
+        x = self._function_x_line()
+        ic_n =  torch.log(torch.clamp(self.info.functions.init_n_function(x), min=1e-12))
+        ic_pe = torch.log(torch.clamp(self.info.functions.init_pe_function(x), min=1e-12))
+        ic_pi = torch.log(torch.clamp(self.info.functions.init_pi_function(x), min=1e-12))
         ic_vort = torch.full((self.info.parameters.num_x,), float(self.info.settings[("vort", "function")]),)
         return torch.stack((ic_n, ic_pe, ic_pi, ic_vort), dim=0)
-    
+
 
     def _ic_residuals(
         self,
-        model,
+        state_t: dict[str, Tensor], # Predicted state at initial time step (batch, 4, nx, nz)
         x: Tensor,
         z: Tensor,
-        t: Tensor,
     ):
-        state = model(0, x, z)
-        pi = torch.exp(state["lnpi"])
-        phi = state["phi"]
-        vort = state.get("vort")
-        params = self.info.parameters
-        if vort is None:
-            vort = laplacian_perp(phi + pi, x, z, params.total_x, params.total_z)
+        pi = state_t["lnpi"]
+        phi = state_t["phi"]
+        vort = laplacian_perp(phi + pi, x, z)
 
         init_n, init_pe, init_pi, init_vort = self.ic
+        init_n = self._broadcast_x_profile(init_n, state_t["lnn"])
+        init_pe = self._broadcast_x_profile(init_pe, state_t["lnpe"])
+        init_pi = self._broadcast_x_profile(init_pi, state_t["lnpi"])
+        init_vort = self._broadcast_x_profile(init_vort, state_t["phi"])
 
         return {
-            "ic_n": state["lnn"][0, :, :] - init_n[:, None],
-            "ic_pe": state["lnpe"][0, :, :] - init_pe[:, None],
-            "ic_pi": state["lnpi"][0, :, :] - init_pi[:, None],
-            "ic_vort": vort[0, :, :] - init_vort[:, None],
+            "ic_n": state_t["lnn"] - init_n,
+            "ic_pe": state_t["lnpe"] - init_pe,
+            "ic_pi": state_t["lnpi"] - init_pi,
+            "ic_vort": vort - init_vort,
         }
 
 
@@ -89,15 +109,15 @@ class BOUTHESELPhysics:
         return boundary_conditions
     
 
-    def _bc_residuals(self, model, x: Tensor, z: Tensor, t: Tensor):
-        state = model(t, x, z)
-        params = self.info.parameters
-
+    def _bc_residuals(
+        self,
+        state: dict[str, Tensor], # Predicted state at current time step
+        x: Tensor,
+        z: Tensor,
+    ):
         pi = torch.exp(state["lnpi"])
         phi = state["phi"]
-        vort = state.get("vort")
-        if vort is None:
-            vort = laplacian_perp(phi + pi, x, z, params.total_x, params.total_z)
+        vort = laplacian_perp(phi + pi, x, z)
 
         fields = {
             "lnn": state["lnn"],
@@ -105,77 +125,81 @@ class BOUTHESELPhysics:
             "lnpi": state["lnpi"],
             "vort": vort,
         }
-        z_derivatives = {
-            name: grad_z(field, z, params.total_z)
+        x_derivatives = {
+            name: grad_x(field, x)
             for name, field in fields.items()
         }
-
-        def boundary_slice(field: Tensor, side: str) -> Tensor:
-            z_idx = 0 if side == "xin" else -1
-            if field.ndim < 3:
-                raise ValueError(f"Boundary field for side {side!r} must have at least 3 dimensions, got {field.shape}")
-            return field[:, :, z_idx]
 
         residuals = {}
         for field_name, side_map in self.bc.items():
             field = fields.get(field_name)
-            ddz_field = z_derivatives.get(field_name)
-            if field is None or ddz_field is None:
+            ddx_field = x_derivatives.get(field_name)
+            if field is None or ddx_field is None:
                 continue
 
             for side, (bc_type, bc_value) in side_map.items():
                 key = f"bc_{field_name}_{side}"
                 if "dirichlet" in bc_type.lower():
-                    residuals[key] = boundary_slice(field, side) - bc_value
+                    residuals[key] = self._boundary_slice(field, side) - bc_value
                 elif "neumann" in bc_type.lower():
-                    residuals[key] = boundary_slice(ddz_field, side) - bc_value
+                    residuals[key] = self._boundary_slice(ddx_field, side) - bc_value
 
         return residuals
 
-    def _eq_residuals(self, model, x: Tensor, z: Tensor, t: Tensor):
+    def _eq_residuals(
+        self,
+        state: dict[str, Tensor], # Predicted state at current time step
+        x: Tensor,
+        z: Tensor,
+        t: Tensor,
+    ):
+        
         settings = self.info.settings
         params = self.info.parameters
-        state = model(t, x, z)
+
         lnn, lnpe, lnpi, phi = state["lnn"], state["lnpe"], state["lnpi"], state["phi"]
         n, pe, pi = torch.exp(lnn), torch.exp(lnpe), torch.exp(lnpi)
         lnte, lnti = lnpe - lnn, lnpi - lnn
         te, ti = torch.exp(lnte), torch.exp(lnti)
         tau = torch.exp(lnti - lnte)
         cs_hot = torch.sqrt(torch.clamp(ti + te, min=1e-12))
-        avg_n, avg_te, avg_ti, avg_phi, avg_tau, avg_cs_hot = (value.mean(dim=2, keepdim=True) for value in (n, te, ti, phi, tau, cs_hot) )
+        avg_n, avg_te, avg_ti, avg_phi, avg_tau, avg_cs_hot = (
+            self._mean_z(value) for value in (n, te, ti, phi, tau, cs_hot)
+        )
         
 
         # Laver field lines
         # Kunne ikke finde funktion for B så tager den der er i data:
-        b_field = self.info.data.B.to(device=n.device, dtype=n.dtype).view(1, -1, 1)
+        b_field = self._broadcast_x_profile(self.info.data.B, n)
         inv_b = 1.0 / torch.clamp(b_field, min=1e-12)
         
 
-        sigma_open = self.info.functions.sigma_open_function(self.x_line).to(device=n.device, dtype=n.dtype).view(1, -1, 1)
-        sigma_closed = self.info.functions.sigma_closed_function(self.x_line).to(device=n.device, dtype=n.dtype).view(1, -1, 1)
-        sigma_force = self.info.functions.sigma_force_function(self.x_line).to(device=n.device, dtype=n.dtype).view(1, -1, 1)
+        x_func = self._function_x_line()
+        sigma_open = self._broadcast_x_profile(self.info.functions.sigma_open_function(x_func), n)
+        sigma_closed = self._broadcast_x_profile(self.info.functions.sigma_closed_function(x_func), n)
+        sigma_force = self._broadcast_x_profile(self.info.functions.sigma_force_function(x_func), n)
 
         init_n, init_pe, init_pi, _ = self.ic
-        init_n = init_n.to(device=n.device, dtype=n.dtype).view(1, -1, 1)
-        init_pe = init_pe.to(device=n.device, dtype=n.dtype).view(1, -1, 1)
-        init_pi = init_pi.to(device=n.device, dtype=n.dtype).view(1, -1, 1)
+        init_n = self._broadcast_x_profile(init_n, n)
+        init_pe = self._broadcast_x_profile(init_pe, n)
+        init_pi = self._broadcast_x_profile(init_pi, n)
         
 
-        dphi_dx, dphi_dz = grad_x(phi, x, params.total_x), grad_z(phi, z, params.total_z)
-        dpi_dx, dpi_dz = grad_x(pi, x, params.total_x), grad_z(pi, z, params.total_z)
-        dlnn_dx, dlnn_dz = grad_x(lnn, x, params.total_x), grad_z(lnn, z, params.total_z)
-        dlnte_dx, dlnte_dz = grad_x(lnte, x, params.total_x), grad_z(lnte, z, params.total_z)
-        dlnti_dx, dlnti_dz = grad_x(lnti, x, params.total_x), grad_z(lnti, z, params.total_z)
-        ddt_lnn, ddt_lnpe, ddt_lnpi = grad_t(lnn, t, params.totalt_t), grad_t(lnpe, t, params.totalt_t), grad_t(lnpi, t, params.totalt_t)
-        vort = laplacian_perp(phi + pi, x, z, params.total_x, params.total_z)
-        ddt_vort = grad_t(vort, t, params.totalt_t)
+        dphi_dx, dphi_dz = grad_x(phi, x), grad_z(phi, z)
+        dpi_dx, dpi_dz = grad_x(pi, x), grad_z(pi, z)
+        dlnn_dx, dlnn_dz = grad_x(lnn, x), grad_z(lnn, z)
+        dlnte_dx, dlnte_dz = grad_x(lnte, x), grad_z(lnte, z)
+        dlnti_dx, dlnti_dz = grad_x(lnti, x), grad_z(lnti, z)
+        ddt_lnn, ddt_lnpe, ddt_lnpi = grad_t(lnn, t), grad_t(lnpe, t), grad_t(lnpi, t)
+        vort = laplacian_perp(phi + pi, x, z)
+        ddt_vort = grad_t(vort, t)
 
         def brackets(f: Tensor, g: Tensor) -> Tensor:
-            bracket = grad_x(f, x, params.total_x) * grad_z(g, z, params.total_z) - grad_z(f, z, params.total_z) * grad_x(g, x, params.total_x)
+            bracket = grad_x(f, x) * grad_z(g, z) - grad_z(f, z) * grad_x(g, x)
             return -bracket if settings["hesel", "right_handed_coord"] else bracket
 
         def curvature(f: Tensor) -> Tensor:
-            curv = (2.0 if settings["hesel", "double_curvature_coeff"] else 1.0) * params.rhos / (params.rmajor + params.rminor) * grad_z(f, z, params.total_z)
+            curv = (2.0 if settings["hesel", "double_curvature_coeff"] else 1.0) * params.rhos / (params.rmajor + params.rminor) * grad_z(f, z)
             return -curv if settings["hesel", "right_handed_coord"] else curv
 
         interchange = {name: torch.zeros_like(vort if name == "vort" else lnn) for name in ("lnn", "lnpe", "lnpi", "vort")}
@@ -211,37 +235,37 @@ class BOUTHESELPhysics:
             u_r_z = torch.zeros_like(n)
         elif settings["hesel", "collisional_model"] == 1:
             collisional = {
-                "lnn": params.norm_de * (1.0 + params.ti0 / params.te0) * laplacian_perp(lnn, x, z, params.total_x, params.total_z),
-                "lnpe": 2.0 / 3.0 * params.norm_de * (1.0 + params.ti0 / params.te0) * laplacian_perp(lnpe, x, z, params.total_x, params.total_z),
-                "lnpi": 2.0 / 3.0 * 2.0 * params.norm_di * laplacian_perp(lnti, x, z, params.total_x, params.total_z),
-                "vort": params.norm_eta * laplacian_perp(vort, x, z, params.total_x, params.total_z),
+                "lnn": params.norm_de * (1.0 + params.ti0 / params.te0) * laplacian_perp(lnn, x, z),
+                "lnpe": 2.0 / 3.0 * params.norm_de * (1.0 + params.ti0 / params.te0) * laplacian_perp(lnpe, x, z),
+                "lnpi": 2.0 / 3.0 * 2.0 * params.norm_di * laplacian_perp(lnti, x, z),
+                "vort": params.norm_eta * laplacian_perp(vort, x, z),
             }
             u_r_x = torch.zeros_like(n)
             u_r_z = torch.zeros_like(n)
         elif settings["hesel", "collisional_model"] == 2:
-            deln_rcpn = laplacian_perp(lnn, x, z, params.total_x, params.total_z) + dlnn_dx * dlnn_dx + dlnn_dz * dlnn_dz
-            delte_rcpte = laplacian_perp(lnte, x, z, params.total_x, params.total_z) + dlnte_dx * dlnte_dx + dlnte_dz * dlnte_dz
-            delti_rcpti = laplacian_perp(lnti, x, z, params.total_x, params.total_z) + dlnti_dx * dlnti_dx + dlnti_dz * dlnti_dz
+            deln_rcpn = laplacian_perp(lnn, x, z) + dlnn_dx * dlnn_dx + dlnn_dz * dlnn_dz
+            delte_rcpte = laplacian_perp(lnte, x, z) + dlnte_dx * dlnte_dx + dlnte_dz * dlnte_dz
+            delti_rcpti = laplacian_perp(lnti, x, z) + dlnti_dx * dlnti_dx + dlnti_dz * dlnti_dz
             gradn_gradte_rcppe = dlnn_dx * dlnte_dx + dlnn_dz * dlnte_dz
             gradn_gradti_rcppi = dlnn_dx * dlnti_dx + dlnn_dz * dlnti_dz
             collisional = {
                 "lnn": dn * deln_rcpn,
                 "lnpe": 2.0 / 3.0 * dn * (deln_rcpn + gradn_gradte_rcppe) + 2.0 / 3.0 * 29.0 / 12.0 * de * (delte_rcpte + gradn_gradte_rcppe),
                 "lnpi": 2.0 / 3.0 * 5.0 / 2.0 * dn * (deln_rcpn + gradn_gradti_rcppi) + 2.0 / 3.0 * 2.0 * di * (delti_rcpti + gradn_gradti_rcppi),
-                "vort": params.norm_eta * laplacian_perp(vort, x, z, params.total_x, params.total_z),
+                "vort": params.norm_eta * laplacian_perp(vort, x, z),
             }
             u_r_x, u_r_z = -dn * dlnn_dx, -dn * dlnn_dz
         elif settings["hesel", "collisional_model"] == 3:
-            delte_rcpte = laplacian_perp(lnte, x, z, params.total_x, params.total_z) + dlnte_dx * dlnte_dx + dlnte_dz * dlnte_dz
-            delti_rcpti = laplacian_perp(lnti, x, z, params.total_x, params.total_z) + dlnti_dx * dlnti_dx + dlnti_dz * dlnti_dz
+            delte_rcpte = laplacian_perp(lnte, x, z) + dlnte_dx * dlnte_dx + dlnte_dz * dlnte_dz
+            delti_rcpti = laplacian_perp(lnti, x, z) + dlnti_dx * dlnti_dx + dlnti_dz * dlnti_dz
             u_r_x = -de * ((1.0 + ti_rcpte) * dlnn_dx + dlnti_dx * ti_rcpte - 0.5 * dlnte_dx)
             u_r_z = -de * ((1.0 + ti_rcpte) * dlnn_dz + dlnti_dz * ti_rcpte - 0.5 * dlnte_dz)
-            div_gamma_r_rcpn = dlnn_dx * u_r_x + dlnn_dz * u_r_z + grad_x(u_r_x, x, params.total_x) + grad_z(u_r_z, z, params.total_z)
+            div_gamma_r_rcpn = dlnn_dx * u_r_x + dlnn_dz * u_r_z + grad_x(u_r_x, x) + grad_z(u_r_z, z)
             collisional = {
                 "lnn": -div_gamma_r_rcpn,
-                "lnpe": -2.0 / 3.0 * (div_gamma_r_rcpn + dlnte_dx * u_r_x + dlnte_dz * u_r_z) + 2.0 / 3.0 * 29.0 / 12.0 * ((grad_x(de, x, params.total_x) + de * dlnn_dx) * dlnte_dx + (grad_z(de, z, params.total_z) + de * dlnn_dz) * dlnte_dz + de * delte_rcpte),
-                "lnpi": -2.0 / 3.0 * 5.0 / 2.0 * (div_gamma_r_rcpn + dlnti_dx * u_r_x + dlnti_dz * u_r_z) + 2.0 / 3.0 * 2.0 * ((grad_x(di, x, params.total_x) + di * dlnn_dx) * dlnti_dx + (grad_z(di, z, params.total_z) + di * dlnn_dz) * dlnti_dz + di * delti_rcpti),
-                "vort": params.norm_eta * laplacian_perp(vort, x, z, params.total_x, params.total_z),
+                "lnpe": -2.0 / 3.0 * (div_gamma_r_rcpn + dlnte_dx * u_r_x + dlnte_dz * u_r_z) + 2.0 / 3.0 * 29.0 / 12.0 * ((grad_x(de, x) + de * dlnn_dx) * dlnte_dx + (grad_z(de, z) + de * dlnn_dz) * dlnte_dz + de * delte_rcpte),
+                "lnpi": -2.0 / 3.0 * 5.0 / 2.0 * (div_gamma_r_rcpn + dlnti_dx * u_r_x + dlnti_dz * u_r_z) + 2.0 / 3.0 * 2.0 * ((grad_x(di, x) + di * dlnn_dx) * dlnti_dx + (grad_z(di, z) + di * dlnn_dz) * dlnti_dz + di * delti_rcpti),
+                "vort": params.norm_eta * laplacian_perp(vort, x, z),
             }
         else:
             raise ValueError("Unsupported collisional_model option from BOUT-HESEL.")
@@ -267,7 +291,7 @@ class BOUTHESELPhysics:
         viscous = {name: torch.zeros_like(term) for name, term in interchange.items()}
         if settings["hesel", "perpend_viscous_heating"]:
             field_sum = phi + pi
-            qviscous = 3.0 / 10.0 * di * ((d2dx2(field_sum, x, params.total_x) - d2dz2(field_sum, z, params.total_z)) ** 2 + 4.0 * d2dxdz(field_sum, x, z, params.total_x, params.total_z) ** 2) / torch.clamp(ti, min=1e-12)
+            qviscous = 3.0 / 10.0 * di * ((d2dx2(field_sum, x) - d2dz2(field_sum, z)) ** 2 + 4.0 * d2dxdz(field_sum, x, z) ** 2) / torch.clamp(ti, min=1e-12)
             viscous["lnpi"] = 2.0 / 3.0 * qviscous
 
         perpendicular = {name: collisional[name] + heat_exchange[name] + viscous[name] for name in interchange}
@@ -357,8 +381,7 @@ class BOUTHESELPhysics:
             if not settings["hesel","not_p_force"]:
                 forcing_multiplier = torch.ones_like(pi)
                 if settings["hesel","h_mode"]:
-
-                    t_phys = t * params.totalt_t
+                    t_phys = t
                     forcing_multiplier = 1.0 + (settings["hesel","ramp_a"] - 1.0) / 2.0 * (torch.tanh((t_phys - settings["hesel","ramp_t0"]) / settings["hesel","ramp_trans"]) - torch.tanh((t_phys - settings["hesel","ramp_t0"] - settings["hesel","ramp_peak"]) / settings["hesel","ramp_trans"]))
                 force_pe, force_pi = sigma_force * (init_pe - pe) / params.force_time, sigma_force * (init_pi * forcing_multiplier - pi) / params.force_time
                 forcing["lnpe"] = forcing["lnpe"] + force_pe / torch.clamp(pe, min=1e-12)

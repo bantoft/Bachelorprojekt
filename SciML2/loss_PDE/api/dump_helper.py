@@ -176,12 +176,15 @@ class param:
     me: float
     mp: float
     pi: float
-    totalt_t: float
     num_t: int
+    num_x: int
+    num_z: int
+    dt: float
+    dx: float
+    dz: float
+    total_t: float
     total_z: float
     total_x: float
-    num_z: int
-    num_x: int
     a: int
     b0: float
     bt: float

@@ -15,15 +15,20 @@ class BOUTHESELInfo:
         self.root = root
         self._raw = self._read(Path(root) / 'BOUT.settings')
         self.settings = {ref: self._resolve(*ref, ()) for ref in self._raw}
+        self.data = self._load_data()
 
         for key, value in DEFAULT_FACTORY.items():
             if ('hesel', key) in self.settings: continue
             self.settings.setdefault(('hesel', key), value)
 
         self.functions = self._parse_functions()
-        self.data = self._load_data()
         self.parameters = self._build_param()
+
         self.standardized = self._std()
+        self.t_line = torch.arange(self.parameters.num_t, dtype=torch.float32) * self.parameters.dt
+        self.x_line = torch.arange(self.parameters.num_x, dtype=torch.float32) * self.parameters.dx
+        self.z_line = torch.arange(self.parameters.num_z, dtype=torch.float32) * self.parameters.dz
+
 
     def _read(self, path: Path) -> dict[tuple[str, str], str]:
         settings, section = {}, 'root'
@@ -188,12 +193,16 @@ class BOUTHESELInfo:
         param.me = 9.1093816e-31
         param.mp = 1.67262158e-27
         param.pi = math.pi
+
         param.num_t = self.data.lnn.shape[0]
-        param.totalt_t = float(self.settings["root", "timestep"]) * float(self.settings["root", "nout"])
         param.num_x = int(self.settings["mesh", "nx"])
         param.num_z = int(self.settings["mesh", "nz"])
+        param.dt = float(self.settings["root", "timestep"])
+        param.dx = float(self.settings["mesh", "dx"])
+        param.dz = float(self.settings["mesh", "dz"])
         param.total_x = float(self.settings["mesh", "lx"])
         param.total_z = float(self.settings["mesh", "lz"])
+        param.total_t = param.dt * (param.num_t - 1)
 
         def get_param(name: str):
             key = name.lower()
