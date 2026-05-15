@@ -1,257 +1,236 @@
-from pathlib import Path
-from copy import deepcopy
-
 import torch
+
 import torch.nn as nn
+from pathlib import Path
+import itertools
 
 from util.model import PINN
 from util.structure import NN_STRUCTURE
-from util.data_loader import make_dataloader
-from util.training_helpers import (_default_model_path,
-                                   _init_wandb,
-                                   _save_checkpoint,
-                                   _log_split_losses,
-                                   _get_loss)
+from util.data_loader import make_dataloader, move_batch_to_device
+from util.træning_helpers import get_loss, HistoryWriter, save_checkpoint
 
-def init_trainer(
-        batch_size = 256,
-        num_workers = 2,
-        pin_memory = True,
-        train_ratio = 0.8,
-        val_ratio = 0.1,
-        lr = 1e-3,):
+def init_trainer(training_config: dict):
     from loss_PDE.bout_phys import BOUTHESELPhys
     from loss_PDE.bout_dump import BOUTHESELInfo
-    root = Path(__file__).parents[1] / r"simulatorer/BOUT/BOUT-HESEL/data"
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    root = Path(__file__).parents[1] / r"simulatorer/BOUT/BOUT-HESEL/data_alexander_512_512"
     info = BOUTHESELInfo(root)
-    phys = BOUTHESELPhys(info).to(device)
+    phys = BOUTHESELPhys(info)
+    condition = nn.MSELoss().to(info.device)
     model = PINN(NN_STRUCTURE)
-    standardization = type(info.standardized)(
-        mean=info.standardized.mean.to(device),
-        std=info.standardized.std.to(device),
-    )
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    model.to(device)
-    train_loader, val_loader, test_loader = make_dataloader(info,
-                                                            batch_size=batch_size,
-                                                            num_workers=num_workers,
-                                                            pin_memory=pin_memory,
-                                                            train_ratio=train_ratio,
-                                                            val_ratio=val_ratio)
+    model.to(info.device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=training_config["lr"])
+    train_loader, val_loader, test_loader = make_dataloader(info, training_config)
+
+    data_dir = Path(__file__).resolve().parent / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    history = HistoryWriter(data_dir / "training_history.jsonl")
+    best_model_path = data_dir / "best_val_model.pt"
+    best_val_loss = float("inf")
+    patience_counter = 0
 
     return (info,
             phys,
+            condition,
             model,
+            optimizer,
             train_loader,
             val_loader,
             test_loader,
-            standardization,
-            optimizer,
-            device)
+            history,
+            best_model_path,
+            best_val_loss,
+            patience_counter)
 
 
 
 if __name__ == "__main__":
 
     training_config = {
-        "saving_frequency": 10,
-        "status_frequency": 500,
-        "epochs": 2,
-        "early_stopping_patience": 1,
+        # Optimization
+        "lr": 1e-4,
+        "epochs": 10,
+        "early_stopping_patience": 3,
         "early_stopping_min_delta": 10,
-        "batch_size": 2048,
-        "num_workers": 2,
-        "pin_memory": True,
+
+        # Logging / status
+        "status_frequency": 50,
+        "flush_frequency": 50,
+
+        # Dataset split
         "train_ratio": 0.8,
         "val_ratio": 0.1,
-        "lr": 1e-4,
-        "weight_da": 10.0,
-        "weight_ic": 1.0,
-        "weight_eq": 500.0,
-        "weight_bc": 1.0,
-        "device": None
+
+        # Loss weights
+        "da": 500.0,
+        "ic": 1.0,
+        "eq": 25000.0, # Brug opløsigligheden af (num_x*num_z)
+        "bc": 1.0,
+
+        # DataLoader
+        "batch_size": 2**14,
+        "shuffle": True, # Bruges kun i val/test loader, da sampler bruges i train loader
+        "pin_memory": True,
+        "persistent_workers": True,
+        "num_workers": 4,
+        "prefetch_factor": 1,
+        # Resume training from checkpoint
+        "resume": False,
     }
 
 
     (info,
     phys,
+    condition,
     model,
+    optimizer,
     train_loader,
     val_loader,
     test_loader,
-    standardization,
-    optimizer,
-    device) = init_trainer(batch_size=training_config["batch_size"],
-                           num_workers = training_config["num_workers"],
-                           pin_memory = training_config["pin_memory"],
-                           train_ratio = training_config["train_ratio"],
-                           val_ratio = training_config["val_ratio"],
-                           lr = training_config["lr"],)
-
-    mse_loss = nn.MSELoss().to(device)
-
-    training_config["device"] = device
+    history,
+    best_model_path,
+    best_val_loss,
+    patience_counter) = init_trainer(training_config)
     
-    run = _init_wandb(config=training_config)
-    model_path = _default_model_path()
-    global_step = 0
-    best_val_loss = float("inf")
-    best_epoch = -1
-    epochs_without_improvement = 0
-    best_model_state = deepcopy(model.state_dict())
-    stopped_early = False
+    checkpoint_path = best_model_path.parent / "checkpoint_latest.pt"
+    start_epoch = 0
+    start_batch_idx = 0
 
-    try:
-        for epoch in range(training_config["epochs"]+1):
+    # Optionally resume from latest checkpoint
+    if training_config.get("resume", False) and checkpoint_path.exists():
+        print(f"Resuming training from checkpoint: {checkpoint_path}")
+        ckpt = torch.load(checkpoint_path, map_location=info.device)
+        try:
+            model.load_state_dict(ckpt["model_state_dict"])
+            if optimizer is not None and ckpt.get("optimizer_state_dict") is not None:
+                optimizer.load_state_dict(ckpt["optimizer_state_dict"])
+            
+            saved_epoch = int(ckpt.get("epoch", 0))
+            saved_batch_idx = int(ckpt.get("batch_idx", -1))
+            
+            # If batch_idx == -1, we completed the epoch, so start next epoch
+            # Otherwise, we interrupted mid-epoch, so resume in same epoch from next batch
+            if saved_batch_idx == -1:
+                start_epoch = saved_epoch + 1
+                start_batch_idx = 0
+            else:
+                start_epoch = saved_epoch
+                start_batch_idx = saved_batch_idx + 1
+            
+            best_val_loss = ckpt.get("best_val_loss", best_val_loss)
+            # restore history (buffer and filename) so logging can continue
+            if "history" in ckpt and ckpt["history"] is not None:
+                try:
+                    hist_info = ckpt["history"]
+                    if hist_info.get("filename"):
+                        history.filename = Path(hist_info["filename"])
+                    history.buffer = hist_info.get("buffer", [])
+                except Exception:
+                    pass
+            # restore RNG state (convert bytes back to ByteTensor)
+            if "torch_rng_state" in ckpt:
+                import numpy as np
+                rng_state = ckpt["torch_rng_state"]
+                if isinstance(rng_state, bytes):
+                    rng_state = torch.from_numpy(np.frombuffer(rng_state, dtype=np.uint8).copy())
+                torch.set_rng_state(rng_state)
+            if "cuda_rng_state_all" in ckpt and torch.cuda.is_available():
+                try:
+                    import numpy as np
+                    cuda_rng_states = ckpt["cuda_rng_state_all"]
+                    # Convert list of bytes back to list of ByteTensors
+                    if cuda_rng_states and isinstance(cuda_rng_states[0], bytes):
+                        cuda_rng_states = [torch.from_numpy(np.frombuffer(s, dtype=np.uint8).copy()) for s in cuda_rng_states]
+                    torch.cuda.set_rng_state_all(cuda_rng_states)
+                except Exception:
+                    pass
+            # reset patience counter on resume
+            patience_counter = 0
+            print(f"Resumed at epoch {start_epoch}, starting from batch {start_batch_idx}")
+        except Exception as e:
+            print(f"Failed to load checkpoint: {e}. Starting from scratch.")
+    
+    
 
-            model.train()
-            for batch_idx, batch in enumerate(train_loader):
+    for epoch in range(start_epoch, training_config["epochs"]):
+        print(f"Epoch {epoch+1}/{training_config['epochs']}")
 
-                loss_da, loss_ic, loss_eq, loss_bc = _get_loss(model, phys, batch, standardization, mse_loss)
-                loss_da *= training_config["weight_da"]
-                loss_ic *= training_config["weight_ic"]
-                loss_eq *= training_config["weight_eq"]
-                loss_bc *= training_config["weight_bc"]
+        model.train()
+        
+        # Skip batches if resuming mid-epoch
+        batch_iter = train_loader
+        if epoch == start_epoch and start_batch_idx > 0:
+            batch_iter = itertools.islice(train_loader, start_batch_idx, None)
+            print(f"Skipping first {start_batch_idx} batches to resume from batch {start_batch_idx}")
+        
+        for batch_idx, batch in enumerate(batch_iter, start=start_batch_idx if epoch == start_epoch else 0):
+            avg_z, cord_fys, cord_num, input_data, target = move_batch_to_device((batch), info.device, training_config["pin_memory"])
+            loss_total = get_loss(model, info, phys, avg_z, cord_fys, cord_num, input_data, target, condition, training_config, history, type="train")
+            optimizer.zero_grad(set_to_none=True)
+            loss_total.backward()
+            optimizer.step()
 
-                optimizer.zero_grad()
-                loss_total = loss_da + loss_ic + loss_eq + loss_bc
-                loss_total.backward()
-                optimizer.step()
+            if batch_idx % training_config["status_frequency"] == 0:
+                print(f"Training {batch_idx}/{len(train_loader)}\t Loss: {loss_total.item():.6f}")
 
-                if batch_idx % training_config["saving_frequency"] == 0:
-                    global_step += 1
-                    _log_split_losses(
-                        run,
-                        split="train",
-                        epoch=epoch,
-                        batch_idx=batch_idx,
-                        step=global_step,
-                        loss_total=loss_total.item(),
-                        loss_da=loss_da.item(),
-                        loss_ic=loss_ic.item(),
-                        loss_eq=loss_eq.item(),
-                        loss_bc=loss_bc.item(),
-                    )
+            if (batch_idx + 1) % training_config["flush_frequency"] == 0:
+                history.flush() 
+                save_checkpoint(model, optimizer, epoch, batch_idx, best_val_loss, training_config, checkpoint_path, history, )
+        
+        model.eval()
+        val_total_loss = 0.0
+        val_batches = 0
+        with torch.no_grad():
+            for batch_idx, batch in enumerate(val_loader):
+                avg_z, cord_fys, cord_num, input_data, target = move_batch_to_device((batch), info.device, training_config["pin_memory"])
+
+                loss_total = get_loss(model, info, phys, avg_z, cord_fys, cord_num, input_data, target, condition, training_config, history, type="val")
+
+                val_total_loss += loss_total.detach().cpu().item()
+                val_batches += 1
 
                 if batch_idx % training_config["status_frequency"] == 0:
-                    print(
-                        f"Epoch [{epoch+1}/{training_config['epochs']}], "
-                        f"Batch [{batch_idx}/{len(train_loader)}], "
-                        f"Loss: {loss_total.item():.6e} (DA: {loss_da.item():.6e}, IC: {loss_ic.item():.6e}, EQ: {loss_eq.item():.6e}, BC: {loss_bc.item():.6e})"
-                    )
+                    print(f"Validation {batch_idx}/{len(val_loader)}\t Loss: {loss_total.item():.6f}")
 
-            model.eval()
-            val_total_loss_sum = 0.0
-            val_batches = 0
-            with torch.no_grad():
-                for batch_idx, batch in enumerate(val_loader):
+                if (batch_idx + 1) % training_config["flush_frequency"] == 0:
+                    history.flush() 
+                    save_checkpoint(model, optimizer, epoch, batch_idx, best_val_loss, training_config, checkpoint_path, history, )
 
-                    loss_da, loss_ic, loss_eq, loss_bc = _get_loss(model, phys, batch, standardization, mse_loss)
-                    loss_da *= training_config["weight_da"]
-                    loss_ic *= training_config["weight_ic"]
-                    loss_eq *= training_config["weight_eq"]
-                    loss_bc *= training_config["weight_bc"]
-                    val_total = loss_da.item() + loss_ic.item() + loss_eq.item() + loss_bc.item()
-                    val_total_loss_sum += val_total
-                    val_batches += 1
+        val_loss = val_total_loss / max(val_batches, 1)
+        print(f"Validation loss: {val_loss:.6f}")
 
-                    global_step += 1
-                    _log_split_losses(
-                        run,
-                        split="val",
-                        epoch=epoch,
-                        batch_idx=batch_idx,
-                        step=global_step,
-                        loss_total=val_total,
-                        loss_da=loss_da.item(),
-                        loss_ic=loss_ic.item(),
-                        loss_eq=loss_eq.item(),
-                        loss_bc=loss_bc.item(),
-                    )
-                    
-                    if batch_idx % training_config["status_frequency"] == 0:
-                        print(
-                            f"Epoch [{epoch+1}/{training_config['epochs']}], "
-                            f"Batch [{batch_idx}/{len(train_loader)}], "
-                            f"Loss: {val_total:.6e} (DA: {loss_da:.6e}, IC: {loss_ic:.6e}, EQ: {loss_eq:.6e}, BC: {loss_bc:.6e})"
-                        )
-
-                mean_val_loss = val_total_loss_sum / val_batches if val_batches > 0 else float("inf")
-
-
-                for batch_idx, batch in enumerate(test_loader):
-                    loss_da, loss_ic, loss_eq, loss_bc = _get_loss(model, phys, batch, standardization, mse_loss)
-                    loss_da *= training_config["weight_da"]
-                    loss_ic *= training_config["weight_ic"]
-                    loss_eq *= training_config["weight_eq"]
-                    loss_bc *= training_config["weight_bc"]
-                    test_total = loss_da.item() + loss_ic.item() + loss_eq.item() + loss_bc.item()
-
-                    global_step += 1
-                    _log_split_losses(
-                        run,
-                        split="test",
-                        epoch=epoch,
-                        batch_idx=batch_idx,
-                        step=global_step,
-                        loss_total=(loss_da.item() + loss_ic.item() + loss_eq.item() + loss_bc.item()),
-                        loss_da=loss_da.item(),
-                        loss_ic=loss_ic.item(),
-                        loss_eq=loss_eq.item(),
-                        loss_bc=loss_bc.item(),
-                    )
-
-                    if batch_idx % training_config["status_frequency"] == 0:
-                        print(
-                            f"Epoch [{epoch+1}/{training_config['epochs']}], "
-                            f"Batch [{batch_idx}/{len(train_loader)}], "
-                            f"Loss: {test_total:.6e} (DA: {loss_da:.6e}, IC: {loss_ic:.6e}, EQ: {loss_eq:.6e}, BC: {loss_bc:.6e})"
-                        )
-
-
-
-            if mean_val_loss < (best_val_loss - training_config["early_stopping_min_delta"]):
-                best_val_loss = mean_val_loss
-                best_epoch = epoch
-                epochs_without_improvement = 0
-                best_model_state = deepcopy(model.state_dict())
-            else:
-                epochs_without_improvement += 1
-
-            run.log(
-                {
-                    "epoch": epoch,
-                    "val/epoch_mean_total_loss": mean_val_loss,
-                    "early_stopping/best_val_loss": best_val_loss,
-                    "early_stopping/best_epoch": best_epoch,
-                    "early_stopping/epochs_without_improvement": epochs_without_improvement,
-                },
-                step=global_step,
+        if val_loss < best_val_loss - training_config["early_stopping_min_delta"]:
+            best_val_loss = val_loss
+            patience_counter = 0
+            torch.save(model.state_dict(), best_model_path)
+            print(f"Saved new best model to {best_model_path}")
+        else:
+            patience_counter += 1
+            print(
+                f"No improvement in val loss for {patience_counter} epoch(s) "
+                f"(best: {best_val_loss:.6f})"
             )
 
-            if epochs_without_improvement >= training_config["early_stopping_patience"]:
-                stopped_early = True
-                print(
-                    f"Early stopping ved epoch {epoch}. "
-                    f"Bedste val loss var {best_val_loss:.6e} ved epoch {best_epoch}."
-                )
-                break
+        history.flush()
+        save_checkpoint(model, optimizer, epoch, -1, best_val_loss, training_config, checkpoint_path, history)
 
+        if patience_counter >= training_config["early_stopping_patience"]:
+            print("Early stopping triggered")
+            break
 
-    finally:
-        model.load_state_dict(best_model_state)
-        saved_model_path = _save_checkpoint(
-            model=model,
-            model_path=model_path,
-            output_names=tuple(NN_STRUCTURE["output_names"]),
-            standardization=standardization,
-        )
-        run.summary["saved_model_path"] = str(saved_model_path)
-        run.summary["best_val_loss"] = best_val_loss
-        run.summary["best_epoch"] = best_epoch
-        run.summary["stopped_early"] = stopped_early
-        run.finish()
+    with torch.no_grad():
+        test_total_loss = 0.0
+        test_batches = 0
+        for batch_idx, batch in enumerate(test_loader):
+            avg_z, cord_fys, cord_num, input_data, target = move_batch_to_device((batch), info.device, training_config["pin_memory"])
 
-    print(f"Gemte model lokalt til {saved_model_path}")
-    print("Done")
+            loss_total = get_loss(model, info, phys, avg_z, cord_fys, cord_num, input_data, target, condition, training_config, history, type="test")
+
+            test_total_loss += loss_total.detach().cpu().item()
+            test_batches += 1
+
+            if batch_idx % training_config["status_frequency"] == 0:
+                print(f"Test {batch_idx}/{len(test_loader)}\t Loss: {loss_total.item():.6f}")
+
+        test_loss = test_total_loss / max(test_batches, 1)
+        print(f"Test loss: {test_loss:.6f}")

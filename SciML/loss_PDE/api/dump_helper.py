@@ -170,20 +170,20 @@ FUNCTION_GLOBALS = {'__builtins__': {}, **FUNCTION_NAMESPACE}
 
 @dataclass
 class param:
-    e: float
-    epso: float
-    me: float
-    mp: float
-    pi: float
     num_t: int
     num_x: int
     num_z: int
     dt: float
     dx: float
     dz: float
-    total_t: float
-    total_z: float
-    total_x: float
+    Lx: float
+    Lz: float
+    Lt: float
+    e: float
+    epso: float
+    me: float
+    mp: float
+    pi: float
     a: int
     b0: float
     bt: float

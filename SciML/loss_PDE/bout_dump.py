@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 import math
+import re
 import torch
 import xarray
 
@@ -12,6 +13,14 @@ from loss_PDE.api.dump_helper import *
 
 class BOUTHESELInfo:
     def __init__(self, root: Path):
+
+        # Data håndtering (sæt før data indlæsning)
+        if not torch.cuda.is_available():
+            raise RuntimeError("SciML_copy er nu sat op til GPU-traening og kraever en tilgaengelig CUDA-enhed.")
+        self.device = torch.device("cuda")
+        
+        self.dtype = torch.float32
+
         self.root = root
         self._raw = self._read(Path(root) / 'BOUT.settings')
         self.settings = {ref: self._resolve(*ref, ()) for ref in self._raw}
@@ -21,15 +30,13 @@ class BOUTHESELInfo:
             if ('hesel', key) in self.settings: continue
             self.settings.setdefault(('hesel', key), value)
 
-        self.functions = self._parse_functions()
+        # subset af data og settings, dog mere nice at have dette
+        self.functions = self._parse_functions() # ligger i normaliseret interval: [0, 1]
         self.parameters = self._build_param()
+        self.standardized = self._std_for_model()
+        self.avg_in_z = self._avg_in_z() # (t, x, 1, 1) flyttes på device med batches
 
-        self.standardized = self._std()
-        self.t_line = torch.arange(self.parameters.num_t, dtype=torch.float32) * self.parameters.dt
-        self.x_line = torch.arange(self.parameters.num_x, dtype=torch.float32) * self.parameters.dx
-        self.z_line = torch.arange(self.parameters.num_z, dtype=torch.float32) * self.parameters.dz
-
-
+        
     def _read(self, path: Path) -> dict[tuple[str, str], str]:
         settings, section = {}, 'root'
         for raw in path.read_text(encoding='utf-8').splitlines():
@@ -44,7 +51,7 @@ class BOUTHESELInfo:
                 settings[(section, key.strip())] = value.strip()
         return settings
     
-    def _resolve(self, section: str, key: str, stack: tuple[tuple[str, str], ...]) -> object:
+    def _resolve(self, section: str, key: str, stack: tuple[tuple[str, str], ...]) -> bool | int | float | str:
         ref = (section, key)
 
         value = self._raw[ref]
@@ -157,14 +164,18 @@ class BOUTHESELInfo:
         needed_vars = ['lnn', 'lnpe', 'lnpi', 'phi', 'vort', 'init_n', 'init_pe', 'init_pi', 'sigma_open', 'sigma_closed', 'sigma_force', 'B', 'dx', 'dz', 't_array', 'Bt', 'q', 'Te0', 'Ti0', 'n0', 'lconn', 'Rmajor', 'Rminor', 'A', 'Z', 'Mach', 'x_lcfs', 'x_wall', 'force_time', 'floor_time', 'floor_n', 'floor_pe', 'floor_pi', 'B0', 'oci', 'rhoe', 'rhos', 'nuei', 'nuii', 'nuee', 'neoclass_correction_factor', 'lblob']
         data_obj = SimpleNamespace(**{name: None for name in needed_vars})
         overlap = 2
-        for data_path in sorted(path.glob('BOUT.dmp.*.nc')):
+        def dump_index(data_path: Path) -> int:
+            match = re.search(r'BOUT\.dmp\.(\d+)\.nc$', data_path.name)
+            return int(match.group(1)) if match else -1
+
+        for data_path in sorted(path.glob('BOUT.dmp.*.nc'), key=dump_index):
             with xarray.open_dataset(data_path, engine='netcdf4') as dataset:
                 for name in needed_vars:
                     if name not in dataset: continue
 
                     variable = dataset[name]
                     array = variable.squeeze('y', drop=True) if 'y' in variable.dims else variable
-                    values = torch.as_tensor(array.values)
+                    values = torch.as_tensor(array.values, dtype=self.dtype)
 
                     if name == 't_array':
                         if getattr(data_obj, name) is None:
@@ -200,9 +211,9 @@ class BOUTHESELInfo:
         param.dt = float(self.settings["root", "timestep"])
         param.dx = float(self.settings["mesh", "dx"])
         param.dz = float(self.settings["mesh", "dz"])
-        param.total_x = float(self.settings["mesh", "lx"])
-        param.total_z = float(self.settings["mesh", "lz"])
-        param.total_t = param.dt * (param.num_t - 1)
+        param.Lx = float(self.settings["mesh", "lx"])
+        param.Lz = float(self.settings["mesh", "lz"])
+        param.Lt = float(self.settings["root", "timestep"])
 
         def get_param(name: str):
             key = name.lower()
@@ -253,19 +264,29 @@ class BOUTHESELInfo:
                              * param.oci)
         return param
 
-    def _std(self):
+    def _std_for_model(self):
         return standardization(
             mean=torch.tensor([
                 self.data.lnn.mean().item(),
                 self.data.lnpe.mean().item(),
                 self.data.lnpi.mean().item(),
                 self.data.phi.mean().item(),
-            ]),
+            ], dtype=self.dtype, device=self.device),
             std=torch.tensor([
                 self.data.lnn.std().item(),
                 self.data.lnpe.std().item(),
                 self.data.lnpi.std().item(),
                 self.data.phi.std().item(),
-            ]),
+            ], dtype=self.dtype, device=self.device),
         )
-    
+
+    def _avg_in_z(self):
+        """
+        Precomputer gennemsnit så de kan flyttes på device direkte
+        """
+        return {
+            "avg_n": torch.exp(self.data.lnn).mean(dim=-1, keepdim=True),
+            "avg_te": torch.exp(self.data.lnpe - self.data.lnn).mean(dim=-1, keepdim=True),
+            "avg_ti": torch.exp(self.data.lnpi - self.data.lnn).mean(dim=-1, keepdim=True),
+            "avg_phi": self.data.phi.mean(dim=-1, keepdim=True),
+        }

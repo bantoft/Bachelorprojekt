@@ -50,23 +50,12 @@ make -j16
 #Kør simulation#
 ################
 cd simulator/BOUT-HESEL
-mpirun -np 4 ./hesel -d data2
-
-
-############
-#Python env#
-############
 
 module purge
-module load python3/3.11.13
-python3 -m venv ignore_mappe/bsc_venv
-source ignore_mappe/bsc_venv/bin/activate
-pip install --upgrade pip
-pip install -r req.txt
+module load mpi/5.0.3-gcc-13.3.0-binutils-2.42
+module load fftw3/3.3.10-openmpi-5.0.3-gcc-13.3.0
+module load netcdf-c/4.9.3-hdf5-1.14.6-intel-2021-update4
+module load intel/2021.4.0
 
+mpirun -np 4 ./hesel -d data
 
-
-spack install -j16 hdf5
-spack install -j16 netcdf-c
-spack install -j16 parallel-netcdf ^openmpi
-spack install -j16 fftw@3.3.10 +mpi ^openmpi
