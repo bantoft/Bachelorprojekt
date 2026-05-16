@@ -1,7 +1,6 @@
+sim_data
 teori
-
-simulatorer/BOUT
-simulatorer/BANT-dev/data
+.venv
 
 
 # Python-generated files
@@ -12,9 +11,4 @@ dist/
 wheels/
 *.egg-info
 
-# Virtual environments
-.venv
 
-# Local secrets / environment variables
-.env
-SciML/.env
