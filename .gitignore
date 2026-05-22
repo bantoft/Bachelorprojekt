@@ -1,6 +1,11 @@
-sim_data
-teori
 .venv
+
+# Data filder
+sim_data
+SciML/PINN/history*
+
+# Her er bøger der fylder meget...
+teori
 
 
 # Python-generated files

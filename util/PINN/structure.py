@@ -8,6 +8,5 @@ NN_STRUCTURE = {
         {"size": 50, "non_lin_foo": torch.nn.Tanh},
         {"size": 25, "non_lin_foo": torch.nn.SiLU},
         {"size": 50, "non_lin_foo": torch.nn.Tanh},
-
     ],
 }

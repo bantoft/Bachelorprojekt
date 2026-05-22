@@ -1,15 +1,20 @@
 from __future__ import annotations
 
+# Fiks path for imports
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
 import re
 import math
 import torch
 
 from torch import Tensor
 
-from util.model import PINN
-from loss_PDE.bout_dump import BOUTHESELInfo
-from loss_PDE.api.operators import grad_x, grad_z, grad_t, laplacian_perp, d2dx2, d2dz2, d2dxdz
+from hesel_scraper.bout_dump import BOUTHESELInfo
+from hesel_scraper.api.operators import grad_x, grad_z, grad_t, laplacian_perp, d2dx2, d2dz2, d2dxdz
 
+from util.PINN.model import PINN
 
 class BOUTHESELPhys:
     def __init__(self, info: BOUTHESELInfo):

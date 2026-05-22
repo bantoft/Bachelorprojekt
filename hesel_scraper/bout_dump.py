@@ -9,16 +9,14 @@ import xarray
 from pathlib import Path
 from types import SimpleNamespace   
 
-from loss_PDE.api.dump_helper import *
+from hesel_scraper.api.dump_helper import *
 
 class BOUTHESELInfo:
     def __init__(self, root: Path):
 
         # Data håndtering (sæt før data indlæsning)
-        if not torch.cuda.is_available():
-            raise RuntimeError("SciML_copy er nu sat op til GPU-traening og kraever en tilgaengelig CUDA-enhed.")
-        self.device = torch.device("cuda")
-        
+
+        self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
         self.dtype = torch.float32
 
         self.root = root
