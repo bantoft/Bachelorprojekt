@@ -29,7 +29,7 @@ if __name__ == "__main__":
         # Hvis resume er True læses checkpoint fra out_folder ellers startes ny træningen
         # Hvis checkpoint ikke findes, laves ny checkpoint og træningsdata appendes hvis history.json findes
         # Intet slettes
-        "resume": False,
+        "resume": True,
         
         # Optimization
         "lr": 1e-4,
@@ -38,8 +38,8 @@ if __name__ == "__main__":
         "early_stopping_min_delta": 1.0,
 
         # Logging / status
-        "status_frequency": 1000,
-        "flush_frequency": 1000,
+        "status_frequency": 100,
+        "flush_frequency": 100,
 
         # Dataset split
         "train_ratio": 0.8,
@@ -169,7 +169,7 @@ if __name__ == "__main__":
 
     for epoch in range(start_epoch, training_config["epochs"]):
         print(f"""
-              Epoch {epoch}/{training_config['epochs']}
+              Epoch {epoch+1}/{training_config['epochs']}
               Patience Counter: {patience_counter}
               Best Val Loss: {best_val_loss}
               Starting split: {split}
