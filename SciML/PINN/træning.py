@@ -28,7 +28,7 @@ if __name__ == "__main__":
         # Hvis resume er True læses checkpoint fra out_folder ellers startes ny træningen
         # Hvis checkpoint ikke findes, laves ny checkpoint og træningsdata appendes hvis history.json findes
         # Intet slettes
-        "resume": False,
+        "resume": True,
         
         # Optimization
         "lr": 1e-5,
@@ -37,8 +37,8 @@ if __name__ == "__main__":
         "early_stopping_min_delta": 1.0,
 
         # Logging / status
-        "status_frequency": 10,
-        "flush_frequency": 20,
+        "status_frequency": 1000,
+        "flush_frequency": 100,
 
         # Dataset split
         "train_ratio": 0.8,
@@ -109,6 +109,11 @@ if __name__ == "__main__":
             checkpoint = torch.load(checkpoint_path, weights_only=False)
             training_config = checkpoint["training_config"]
             training_config["resume"] = True
+
+            training_config["num_workers"] = 0  # Sæt num_workers til 0 ved resume for at undgå problemer med DataLoader og multiprocessing
+            training_config["pin_memory"] = False  # Sæt pin_memory til False ved resume for at undgå problemer med DataLoader og multiprocessing
+            training_config["persistent_workers"] = None  # Sæt persistent_workers til False ved resume for at undgå problemer med DataLoader og multiprocessing
+            training_config["prefetch_factor"] = None  # Reducer prefetch_factor ved resume for at undgå problemer med DataLoader og multiprocessing
             (
                 info,
                 phys,
@@ -142,7 +147,9 @@ if __name__ == "__main__":
             best_val_loss = checkpoint.get("best_val_loss", float("inf"))
             start_epoch = checkpoint.get("epoch", 0)
             split = checkpoint.get("split", "training")
-            print(f"Resuming from epoch {start_epoch + 1}, split={split}, batch={start_batch_idx}")
+            print(f"""
+                  Resuming from epoch {start_epoch + 1}, split={split}, batch={start_batch_idx}
+                  """)
     else:
         (
             info,
@@ -165,9 +172,12 @@ if __name__ == "__main__":
                         patience_counter=patience_counter)
 
 
+    training_config["epochs"] = 1
+
 
     for key, value in training_config.items():
         print(f"{key}: {value}")
+    
     for epoch in range(start_epoch, training_config["epochs"]):
         print(f"""
               Epoch {epoch+1}/{training_config['epochs']}

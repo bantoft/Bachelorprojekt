@@ -298,9 +298,6 @@ def iterate(info,
             avg_iter_loss += loss_total.item()
             processed_batches += 1
 
-            if batch_idx == 11:
-                break
-
             if is_training:
                 optimizer.zero_grad(set_to_none=True)
                 loss_total.backward()
