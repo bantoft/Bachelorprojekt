@@ -29,17 +29,17 @@ if __name__ == "__main__":
         # Hvis resume er True læses checkpoint fra out_folder ellers startes ny træningen
         # Hvis checkpoint ikke findes, laves ny checkpoint og træningsdata appendes hvis history.json findes
         # Intet slettes
-        "resume": True,
+        "resume": False,
         
         # Optimization
-        "lr": 1e-4,
-        "epochs": 10,
+        "lr": 1e-5,
+        "epochs": 1,
         "early_stopping_patience": 3,
         "early_stopping_min_delta": 1.0,
 
         # Logging / status
         "status_frequency": 100,
-        "flush_frequency": 100,
+        "flush_frequency": 200,
 
         # Dataset split
         "train_ratio": 0.8,
@@ -143,7 +143,7 @@ if __name__ == "__main__":
             best_val_loss = checkpoint.get("best_val_loss", float("inf"))
             start_epoch = checkpoint.get("epoch", 0)
             split = checkpoint.get("split", "training")
-            print(f"Resuming from epoch {start_epoch}, split={split}, batch={start_batch_idx}")
+            print(f"Resuming from epoch {start_epoch + 1}, split={split}, batch={start_batch_idx}")
 
     else:
         (
@@ -167,12 +167,14 @@ if __name__ == "__main__":
                         patience_counter=patience_counter)
 
 
+
+    for key, value in training_config.items():
+        print(f"{key}: {value}")
     for epoch in range(start_epoch, training_config["epochs"]):
         print(f"""
               Epoch {epoch+1}/{training_config['epochs']}
               Patience Counter: {patience_counter}
               Best Val Loss: {best_val_loss}
-              Starting split: {split}
               """)
         
 

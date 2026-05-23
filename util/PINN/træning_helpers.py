@@ -285,9 +285,6 @@ def iterate(info,
                         )
         
         avg_iter_loss += loss_total.item()
-        
-        if batch_idx == 10: break
-
 
         if split == "training":
             optimizer.zero_grad(set_to_none=True)
