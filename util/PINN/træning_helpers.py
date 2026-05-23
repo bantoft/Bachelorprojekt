@@ -261,49 +261,72 @@ def iterate(info,
             first_batch: int
             ):
 
-    if split == "training":
+    is_training = split == "training"
+
+    if is_training:
         model.train()
     else:
         model.eval()
+        optimizer.zero_grad(set_to_none=True)
+        param_requires_grad = [param.requires_grad for param in model.parameters()]
+        for param in model.parameters():
+            param.requires_grad_(False)
+
+        if info.device.type == "cuda":
+            torch.cuda.empty_cache()
 
     avg_iter_loss = 0.0
+    processed_batches = 0
 
-    for batch_idx, batch in enumerate(batch_iter, start=first_batch):
-        avg_z, cord_fys, cord_num, input_data, target = move_batch_to_device((batch), info.device, training_config["pin_memory"])
-        loss_total = step(info,
-                          phys,
-                          model,
-                          avg_z,
-                          cord_fys,
-                          cord_num,
-                          input_data,
-                          target,
-                          condition,
-                          training_config,
-                          history,
-                          split=split
-                        )
-        
-        avg_iter_loss += loss_total.item()
+    try:
+        for batch_idx, batch in enumerate(batch_iter, start=first_batch):
+            avg_z, cord_fys, cord_num, input_data, target = move_batch_to_device((batch), info.device, training_config["pin_memory"])
+            loss_total = step(info,
+                            phys,
+                            model,
+                            avg_z,
+                            cord_fys,
+                            cord_num,
+                            input_data,
+                            target,
+                            condition,
+                            training_config,
+                            history,
+                            split=split
+                            )
 
-        if split == "training":
-            optimizer.zero_grad(set_to_none=True)
-            loss_total.backward()
-            optimizer.step()
+            avg_iter_loss += loss_total.item()
+            processed_batches += 1
 
-        if batch_idx % training_config["status_frequency"] == 0:
-            print(f"{split} {batch_idx}/{num_batches}\t Loss: {loss_total.item():.6f}")
+            if batch_idx == 11:
+                break
 
-        if batch_idx % training_config["flush_frequency"] == 0:
-            history.flush()
-            if split == "training":
-                save_checkpoint(training_config,
-                                model,
-                                optimizer=optimizer,
-                                batch_idx=batch_idx)
-            else:
-                save_checkpoint(training_config,batch_idx=batch_idx)
-    
-    avg_iter_loss /= num_batches
+            if is_training:
+                optimizer.zero_grad(set_to_none=True)
+                loss_total.backward()
+                optimizer.step()
+
+            if batch_idx % training_config["status_frequency"] == 0:
+                print(f"{split} {batch_idx}/{num_batches}\t Loss: {loss_total.item():.6f}")
+
+            if batch_idx % training_config["flush_frequency"] == 0:
+                history.flush()
+                if is_training:
+                    save_checkpoint(training_config,
+                                    model,
+                                    optimizer=optimizer,
+                                    batch_idx=batch_idx)
+                else:
+                    save_checkpoint(training_config, batch_idx=batch_idx)
+
+            del avg_z, cord_fys, cord_num, input_data, target, loss_total
+
+    finally:
+        if not is_training:
+            for param, old_value in zip(model.parameters(), param_requires_grad):
+                param.requires_grad_(old_value)
+
+    if processed_batches > 0:
+        avg_iter_loss /= processed_batches
 
     return avg_iter_loss

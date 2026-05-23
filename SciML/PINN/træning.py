@@ -7,7 +7,6 @@ sys.path.append(str(ROOT_DIR))
 
 import torch
 import itertools
-import torch.nn as nn
 
 from util.PINN.model import PINN
 from util.PINN.træning_helpers import HistoryBuffer, save_checkpoint, iterate, init_trainer
@@ -33,13 +32,13 @@ if __name__ == "__main__":
         
         # Optimization
         "lr": 1e-5,
-        "epochs": 1,
+        "epochs": 2,
         "early_stopping_patience": 3,
         "early_stopping_min_delta": 1.0,
 
         # Logging / status
-        "status_frequency": 100,
-        "flush_frequency": 200,
+        "status_frequency": 10,
+        "flush_frequency": 20,
 
         # Dataset split
         "train_ratio": 0.8,
@@ -144,7 +143,6 @@ if __name__ == "__main__":
             start_epoch = checkpoint.get("epoch", 0)
             split = checkpoint.get("split", "training")
             print(f"Resuming from epoch {start_epoch + 1}, split={split}, batch={start_batch_idx}")
-
     else:
         (
             info,
@@ -228,9 +226,13 @@ if __name__ == "__main__":
 
             else:
                 patience_counter += 1
-                if patience_counter >= training_config["early_stopping_patience"] or epoch == training_config["epochs"] - 1:
-                    print("Last epoch or early stopping triggered. Ending training.")
+                if patience_counter >= training_config["early_stopping_patience"]:
+                    print("Early stopping triggered. Ending training.")
                     split = "test"
+
+            if epoch == training_config["epochs"] - 1:
+                print("Last epoch reached. Running test split.")
+                split = "test"
 
         history.flush()
         save_checkpoint(training_config=training_config,
@@ -243,8 +245,8 @@ if __name__ == "__main__":
 
 
         if split == "test":
-            batch_iter = itertools.islice(val_loader, start_batch_idx, None)
-            num_batches = len(val_loader)
+            batch_iter = itertools.islice(test_loader, start_batch_idx, None)
+            num_batches = len(test_loader)
             iterate(info=info,
                     phys=phys,
                     optimizer=optimizer,
@@ -258,6 +260,7 @@ if __name__ == "__main__":
                     first_batch=start_batch_idx)
             break
 
+        history.flush()
         save_checkpoint(training_config=training_config,
                         model=model,
                         optimizer=optimizer,
