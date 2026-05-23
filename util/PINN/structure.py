@@ -5,8 +5,9 @@ NN_STRUCTURE = {
     "output_size": 4,
     "output_names": ("lnn", "lnpe", "lnpi", "phi"),
     "layers": [
-        {"size": 50, "non_lin_foo": torch.nn.Tanh},
-        {"size": 25, "non_lin_foo": torch.nn.SiLU},
-        {"size": 50, "non_lin_foo": torch.nn.Tanh},
+        {"size": 2**8, "non_lin_foo": torch.nn.Tanh},
+        {"size": 2**7, "non_lin_foo": torch.nn.SiLU},
+        {"size": 2**7, "non_lin_foo": torch.nn.Tanh},
+        {"size": 2**8, "non_lin_foo": torch.nn.SiLU},
     ],
 }

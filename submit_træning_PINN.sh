@@ -5,7 +5,7 @@
 ### =========================
 
 #BSUB -J PINN_tr
-#BSUB -W 24:00
+#BSUB -W 12:00
 
 # ## Output og error logs
 # ## -o/-e append, -oo/-eo overwrite
@@ -22,6 +22,8 @@
 ### CPU settings
 ### =========================
 
+# ## Antal CPU cores
+#BSUB -n 4
 
 # ## Alle cores på samme node
 #BSUB -R "span[hosts=1]"
@@ -37,11 +39,9 @@
 ### GPU settings
 ### =========================
 
-# ## Antal GPU cores
-#BSUB -n 4
 
 # ## GPU queue
-#BSUB -q gpul40
+#BSUB -q gpua40
 
 # ## Antal GPU'er
 #BSUB -gpu "num=1:mode=exclusive_process" 
@@ -51,4 +51,4 @@
 ### Run commands
 ### =========================
 
-.venv/bin/python SciML/træning.py
+.venv/bin/python SciML/PINN/træning.py

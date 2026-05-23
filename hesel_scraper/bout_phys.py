@@ -50,7 +50,11 @@ class BOUTHESELPhys:
         }
 
     def _ic_residuals(self, model: PINN, cord_fys: Tensor, cord_num: Tensor, input: Tensor, standardization):
-        ic_pred = model.forward(standardization, cord_fys, torch.zeros_like(input)) # (model, cord_fys/num, input, standardization) allerede på device
+        # convert to initial cord: (x,z,t) -> (x, z, t=0)
+        cord_fys_ic = cord_fys.clone()
+        cord_fys_ic[:, 2] = 0
+
+        ic_pred = model.forward(standardization, cord_fys_ic, torch.zeros_like(input)) # (model, cord_fys/num, input, standardization) allerede på device
         ic_vort = self._get_vort_field(ic_pred, cord_fys)# udregnet op device
         return {
             "ic_lnn" : ic_pred["lnn"]  - self.ic["init_lnn"][cord_num[:, 0].int()].view_as(ic_pred["lnn"]),
