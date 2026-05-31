@@ -41,7 +41,8 @@
 
 
 # ## GPU queue
-#BSUB -q gpua40
+#BSUB -q gpua100
+
 
 # ## Antal GPU'er
 #BSUB -gpu "num=1:mode=exclusive_process" 

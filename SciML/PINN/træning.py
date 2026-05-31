@@ -23,12 +23,12 @@ if __name__ == "__main__":
         "root": r"sim_data/data_15_512_Alexander_",
         # Output folder for checkpoints, history og best model
         # Kald folderen for: history<...> så det ikke flyttes til repo
-        "out_folder": r"SciML/PINN/history_tester",
+        "out_folder": r"SciML/PINN/history_stor_model_3",
         # "out_folder": r"SciML2/PINN/eksperiment_data",
         # Hvis resume er True læses checkpoint fra out_folder ellers startes ny træningen
         # Hvis checkpoint ikke findes, laves ny checkpoint og træningsdata appendes hvis history.json findes
         # Intet slettes
-        "resume": True,
+        "resume": False,
         
         # Optimization
         "lr": 1e-5,
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         "bc": 1.0,
 
         # DataLoader
-        "batch_size": 2**13,
+        "batch_size": 2**13 - 2**11 + 2**10, # 8192 - 2048 + 1024 = 7168
         "shuffle": True, # Bruges kun i val/test loader, da sampler bruges i train loader
         "pin_memory": True,
         "persistent_workers": True,
@@ -110,10 +110,12 @@ if __name__ == "__main__":
             training_config = checkpoint["training_config"]
             training_config["resume"] = True
 
-            training_config["num_workers"] = 0  # Sæt num_workers til 0 ved resume for at undgå problemer med DataLoader og multiprocessing
-            training_config["pin_memory"] = False  # Sæt pin_memory til False ved resume for at undgå problemer med DataLoader og multiprocessing
-            training_config["persistent_workers"] = None  # Sæt persistent_workers til False ved resume for at undgå problemer med DataLoader og multiprocessing
-            training_config["prefetch_factor"] = None  # Reducer prefetch_factor ved resume for at undgå problemer med DataLoader og multiprocessing
+            # Hvis du får 
+            # training_config["num_workers"] = 0  # Sæt num_workers til 0 ved resume for at undgå problemer med DataLoader og multiprocessing
+            # training_config["pin_memory"] = False  # Sæt pin_memory til False ved resume for at undgå problemer med DataLoader og multiprocessing
+            # training_config["persistent_workers"] = None  # Sæt persistent_workers til False ved resume for at undgå problemer med DataLoader og multiprocessing
+            # training_config["prefetch_factor"] = None  # Reducer prefetch_factor ved resume for at undgå problemer med DataLoader og multiprocessing
+
             (
                 info,
                 phys,
