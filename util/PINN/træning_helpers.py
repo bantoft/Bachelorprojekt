@@ -184,8 +184,6 @@ def save_checkpoint(training_config: dict,
     filename.parent.mkdir(parents=True, exist_ok=True)
     torch.save(ckpt, filename)
 
-
-
 def step(info,
          phys,
          model: torch.nn.Module,
@@ -246,7 +244,6 @@ def step(info,
         },
     )
     return weighted_loss["total"]
-
 
 def iterate(info,
             phys,

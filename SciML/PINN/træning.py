@@ -23,7 +23,7 @@ if __name__ == "__main__":
         "root": r"sim_data/data_15_512_Alexander_",
         # Output folder for checkpoints, history og best model
         # Kald folderen for: history<...> så det ikke flyttes til repo
-        "out_folder": r"SciML/PINN/history_tester",
+        "out_folder": r"SciML/PINN/history_testerasfdasdf",
         # "out_folder": r"SciML2/PINN/eksperiment_data",
         # Hvis resume er True læses checkpoint fra out_folder ellers startes ny træningen
         # Hvis checkpoint ikke findes, laves ny checkpoint og træningsdata appendes hvis history.json findes
