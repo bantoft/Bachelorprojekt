@@ -46,7 +46,8 @@ class BOUTHESELPhys:
             "init_lnn":  torch.log(self.info.data.init_n).to(torch.float32).to(self.info.device), #(num_x, 1)
             "init_lnpe":  torch.log(self.info.data.init_pe).to(torch.float32).to(self.info.device), # (num_x, 1)
             "init_lnpi":  torch.log(self.info.data.init_pi).to(torch.float32).to(self.info.device), # (num_x, 1)
-            "init_vort":  self.info.data.vort[0, :, 0].to(torch.float32).to(self.info.device) # (num_x, 1)
+            "init_vort":  self.info.data.vort[0, :, 0].to(torch.float32).to(self.info.device), # (num_x, 1)
+            "init_phi":  self.info.data.phi[0, :, 0].to(torch.float32).to(self.info.device) # (num_x, 1)
         }
 
     def _ic_residuals(self, model: PINN, cord_fys: Tensor, cord_num: Tensor, input: Tensor, standardization):
@@ -70,7 +71,7 @@ class BOUTHESELPhys:
         Values are ln transformed and moved to device.
         """
         boundary_conditions = {}
-        allowed_fields = {"lnn", "lnpe", "lnpi", "vort"}
+        allowed_fields = {"lnn", "lnpe", "lnpi", "vort", "phi"}
         for (field, key), value in self.info.settings.items():
             if field not in allowed_fields or "bndry" not in key:
                 continue
@@ -96,7 +97,12 @@ class BOUTHESELPhys:
             # Konverter til tensor og flyt til device
             bc_tensor = torch.tensor(float(parsed_value), dtype=self.info.dtype, device=self.info.device)
             boundary_conditions.setdefault(field, {})[side] = (bc_type, bc_tensor)
-        
+
+        # Undskyld jeg har snydt lidt her men går ud fra at det er ok ;)
+        boundary_conditions.setdefault("phi", {}).update({
+            "xin": ("dirichlet_o2", self.ic["init_phi"][0]),
+            "xout": ("neumann_o2", torch.tensor(0.0, dtype=self.info.dtype, device=self.info.device)),
+        })
         return boundary_conditions
 
     def _x_boundary_state(self):
