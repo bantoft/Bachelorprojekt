@@ -12,7 +12,7 @@ import torch
 from torch import Tensor
 
 from hesel_scraper.bout_dump import BOUTHESELInfo
-from hesel_scraper.api.operators import grad_x, grad_z, grad_t, laplacian_perp, d2dx2, d2dz2, d2dxdz
+from hesel_scraper.api.operators import grad_components, grad_x, grad_z, laplacian_perp, d2dx2, d2dz2, d2dxdz
 
 from util.PINN.model import PINN
 
@@ -245,14 +245,19 @@ class BOUTHESELPhys:
         ti_bck = float(getattr(params, "ti_bck", 0.0))
         t_phys = cord_fys[:, 2:3]
 
-        dphi_dx, dphi_dz = grad_x(phi, cord_fys).reshape(phi.shape).to(phi.dtype), grad_z(phi, cord_fys).reshape(phi.shape).to(phi.dtype)
-        dpi_dx, dpi_dz = grad_x(pi, cord_fys).reshape(pi.shape).to(pi.dtype), grad_z(pi, cord_fys).reshape(pi.shape).to(pi.dtype)
-        dlnn_dx, dlnn_dz = grad_x(lnn, cord_fys).reshape(lnn.shape).to(lnn.dtype), grad_z(lnn, cord_fys).reshape(lnn.shape).to(lnn.dtype)
-        dlnte_dx, dlnte_dz = grad_x(lnte, cord_fys).reshape(lnte.shape).to(lnte.dtype), grad_z(lnte, cord_fys).reshape(lnte.shape).to(lnte.dtype)
-        dlnti_dx, dlnti_dz = grad_x(lnti, cord_fys).reshape(lnti.shape).to(lnti.dtype), grad_z(lnti, cord_fys).reshape(lnti.shape).to(lnti.dtype)
-        ddt_lnn, ddt_lnpe, ddt_lnpi = grad_t(lnn, cord_fys).reshape(lnn.shape).to(lnn.dtype), grad_t(lnpe, cord_fys).reshape(lnpe.shape).to(lnpe.dtype), grad_t(lnpi, cord_fys).reshape(lnpi.shape).to(lnpi.dtype)
+        def first_derivatives(field: Tensor) -> tuple[Tensor, Tensor, Tensor]:
+            dx, dz, dt = grad_components(field, cord_fys)
+            return dx.reshape(field.shape).to(field.dtype), dz.reshape(field.shape).to(field.dtype), dt.reshape(field.shape).to(field.dtype)
+
+        dphi_dx, dphi_dz, _ = first_derivatives(phi)
+        dpi_dx, dpi_dz, _ = first_derivatives(pi)
+        dlnn_dx, dlnn_dz, ddt_lnn = first_derivatives(lnn)
+        dlnte_dx, dlnte_dz, _ = first_derivatives(lnte)
+        dlnti_dx, dlnti_dz, _ = first_derivatives(lnti)
+        _, _, ddt_lnpe = first_derivatives(lnpe)
+        _, _, ddt_lnpi = first_derivatives(lnpi)
         vort = self._get_vort_field(state, cord_fys)
-        ddt_vort = grad_t(vort, cord_fys).reshape(vort.shape).to(vort.dtype)
+        _, _, ddt_vort = first_derivatives(vort)
 
 
         def ddx(field: Tensor) -> Tensor:

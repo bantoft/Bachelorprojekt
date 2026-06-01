@@ -8,20 +8,25 @@ class HESELOneStepDataset(Dataset):
     def __init__(self, info):
         self.info = info
 
+        self.avg_z = torch.stack((self.info.avg_in_z["avg_n"].squeeze(-1),
+                                  self.info.avg_in_z["avg_te"].squeeze(-1),
+                                  self.info.avg_in_z["avg_ti"].squeeze(-1),
+                                  self.info.avg_in_z["avg_phi"].squeeze(-1)), dim=-1).to(dtype=self.info.dtype)
+        
         self.data = torch.stack([
-            info.data.lnn,
-            info.data.lnpe,
-            info.data.lnpi,
-            info.data.vort,
-        ], dim=1).to(dtype=info.dtype)
+            self.info.data.lnn,
+            self.info.data.lnpe,
+            self.info.data.lnpi,
+            self.info.data.phi,
+        ], dim=1).to(dtype=self.info.dtype)
         # [nt, 4, nx, nz]
 
         self.t = (
             torch.arange(
                 self.data.shape[0],
-                dtype=info.dtype,
+                dtype=self.info.dtype,
             )
-            * info.parameters.dt
+            * self.info.parameters.dt
         )
 
     def __len__(self):
@@ -29,11 +34,12 @@ class HESELOneStepDataset(Dataset):
 
     def __getitem__(self, idx):
 
+        avg_z = self.avg_z[idx + 1] # [nx, 4], aligned with target time step
         u = self.data[idx]          # [4, nx, nz]
         t = self.t[idx + 1]         # scalar
         y = self.data[idx + 1]      # [4, nx, nz]
 
-        return u, t, y
+        return avg_z, u, t, y
 
 
 def make_dataloaders(

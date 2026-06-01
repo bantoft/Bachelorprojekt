@@ -1,6 +1,8 @@
 import torch
 
 from neuralop.models.base_model import BaseModel
+from torch.utils.checkpoint import checkpoint
+
 
 
 class WrappedFNO(BaseModel):
@@ -13,44 +15,28 @@ class WrappedFNO(BaseModel):
         self.fno = fno
 
         self.dtype = self.info.dtype
-        self.nx = self.info.parameters.num_x
-        self.nz = self.info.parameters.num_z
+        self.device = self.info.device
 
-        self.x_line = torch.linspace(0.0, self.info.parameters.Lx, self.nx, device=info.device, dtype=self.dtype, requires_grad=True)
-        self.z_line = torch.linspace(0.0, self.info.parameters.Lz, self.nz, device=info.device, dtype=self.dtype, requires_grad=True)
+        self.nx = info.parameters.num_x
+        self.nz = info.parameters.num_z
+        self.lx = info.parameters.Lx
+        self.lz = info.parameters.Lz
 
-        grid = self.embed_coord()
-        self.register_buffer("grid", grid)
+        self.x_line = torch.linspace(0.0, self.lx, self.nx, device=self.device, dtype=self.dtype)
+        self.z_line = torch.linspace(0.0, self.lz, self.nz, device=self.device, dtype=self.dtype)
+
+
+        x_base = self.x_line[:, None].expand(self.nx, self.nz)
+        z_base = self.z_line[None, :].expand(self.nx, self.nz)
+
+        self.register_buffer("x_base", x_base[None, None])
+        self.register_buffer("z_base", z_base[None, None])
+        self.register_buffer("lz_tensor", torch.tensor(self.lz, device=self.device, dtype=self.dtype))
 
         g, H, D_x = self.make_constrains()
         self.register_buffer("g", g)
         self.register_buffer("H", H)
         self.register_buffer("D_x", D_x)
-
-
-    def embed_coord(self):
-        """
-        Enforces:
-            Periodic bounderies i z-axis as extension:
-            (x, z) = (x, sin(2*pi*z/Lz), cos(2*pi*z/Lz))
-        
-        return: fourier embedding [x, sin(2*pi*z/Lz), cos(2*pi*z/Lz)]
-        """
-        dtype = self.dtype
-        nx = self.nx
-        nz = self.nz
-
-        x_axis = torch.linspace(0.0, self.info.parameters.Lx, nx, dtype=dtype).requires_grad_(True)
-        z_axis = torch.linspace(0.0, self.info.parameters.Lz, nz, dtype=dtype).requires_grad_(True)
-        x = x_axis[:, None].expand(-1, nz)
-
-        theta = 2.0 * torch.pi * z_axis / self.info.parameters.Lz
-
-        z1 = torch.sin(theta)[None, :].expand(nx, -1)
-        z2 = torch.cos(theta)[None, :].expand(nx, -1)
-        grid = torch.stack([x, z1, z2], dim=0)
-        return grid
-
 
     def hermit_x(self, field_name):
         """
@@ -66,7 +52,7 @@ class WrappedFNO(BaseModel):
         s = (x - alpha) / L
 
         n = len(bc)
-        powers = torch.arange(n, device=x.device, dtype=x.dtype)
+        powers = torch.arange(n, device=self.device, dtype=self.dtype)
         basis = s[:, None] ** powers
 
         M_rows = []
@@ -75,11 +61,11 @@ class WrappedFNO(BaseModel):
         for side, (bc_type, value) in bc.items():
             s0 = torch.tensor(
                 0.0 if side == "xin" else 1.0,
-                device=x.device,
-                dtype=x.dtype,
+                device=self.device,
+                dtype=self.dtype,
             )
 
-            value = torch.as_tensor(value, device=x.device, dtype=x.dtype)
+            value = torch.as_tensor(value, device=self.device, dtype=self.dtype)
 
             if "dirichlet" in bc_type.lower():
                 row = s0 ** powers
@@ -102,7 +88,7 @@ class WrappedFNO(BaseModel):
         a = torch.linalg.solve(M, c)
 
         return basis @ a
-
+    
 
     def make_constrains(self):
         x = self.x_line
@@ -121,7 +107,7 @@ class WrappedFNO(BaseModel):
             self.phys.ic["init_lnn"],
             self.phys.ic["init_lnpe"],
             self.phys.ic["init_lnpi"],
-            self.phys.ic["init_vort"],
+            self.phys.ic["init_phi"],
         ], dim=0).to(dtype=self.dtype)
 
         g = g[:, :, None].expand(-1, -1, self.nz)
@@ -130,41 +116,45 @@ class WrappedFNO(BaseModel):
         H = torch.stack([self.hermit_x("lnn"),
                          self.hermit_x("lnpe"),
                          self.hermit_x("lnpi"),
-                         self.hermit_x("vort")
+                         self.hermit_x("phi")
         ], dim=0).to(dtype=self.dtype)
 
         H = H[:, :, None].expand(-1, -1, self.nz)
 
         return g, H, D_x
     
+
+    def create_model_input(self, u, t):
+        B, _, nx, nz = u.shape
+
+        x_coord = self.x_base.expand(B, 1, nx, nz)
+        z_coord = self.z_base.expand(B, 1, nx, nz)
+        t_coord = t.view(B, 1, 1, 1).expand(B, 1, nx, nz)
+
+        coord = torch.cat([x_coord, z_coord, t_coord], dim=1).requires_grad_(True)
+
+        x_coord = coord[:, 0:1]
+        z_coord = coord[:, 1:2]
+        t_coord = coord[:, 2:3]
+
+        z1 = torch.sin(2.0 * torch.pi * z_coord / self.lz_tensor)
+        z2 = torch.cos(2.0 * torch.pi * z_coord / self.lz_tensor)
+
+        model_input = torch.cat([u, x_coord, z1, z2, t_coord], dim=1)
+
+        return model_input, coord
+
     def forward(self, u, t):
 
-        u = u.to(device=device, dtype=dtype)
-        B = u.shape[0]
+        model_input, coord = self.create_model_input(u, t)
 
-        t = torch.as_tensor(t, device=device, dtype=dtype)
-
-        if t.ndim == 0:
-            t = t.expand(B)
-
-        # [B] -> [B, 1, nx, nz]
-        t_grid = t.view(B, 1, 1, 1).expand(B, 1, self.nx, self.nz)
-
-        # [B, 4 + 3 + 1, nx, nz] = [B, 8, nx, nz]
-        model_input = torch.cat([u, grid, t_grid], dim=1)
-
-        N_theta = self.fno(model_input)
+        # Checkpointing trades compute for much lower activation memory.
+        N_theta = checkpoint(self.fno, model_input, use_reentrant=False)
 
         L_t = 50.0
-        sigma_t = 1.0 - torch.exp(-t / L_t)
-        sigma_t = sigma_t.view(B, 1, 1, 1)
+        sigma_t = (1.0 - torch.exp(-t / L_t)).view(t.shape[0], 1, 1, 1)
+        
+        f_theta = self.g + sigma_t*(self.H - self.g + self.D_x * (N_theta - self.H))
 
-        f_theta = self.g[None] + sigma_t * (
-            self.H[None]
-            - self.g[None]
-            + self.D_x[None] * (N_theta - self.H[None])
-        )
-
-        return f_theta
-    
+        return f_theta, coord
 

@@ -37,7 +37,7 @@ if __name__ == "__main__":
         "early_stopping_min_delta": 1.0,
 
         # Logging / status
-        "status_frequency": 1000,
+        "status_frequency": 5,
         "flush_frequency": 100,
 
         # Dataset split
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         "bc": 1.0,
 
         # DataLoader
-        "batch_size": 2**13 - 2**11 + 2**10, # 8192 - 2048 + 1024 = 7168
+        "batch_size": 2**10, # 8192 - 2048 + 1024 = 7168
         "shuffle": True, # Bruges kun i val/test loader, da sampler bruges i train loader
         "pin_memory": True,
         "persistent_workers": True,
