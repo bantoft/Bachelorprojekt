@@ -1,17 +1,8 @@
 from __future__ import annotations
-# Fiks path for imports
-import sys
-from pathlib import Path
-
-ROOT_DIR = Path(__file__).resolve().parents[2]
-sys.path.append(str(ROOT_DIR))
-
-import torch
-import torch.nn as nn
-
 
 import json
-
+import torch
+import torch.nn as nn
 
 from pathlib import Path
 from dataclasses import dataclass, field, asdict
@@ -128,7 +119,9 @@ def init_trainer(training_config: dict):
     train_loader, val_loader, test_loader = make_dataloaders(info,
                                                              batch_size=training_config["batch_size"],
                                                              train_split=training_config["train_split"],
-                                                             val_split=training_config["val_split"])
+                                                             val_split=training_config["val_split"],
+                                                             num_workers=training_config.get("num_workers", 0),
+                                                             pin_memory=training_config.get("pin_memory"))
 
     return (info,
             phys,

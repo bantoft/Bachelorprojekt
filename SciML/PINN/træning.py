@@ -174,7 +174,7 @@ if __name__ == "__main__":
                         patience_counter=patience_counter)
 
 
-    training_config["epochs"] = 1
+        training_config["epochs"] = 1
 
 
     for key, value in training_config.items():

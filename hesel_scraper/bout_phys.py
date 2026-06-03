@@ -244,10 +244,22 @@ class BOUTHESELPhys:
         te_bck = float(getattr(params, "te_bck", 0.0))
         ti_bck = float(getattr(params, "ti_bck", 0.0))
         t_phys = cord_fys[:, 2:3]
+        derivative_cache: dict[tuple[str, int], Tensor] = {}
+        component_cache: dict[int, tuple[Tensor, Tensor, Tensor]] = {}
+
+        def cache_key(field: Tensor) -> int:
+            return id(field)
 
         def first_derivatives(field: Tensor) -> tuple[Tensor, Tensor, Tensor]:
-            dx, dz, dt = grad_components(field, cord_fys)
-            return dx.reshape(field.shape).to(field.dtype), dz.reshape(field.shape).to(field.dtype), dt.reshape(field.shape).to(field.dtype)
+            key = cache_key(field)
+            if key not in component_cache:
+                dx, dz, dt = grad_components(field, cord_fys)
+                component_cache[key] = (
+                    dx.reshape(field.shape).to(field.dtype),
+                    dz.reshape(field.shape).to(field.dtype),
+                    dt.reshape(field.shape).to(field.dtype),
+                )
+            return component_cache[key]
 
         dphi_dx, dphi_dz, _ = first_derivatives(phi)
         dpi_dx, dpi_dz, _ = first_derivatives(pi)
@@ -261,22 +273,40 @@ class BOUTHESELPhys:
 
 
         def ddx(field: Tensor) -> Tensor:
-            return grad_x(field, cord_fys).reshape(field.shape).to(field.dtype)
+            key = ("dx", cache_key(field))
+            if key not in derivative_cache:
+                derivative_cache[key] = first_derivatives(field)[0]
+            return derivative_cache[key]
 
         def ddz(field: Tensor) -> Tensor:
-            return grad_z(field, cord_fys).reshape(field.shape).to(field.dtype)
+            key = ("dz", cache_key(field))
+            if key not in derivative_cache:
+                derivative_cache[key] = first_derivatives(field)[1]
+            return derivative_cache[key]
 
         def lap(field: Tensor) -> Tensor:
-            return laplacian_perp(field, cord_fys).reshape(field.shape).to(field.dtype)
+            key = ("lap", cache_key(field))
+            if key not in derivative_cache:
+                derivative_cache[key] = ddxx(field) + ddzz(field)
+            return derivative_cache[key]
 
         def ddxx(field: Tensor) -> Tensor:
-            return d2dx2(field, cord_fys).reshape(field.shape).to(field.dtype)
+            key = ("ddxx", cache_key(field))
+            if key not in derivative_cache:
+                derivative_cache[key] = grad_x(ddx(field), cord_fys).reshape(field.shape).to(field.dtype)
+            return derivative_cache[key]
 
         def ddzz(field: Tensor) -> Tensor:
-            return d2dz2(field, cord_fys).reshape(field.shape).to(field.dtype)
+            key = ("ddzz", cache_key(field))
+            if key not in derivative_cache:
+                derivative_cache[key] = grad_z(ddz(field), cord_fys).reshape(field.shape).to(field.dtype)
+            return derivative_cache[key]
 
         def ddxz(field: Tensor) -> Tensor:
-            return d2dxdz(field, cord_fys).reshape(field.shape).to(field.dtype)
+            key = ("ddxz", cache_key(field))
+            if key not in derivative_cache:
+                derivative_cache[key] = grad_x(ddz(field), cord_fys).reshape(field.shape).to(field.dtype)
+            return derivative_cache[key]
 
 
         def brackets(f: Tensor, g: Tensor) -> Tensor:

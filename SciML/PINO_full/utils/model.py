@@ -24,6 +24,7 @@ class WrappedFNO(BaseModel):
 
         self.x_line = torch.linspace(0.0, self.lx, self.nx, device=self.device, dtype=self.dtype)
         self.z_line = torch.linspace(0.0, self.lz, self.nz, device=self.device, dtype=self.dtype)
+        self.time_scale = 50.0
 
 
         x_base = self.x_line[:, None].expand(self.nx, self.nz)
@@ -33,10 +34,11 @@ class WrappedFNO(BaseModel):
         self.register_buffer("z_base", z_base[None, None])
         self.register_buffer("lz_tensor", torch.tensor(self.lz, device=self.device, dtype=self.dtype))
 
-        g, H, D_x = self.make_constrains()
+        g, H, D_x = self.make_x_constrains()
         self.register_buffer("g", g)
         self.register_buffer("H", H)
         self.register_buffer("D_x", D_x)
+        self._subset_cache = {}
 
     def hermit_x(self, field_name):
         """
@@ -90,7 +92,7 @@ class WrappedFNO(BaseModel):
         return basis @ a
     
 
-    def make_constrains(self):
+    def make_x_constrains(self):
         x = self.x_line
 
         L_alpha = 0.5
@@ -124,11 +126,29 @@ class WrappedFNO(BaseModel):
         return g, H, D_x
     
 
-    def create_model_input(self, u, t):
+    def _get_subset_tensors(self, row_indices):
+        if row_indices is None:
+            return self.x_base, self.z_base, self.g, self.H, self.D_x
+
+        cache_key = tuple(row_indices.tolist())
+        if cache_key not in self._subset_cache:
+            self._subset_cache[cache_key] = (
+                self.x_base.index_select(2, row_indices),
+                self.z_base.index_select(2, row_indices),
+                self.g.index_select(1, row_indices),
+                self.H.index_select(1, row_indices),
+                self.D_x.index_select(1, row_indices),
+            )
+
+        return self._subset_cache[cache_key]
+
+    def create_model_input(self, u, t, row_indices=None):
         B, _, nx, nz = u.shape
 
-        x_coord = self.x_base.expand(B, 1, nx, nz)
-        z_coord = self.z_base.expand(B, 1, nx, nz)
+        x_base, z_base, _, _, _ = self._get_subset_tensors(row_indices)
+
+        x_coord = x_base.expand(B, 1, nx, nz)
+        z_coord = z_base.expand(B, 1, nx, nz)
         t_coord = t.view(B, 1, 1, 1).expand(B, 1, nx, nz)
 
         coord = torch.cat([x_coord, z_coord, t_coord], dim=1).requires_grad_(True)
@@ -144,17 +164,24 @@ class WrappedFNO(BaseModel):
 
         return model_input, coord
 
-    def forward(self, u, t):
+    def forward(self, u, t, row_indices=None, use_checkpoint=None):
+        if row_indices is not None:
+            u = u.index_select(2, row_indices)
 
-        model_input, coord = self.create_model_input(u, t)
+        if use_checkpoint is None:
+            use_checkpoint = row_indices is None
 
-        # Checkpointing trades compute for much lower activation memory.
-        N_theta = checkpoint(self.fno, model_input, use_reentrant=False)
+        model_input, coord = self.create_model_input(u, t, row_indices=row_indices)
 
-        L_t = 50.0
-        sigma_t = (1.0 - torch.exp(-t / L_t)).view(t.shape[0], 1, 1, 1)
-        
-        f_theta = self.g + sigma_t*(self.H - self.g + self.D_x * (N_theta - self.H))
+        if use_checkpoint:
+            # Checkpointing trades compute for much lower activation memory.
+            N_theta = checkpoint(self.fno, model_input, use_reentrant=False)
+        else:
+            N_theta = self.fno(model_input)
+
+        sigma_t = (1.0 - torch.exp(-t / self.time_scale)).view(t.shape[0], 1, 1, 1)
+        _, _, g, H, D_x = self._get_subset_tensors(row_indices)
+
+        f_theta = g[None] + sigma_t * (H[None] - g[None] + D_x[None] * (N_theta - H[None]))
 
         return f_theta, coord
-
