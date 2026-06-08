@@ -1,0 +1,74 @@
+
+Det antages at læseren har en grundlæggende forståelse for differentialligninger og numeriske metoder. 
+Dette afsnit vil give en introduktion til det matematiske grundlag for PDE'er, samt de numeriske metoder der anvendes i BOUT++-simuleringer.
+Derudover vil det også introducere moderne datadrevne metoder som PINNs og PINOs, som er relevante for dette projekt.
+\cite{iter_new_energy}
+\subsection{Det matematiske grundlag} \label{ch2_1}
+
+% Primer til fysikken bag plasma modellen
+Funktioner og funktionrum
+    - Skalar- og vektorfunktioner
+    - Funktioner af flere variable
+    - Kontinuitet og differentiabilitet
+    - Normer og afstandsmål
+    - Gradient
+    - Divergens
+    - Rotation (curl)
+    - Laplace-operatoren
+    - Kædereglen for funktioner af flere variable
+
+Klassifikation af PDE'er
+    - Definition af PDE'er
+    - Klassifikation af PDE'er
+    - Orden og linearitet
+    - Elliptiske PDE'er
+    - Parabolske PDE'er
+    - Hyperbolske PDE'er
+    - Definer hvilket pde system vi har med at gøre
+
+Begyndelses- og randbetingelser
+    - Initialbetingelser (IC)
+    - Dirichlet-betingelser
+    - Neumann-betingelser
+    - Periodiske randbetingelser
+
+% Primer til simulering uden BOUT++ fokues
+Numerisk approksimation
+    - Diskretisering af kontinuert rum
+    - Finite Difference approksimationer
+    - Fremad differens
+    - Bagud differens
+    - Central differens
+    - Diskretisering af tidsafledte
+    - Diskret repræsentation af PDE'er
+
+Fejl og konvergens
+    - Trunkeringsfejl
+    - Konsistens
+    - Stabilitet
+    - Konvergens
+
+% Primer til PINN/PINO-fokus
+-   Funktioner og funktionrum.
+-   Partielle afledte og differentialoperatorer.
+-   PDE'er og randbetingelser.
+-   Finite Difference-approksimationer.
+-   Automatisk differentiation.
+-   Residualer og MSE-tab.
+
+% udledning af PDE-systemet
+\subsection{Fysiken bag Hesel modellen}
+\input{sources/kap_2/2_1_fysik.tex}
+
+% numeriske metoder til løsning/simulering af PDE'er
+% og hvordan BOUT++ og BOUT-HESEL implementerer disse og hvordan det faktsik fungere på en computer
+\subsection{Numeriske metoder, BOUT-HESEL simuleringer}
+\input{sources/kap_2/2_2_numeriske_metoder.tex}
+
+% SciML, PINN og PINO
+
+\subsection{Datadrevne og fysik informeede metoder}
+\input{sources/kap_2/2_3_PINN_PINO.tex}
+
+
+% Måske også en gennemgang af computer hardware

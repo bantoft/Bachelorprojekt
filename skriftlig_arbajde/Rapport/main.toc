@@ -1,8 +1,12 @@
 \babel@toc {english}{}\relax 
 \contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Subsection}{1}{subsection.1.1}%
-\contentsline {section}{List of Figures}{I}{table.caption.2}%
-\contentsline {section}{List of Tables}{II}{table.caption.2}%
-\contentsline {section}{Nomenclature}{III}{table.caption.2}%
-\contentsline {section}{References}{III}{table.caption.2}%
-\contentsline {section}{\numberline {2}Appendix A}{IV}{section.2}%
+\contentsline {section}{\numberline {2}Teory}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Det matematiske grundlag}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Fysiken bag Hesel modellen}{2}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Numeriske metoder, BOUT-HESEL simuleringer}{2}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Datadrevne og fysik informeede metoder}{3}{subsection.2.4}%
+\contentsline {section}{List of Figures}{I}{subsection.2.4}%
+\contentsline {section}{List of Tables}{II}{subsection.2.4}%
+\contentsline {section}{Nomenclature}{III}{subsection.2.4}%
+\contentsline {section}{References}{III}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Appendix A}{IV}{section.3}%
