@@ -1,0 +1,15 @@
+Da HESEL-modellen bestaaar af et ikke-lineaert koblet PDE-system, er numeriske metoder noedvendige for at beregne loesninger i praksis. Den grundlaeggende ide er at erstatte det kontinuerte rum-tidsdomaene med en diskret repræsentation, saaledes at afledte og operatorer kan approksimeres numerisk. Resultatet er en beregningsmodel, der kan afvikles paa en computer og producere tidsudviklinger af de relevante plasmafelter.
+
+Diskretisering betyder, at det kontinuerte domaene $\Omega \times [0,T]$ erstattes af et endeligt antal gitterpunkter i rum og diskrete tidstrin. Hvis et felt $u(x,y,t)$ evalueres paa et gitter, kan man eksempelvis approksimere en førsteafledt ved en central differens
+\[
+\frac{\partial u}{\partial x}(x_i,y_j,t^n) \approx \frac{u_{i+1,j}^n-u_{i-1,j}^n}{2\Delta x},
+\]
+mens andenordensafledte kan approksimeres med tilsvarende differensudtryk. Tidsudviklingen kan derefter frembringes ved eksplicitte eller implicitte tidsintegrationsmetoder, afhængigt af systemets stivhed og stabilitetsegenskaber.
+
+For numeriske PDE-loesere er tre begreber centrale: konsistens, stabilitet og konvergens. Konsistens handler om, hvorvidt den diskrete ligning naermer sig den oprindelige PDE, naar gitterafstanden bliver lille. Stabilitet handler om, hvorvidt numeriske fejl vokser ukontrolleret gennem tidsintegrationen. Konvergens betyder, at den numeriske loesning naermer sig den sande loesning, naar diskretiseringen forfines. Disse begreber er vigtige i dette projekt, fordi de producerede simulationsdata kun er meningsfulde som reference, hvis de stammer fra en paalidelig numerisk loesning.
+
+BOUT++ er et rammevaerk til simulering af plasmafysiske PDE-systemer, og BOUT-HESEL er en konkret implementering af HESEL-modellen oven paa dette rammevaerk. I praksis betyder det, at HESEL-ligningerne diskretiseres og tidsintegreres numerisk, saaledes at der genereres rum-tidsdata for de centrale felter. Disse data fungerer i projektet som reference eller ground truth for de efterfoelgende maskinlaeringsmodeller.
+
+Det er vigtigt at bemaerke, at de data, der anvendes i projectets Scientific Machine Learning-del, ikke er eksperimentelle maalinger direkte fra en reaktor, men numerisk genererede felter fra en etableret fysikbaseret simulator. Det giver to fordele. For det foerste er den underliggende fysik eksplicit kendt gennem ligningssystemet og simuleringsopsaetningen. For det andet giver simulatoren adgang til store maengder konsistente data, som kan bruges til baade traening, validering og fysisk kontrol af modeller.
+
+Den numeriske diskretisering er samtidig afgørende for, hvordan data senere kan bruges i machine learning. Naar simulatoren returnerer felter paa et diskret gitter og ved diskrete tidspunkter, bliver laeringsproblemet i praksis et problem paa diskrete samples. Alligevel er maalet ofte at approksimere den underliggende kontinuerte dynamik. Denne overgang mellem kontinuerte PDE'er og diskrete data er en central motivation for at kombinere klassiske numeriske metoder med Scientific Machine Learning.

@@ -1,0 +1,178 @@
+
+
+
+Dette afsnit introducerer de grundlæggende fysiske principper bag HESEL-modellen.
+Først introduceres plasma og fusion, hvorefter de centrale fysiske mekanismer, som beskriver transport og turbulens i plasmaets randregion, gennemgås.
+Afslutningsvis præsenteres hele HESEL-modellen
+
+Plasma og fusion
+Når man skal udvinde energi fra fusion bruges ovarmes lette grundstoffer op til meget høje temperaturer, hvor plasma kan vedligeholdes. Dog er det ekstremt svært at 
+kontrollere plasma da 
+
+% ## 2.2.1 Plasma og fusion
+
+% Plasma betegnes ofte som stoffets fjerde tilstandsform. Et plasma består af frie elektroner og ioner, som opstår når et neutralt gasformigt stof tilføres tilstrækkelig energi til, at elektronerne frigøres fra atomernes elektronskaller.
+
+% I modsætning til almindelige gasser består plasma derfor af elektrisk ladede partikler. Disse partikler påvirkes af både elektriske og magnetiske felter, hvilket giver anledning til en række kollektive fænomener, som ikke forekommer i neutrale væsker og gasser. Plasmaets bevægelse kan derfor ikke beskrives alene ved klassisk fluiddynamik, men kræver en kombination af elektromagnetisme og transportteori.
+
+% Størstedelen af det synlige univers består af plasma. Eksempler herpå er stjerner, solvinden og interstellare skyer. På Jorden findes plasma blandt andet i lyn, lysstofrør og i magnetisk indesluttede fusionsreaktorer.
+
+% Fusion er den proces, hvor lette atomkerner sammensmeltes til tungere atomkerner under frigivelse af energi. Den mest relevante reaktion for fremtidige fusionskraftværker er deuterium-tritium-reaktionen
+
+% [
+% D + T \rightarrow , ^4He + n + 17.6 \text{ MeV},
+% ]
+
+% hvor deuterium og tritium fusionerer til helium og en neutron samtidig med, at der frigives en betydelig mængde energi.
+
+% For at fusion kan finde sted, skal de positivt ladede atomkerner bringes så tæt på hinanden, at den stærke kernekraft kan overvinde den elektrostatiske frastødning mellem kernerne. Dette kræver temperaturer på størrelsesordenen
+
+% [
+% 10^8 ; \text{K},
+% ]
+
+% hvilket er langt højere end smeltepunkterne for alle kendte materialer.
+
+% Ved disse temperaturer eksisterer brændstoffet nødvendigvis som et plasma. Plasmaet kan derfor ikke indesluttes ved hjælp af fysiske vægge alene, men må kontrolleres ved hjælp af magnetiske felter.
+
+% ---
+
+% ## 2.2.2 Tokamaker og plasmaets randregion
+
+% Den mest udbredte metode til magnetisk indeslutning af plasma er tokamaken. En tokamak består af et torusformet vakuumkammer omgivet af kraftige elektromagneter, som genererer et magnetfelt, der tvinger de ladede partikler til at bevæge sig langs magnetfeltlinjerne.
+
+% På grund af deres elektriske ladning udfører elektroner og ioner en spiralbevægelse omkring magnetfeltlinjerne. Dette reducerer transporten på tværs af magnetfeltet og forbedrer dermed indeslutningen af plasmaet.
+
+% Selvom magnetfeltet begrænser partikeltransporten, vil der stadig forekomme tab af masse og energi. Disse tab er særligt udtalte i plasmaets randregion, hvor turbulente strukturer transporterer partikler og varme fra plasmaets kerne mod reaktorvæggen.
+
+% Randregionen spiller derfor en afgørende rolle for fusionsreaktorens samlede ydeevne. For store energitab reducerer plasmaets temperatur, mens kraftige varmebelastninger kan beskadige reaktorens materialer.
+
+% Det er netop denne randdynamik, som HESEL-modellen er udviklet til at beskrive.
+
+% ---
+
+% ## 2.2.3 Bevarelseslove
+
+% Store dele af plasmafysikken kan beskrives ved hjælp af bevarelseslove. Disse beskriver udviklingen af fysiske størrelser såsom masse, momentum og energi.
+
+% Generelt kan en bevarelseslov skrives som
+
+% [
+% \frac{\partial u}{\partial t}
+% +
+% \nabla \cdot \mathbf{\Gamma}
+% ============================
+
+% S,
+% ]
+
+% hvor
+
+% * (u) er den bevarede størrelse,
+% * (\mathbf{\Gamma}) er en flux,
+% * (S) er en kilde- eller tabsterm.
+
+% Ligningen beskriver, at ændringen af en fysisk størrelse inden for et volumen skyldes transport gennem volumenets grænse samt eventuelle lokale kilder eller tab.
+
+% Denne struktur genfindes i stort set alle plasmafysiske modeller, herunder HESEL-modellen.
+
+% ---
+
+% ## 2.2.4 Advektion, diffusion og kilder
+
+% Transportprocesser i plasma beskrives ofte ved en kombination af advektion, diffusion og kildeled.
+
+% Advektion beskriver transport forårsaget af en hastighed
+
+% [
+% \frac{\partial u}{\partial t}
+% +
+% \mathbf{v}\cdot\nabla u
+% =======================
+
+% 0.
+
+% ]
+
+% Fysisk svarer dette til, at en størrelse flyttes gennem domænet uden at ændre form.
+
+% Diffusion beskriver derimod en udjævning af gradienter
+
+% [
+% \frac{\partial u}{\partial t}
+% =============================
+
+% D\nabla^2 u,
+% ]
+
+% hvor (D) er en diffusionskoefficient.
+
+% I plasmaer forekommer både advektion og diffusion samtidigt. Derudover optræder forskellige kildeterms, som beskriver opvarmning, partikeltilførsel eller energitab.
+
+% HESEL-modellen indeholder alle disse mekanismer.
+
+% ---
+
+% ## 2.2.5 Turbulens og transport
+
+% Et af de største problemer inden for magnetisk indesluttet fusion er turbulens.
+
+% Turbulens opstår, når små forstyrrelser i plasmaet vokser og interagerer på tværs af mange længde- og tidsskalaer. Resultatet er komplekse og tilsyneladende tilfældige bevægelsesmønstre.
+
+% I plasmaets randregion fører turbulens til dannelsen af koherente strukturer, ofte kaldet blobs, som transporterer masse og energi væk fra plasmaets kerne.
+
+% Disse turbulente transportmekanismer er ansvarlige for en væsentlig del af de samlede energi- og partikeltab i moderne tokamaker.
+
+% Da turbulensen spænder over mange skalaer samtidigt, er direkte simulering af alle relevante processer ekstremt beregningstung. Dette motiverer udviklingen af reducerede modeller såsom HESEL-modellen.
+
+% ---
+
+% ## 2.2.6 HESEL-ligningerne
+
+% HESEL (Hot Edge-SOL Electrostatic) er en reduceret fluidmodel udviklet til simulering af turbulens og transport i plasmaets randregion.
+
+% Modellen beskriver udviklingen af fire koblede felter:
+
+% [
+% n,
+% \qquad
+% p_e,
+% \qquad
+% p_i,
+% \qquad
+% \phi,
+% ]
+
+% hvor
+
+% * (n) er partikeltætheden,
+% * (p_e) er elektrontrykket,
+% * (p_i) er iontrykket,
+% * (\phi) er det elektrostatiske potentiale.
+
+% HESEL kan matematisk beskrives som et koblet system af ikke-lineære partielle differentialligninger
+
+% [
+% \frac{\partial \mathbf{u}}{\partial t}
+% ======================================
+
+% \mathcal{F}
+% \left(
+% \mathbf{u},
+% \nabla\mathbf{u},
+% \nabla^2\mathbf{u}
+% \right),
+% ]
+
+% hvor
+
+% [
+% \mathbf{u}
+% ==========
+
+% [n,p_e,p_i,\phi]^T.
+% ]
+
+% Ligningerne indeholder bidrag fra advektion, diffusion, krumningseffekter, parallel transport og forskellige dissipative processer.
+
+% Da systemet er stærkt ikke-lineært og koblet, findes der generelt ingen analytisk løsning. I stedet approksimeres løsningen numerisk ved hjælp af simuleringer. Disse simuleringer udgør datagrundlaget for de datadrevne og fysikinformerede modeller, som introduceres senere i rapporten.

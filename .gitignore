@@ -3,6 +3,7 @@
 # Data filder
 sim_data
 SciML/PINN/history*
+SciML/PINO_z/experiments*
 
 # Her er bøger der fylder meget...
 teori

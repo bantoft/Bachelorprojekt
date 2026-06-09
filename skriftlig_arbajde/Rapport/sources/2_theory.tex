@@ -1,74 +1,28 @@
+I dette kapitel gennemgås det teoretiske grundlag for hele projektet. Da der er et stort overlap mellem fysikken, numeriske, datadrevne og fysik informede metoder 
+foreslås det at læse \ref{ch2_1} grundigt. Herefter kan \ref{ch2_2}, \ref{ch2_3} og \ref{ch2_4} læses i vilkårlig rækkefølge.
+\ref{ch2_1} introducere notation,....\\
+\ref{ch2_2} gennemgår fysikken bag HESEL modellen\\
+\ref{ch2_3} gennemgår de numeriske metoder til løsning/simulering af PDE'er, og hvordan BOUT++ og BOUT-HESEL implementerer disse og\\
+\ref{ch2_4} gennemgår de datadrevne og fysik informeede metoder, og hvordan de kan bruges til at approksimere løsninger af PDE-systemer.\\
 
-Det antages at læseren har en grundlæggende forståelse for differentialligninger og numeriske metoder. 
-Dette afsnit vil give en introduktion til det matematiske grundlag for PDE'er, samt de numeriske metoder der anvendes i BOUT++-simuleringer.
-Derudover vil det også introducere moderne datadrevne metoder som PINNs og PINOs, som er relevante for dette projekt.
-\cite{iter_new_energy}
+
+
 \subsection{Det matematiske grundlag} \label{ch2_1}
+\input{sources/kap_2/2_1_det_matematiske_grundlag.tex}
 
-% Primer til fysikken bag plasma modellen
-Funktioner og funktionrum
-    - Skalar- og vektorfunktioner
-    - Funktioner af flere variable
-    - Kontinuitet og differentiabilitet
-    - Normer og afstandsmål
-    - Gradient
-    - Divergens
-    - Rotation (curl)
-    - Laplace-operatoren
-    - Kædereglen for funktioner af flere variable
-
-Klassifikation af PDE'er
-    - Definition af PDE'er
-    - Klassifikation af PDE'er
-    - Orden og linearitet
-    - Elliptiske PDE'er
-    - Parabolske PDE'er
-    - Hyperbolske PDE'er
-    - Definer hvilket pde system vi har med at gøre
-
-Begyndelses- og randbetingelser
-    - Initialbetingelser (IC)
-    - Dirichlet-betingelser
-    - Neumann-betingelser
-    - Periodiske randbetingelser
-
-% Primer til simulering uden BOUT++ fokues
-Numerisk approksimation
-    - Diskretisering af kontinuert rum
-    - Finite Difference approksimationer
-    - Fremad differens
-    - Bagud differens
-    - Central differens
-    - Diskretisering af tidsafledte
-    - Diskret repræsentation af PDE'er
-
-Fejl og konvergens
-    - Trunkeringsfejl
-    - Konsistens
-    - Stabilitet
-    - Konvergens
-
-% Primer til PINN/PINO-fokus
--   Funktioner og funktionrum.
--   Partielle afledte og differentialoperatorer.
--   PDE'er og randbetingelser.
--   Finite Difference-approksimationer.
--   Automatisk differentiation.
--   Residualer og MSE-tab.
 
 % udledning af PDE-systemet
-\subsection{Fysiken bag Hesel modellen}
-\input{sources/kap_2/2_1_fysik.tex}
+\subsection{Fysikken bag Hesel modellen} \label{ch2_2}
+\input{sources/kap_2/2_2_fysik.tex}
 
 % numeriske metoder til løsning/simulering af PDE'er
 % og hvordan BOUT++ og BOUT-HESEL implementerer disse og hvordan det faktsik fungere på en computer
-\subsection{Numeriske metoder, BOUT-HESEL simuleringer}
-\input{sources/kap_2/2_2_numeriske_metoder.tex}
+\subsection{Numeriske metoder, BOUT-HESEL simuleringer} \label{ch2_3}
+\input{sources/kap_2/2_3_numeriske_metoder.tex}
 
 % SciML, PINN og PINO
-
-\subsection{Datadrevne og fysik informeede metoder}
-\input{sources/kap_2/2_3_PINN_PINO.tex}
+\subsection{Datadrevne og fysik informeede metoder} \label{ch2_4}
+\input{sources/kap_2/2_4_PINN_PINO.tex}
 
 
 % Måske også en gennemgang af computer hardware

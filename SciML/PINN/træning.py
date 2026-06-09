@@ -8,10 +8,8 @@ sys.path.append(str(ROOT_DIR))
 import torch
 import itertools
 
-from util.PINN.model import PINN
-from util.PINN.træning_helpers import HistoryBuffer, save_checkpoint, iterate, init_trainer
-
-
+from SciML.PINN.util.model import PINN
+from SciML.PINN.util.træning_helpers import HistoryBuffer, save_checkpoint, iterate, init_trainer
 
 
 
@@ -23,7 +21,7 @@ if __name__ == "__main__":
         "root": r"sim_data/data_15_512_Alexander_",
         # Output folder for checkpoints, history og best model
         # Kald folderen for: history<...> så det ikke flyttes til repo
-        "out_folder": r"SciML/PINN/history_stor_model_3",
+        "out_folder": r"SciML/PINN/history_stor_model_3asdfasfa",
         # "out_folder": r"SciML2/PINN/eksperiment_data",
         # Hvis resume er True læses checkpoint fra out_folder ellers startes ny træningen
         # Hvis checkpoint ikke findes, laves ny checkpoint og træningsdata appendes hvis history.json findes

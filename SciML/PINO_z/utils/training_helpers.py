@@ -2,257 +2,346 @@ from __future__ import annotations
 
 import gc
 import json
+from pathlib import Path
+
+import neuralop as nop
 import torch
 
 
-from pathlib import Path
-from dataclasses import dataclass, field, asdict
-
-
-
-
-@dataclass
-class LossGroup:
-    total: list[float] = field(default_factory=list)
-    da: list[float] = field(default_factory=list)
-    eq: list[float] = field(default_factory=list)
-
-
-@dataclass
-class SplitHistory:
-    raw: LossGroup = field(default_factory=LossGroup)
-    weighted: LossGroup = field(default_factory=LossGroup)
-
-@dataclass
-class HistoryData:
-    training: SplitHistory = field(default_factory=SplitHistory)
-    validation: SplitHistory = field(default_factory=SplitHistory)
-    test: SplitHistory = field(default_factory=SplitHistory)
-
+SPLITS = ("training", "validation", "test")
+LOSS_TYPES = ("raw", "weighted")
+LOSS_KEYS = ("total", "da", "eq")
 
 class HistoryBuffer:
     def __init__(self, save_path: Path):
         self.save_path = Path(save_path)
-        self.buffer = HistoryData()
-
-        if not self.save_path.exists(): self._save(HistoryData())
+        self.buffer = self._empty_history()
+        if not self.save_path.exists():
+            self._save(self._empty_history())
 
     def append(self, split: str, loss_type: str, values: dict[str, float]):
-        split = split.lower()
-        group: LossGroup = getattr(getattr(self.buffer, split), loss_type)
+        target = self.buffer[split.lower()][loss_type]
         for key, value in values.items():
-            getattr(group, key).append(float(value))
+            target[key].append(float(value))
 
-
+    def _empty_history(self):
+        return {
+            split: {
+                loss_type: {key: [] for key in LOSS_KEYS}
+                for loss_type in LOSS_TYPES
+            }
+            for split in SPLITS
+        }
 
     def flush(self):
         history = self._load()
-        self._extend(history.training, self.buffer.training)
-        self._extend(history.validation, self.buffer.validation)
-        self._extend(history.test, self.buffer.test)
-
+        for split in SPLITS:
+            for loss_type in LOSS_TYPES:
+                for key in LOSS_KEYS:
+                    history[split][loss_type][key].extend(self.buffer[split][loss_type][key])
         self._save(history)
-        self.buffer = HistoryData()
+        self.buffer = self._empty_history()
 
-
-    def _extend(self, history_split: SplitHistory, buffer_split: SplitHistory):
-        self._extend_group(history_split.raw, buffer_split.raw)
-        self._extend_group(history_split.weighted, buffer_split.weighted)
-
-
-    def _extend_group(self, history_group: LossGroup, buffer_group: LossGroup):
-        for key in vars(history_group):
-            getattr(history_group, key).extend(getattr(buffer_group, key))
-
-
-    def _save(self, history: HistoryData):
+    def _save(self, history):
         self.save_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.save_path, "w") as f:
-            json.dump(asdict(history), f, indent=2)
+            json.dump(history, f, indent=2)
 
-    def _load(self) -> HistoryData:
+    def _load(self):
         with open(self.save_path, "r") as f:
-            data = json.load(f)
-
-        return HistoryData(
-            training=SplitHistory(
-                raw=LossGroup(**data["training"]["raw"]),
-                weighted=LossGroup(**data["training"]["weighted"]),
-            ),
-            validation=SplitHistory(
-                raw=LossGroup(**data["validation"]["raw"]),
-                weighted=LossGroup(**data["validation"]["weighted"]),
-            ),
-            test=SplitHistory(
-                raw=LossGroup(**data["test"]["raw"]),
-                weighted=LossGroup(**data["test"]["weighted"]),
-            ),
-        )
+            return json.load(f)
 
 
-def cleanup_phase(model, optimizer=None):
-    model.zero_grad(set_to_none=True)
-    if optimizer is not None:
-        optimizer.zero_grad(set_to_none=True)
-    gc.collect()
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
+def save_checkpoint(training_config: dict,
+                    best_val_model: torch.nn.Module | None = None,
+                    model_state: torch.nn.Module | None = None,
+                    condition: torch.nn.Module| None = None,
+                    optimizer: torch.optim.Optimizer | None = None,
+                    scheduler: torch.optim.lr_scheduler.ReduceLROnPlateau | None = None,
+                    epoch: int| None = None,
+                    split: str| None = None,
+                    batch_idx: int | None = None,
+                    best_val_loss: float| None = None,
+                    patience_counter: int| None = None,
+                    skipped_batch_info: dict| None = None
+                    ):
+    
+    filename = Path(training_config["data_dir"]).resolve() / "checkpoint.pt"
+    checkpoint = torch.load(filename, map_location="cpu", weights_only=False) if filename.exists() else {}
+
+    checkpoint["training_config"] = training_config
+    checkpoint["torch_rng_state"] = torch.get_rng_state().cpu().numpy().tobytes()
+
+    save_dict = {"model_state_dict": None if model_state is None else model_state.state_dict(),
+                 "optimizer_state_dict": None if optimizer is None else optimizer.state_dict(),
+                 "condition_state_dict": None if condition is None else condition.state_dict(),
+                 "best_val_model": None if best_val_model is None else best_val_model.state_dict(),
+                 "scheduler_state_dict": None if scheduler is None else scheduler.state_dict(),
+                 "seed": training_config["seed"],
+                 "epoch": epoch,
+                 "split": split,
+                 "batch_idx": batch_idx,
+                 "best_val_loss": best_val_loss,
+                 "patience_counter": patience_counter,
+                 "skipped_batch_info": skipped_batch_info
+                 }
+    
+    for key, value in save_dict.items():
+        if value is not None: checkpoint[key] = value
+
+    filename.parent.mkdir(parents=True, exist_ok=True)
+    torch.save(checkpoint, filename)
 
 
-def iterater(
-    model,
-    dataloader,
-    condition,
-    optimizer,
-    history,
-    phys,
-    info,
-    split,
-    status_frequency,
-    flush_frequency,
-    eq_weight=1.0,
-):
-    is_training = split == "training"
-    was_training = model.training
-    param_requires_grad = [param.requires_grad for param in model.parameters()]
+def load_checkpoint(training_config):
+    filename = Path(training_config["data_dir"]).resolve() / "checkpoint.pt"
 
-    if is_training:
-        model.train()
-    else:
-        model.eval()
-        for param in model.parameters():
-            param.requires_grad_(False)
+    if not filename.exists():
+        raise FileNotFoundError(f"No checkpoint found at {filename}")
 
-    running_raw = {"total": 0.0, "da": 0.0, "eq": 0.0}
-    running_weighted = {"total": 0.0, "da": 0.0, "eq": 0.0}
-    window_count = 0
-
-    try:
-        for batch_idx, batch in enumerate(dataloader):
-            avg_z, u_subset, t, y_subset, cord_num = [x.to(info.device) for x in batch]
-
-            f_theta, cord = model(u_subset, t)
-            f_theta_tensor = torch.cat([f_theta[name] for name in ("lnn", "lnpe", "lnpi", "phi")], dim=1)
-            data_loss = condition(f_theta_tensor, y_subset)
-
-            eq_residuals = phys.eq_res(avg_z, f_theta, cord, cord_num)
-            eq_residuals_stack = torch.stack(list(eq_residuals.values()))
-            eq_loss = condition(eq_residuals_stack, torch.zeros_like(eq_residuals_stack))
-
-            raw_total = data_loss + eq_loss
-            weighted_eq_loss = eq_weight * eq_loss
-            weighted_total = data_loss + weighted_eq_loss
-
-            history.append(
-                split=split,
-                loss_type="raw",
-                values={
-                    "total": raw_total.detach().cpu().item(),
-                    "da": data_loss.detach().cpu().item(),
-                    "eq": eq_loss.detach().cpu().item(),
-                },
-            )
-            history.append(
-                split=split,
-                loss_type="weighted",
-                values={
-                    "total": weighted_total.detach().cpu().item(),
-                    "da": data_loss.detach().cpu().item(),
-                    "eq": weighted_eq_loss.detach().cpu().item(),
-                },
-            )
-
-            if is_training:
-                optimizer.zero_grad(set_to_none=True)
-                weighted_total.backward()
-                optimizer.step()
-
-            running_raw["total"] += raw_total.detach().cpu().item()
-            running_raw["da"] += data_loss.detach().cpu().item()
-            running_raw["eq"] += eq_loss.detach().cpu().item()
-            running_weighted["total"] += weighted_total.detach().cpu().item()
-            running_weighted["da"] += data_loss.detach().cpu().item()
-            running_weighted["eq"] += weighted_eq_loss.detach().cpu().item()
-            window_count += 1
-
-            if status_frequency and (batch_idx + 1) % status_frequency == 0:
-                print(
-                    f"{split} batch {batch_idx + 1}/{len(dataloader)} | "
-                    f"avg_total={running_raw['total'] / window_count} | "
-                    f"avg_total_w={running_weighted['total'] / window_count} | "
-                    f"avg_data={running_raw['da'] / window_count} | "
-                    f"avg_eq={running_raw['eq'] / window_count} | "
-                    f"avg_eq_w={running_weighted['eq'] / window_count}"
-                )
-                running_raw = {"total": 0.0, "da": 0.0, "eq": 0.0}
-                running_weighted = {"total": 0.0, "da": 0.0, "eq": 0.0}
-                window_count = 0
-
-            if flush_frequency and (batch_idx + 1) % flush_frequency == 0:
-                history.flush()
-
-            del (
-                avg_z,
-                u_subset,
-                t,
-                y_subset,
-                cord_num,
-                f_theta,
-                cord,
-                f_theta_tensor,
-                data_loss,
-                eq_residuals,
-                eq_residuals_stack,
-                eq_loss,
-                raw_total,
-                weighted_eq_loss,
-                weighted_total,
-            )
-            if batch_idx == 2000: break
-
-        if window_count > 0:
-            print(
-                f"{split} batch {len(dataloader)}/{len(dataloader)} | "
-                f"avg_total={running_raw['total'] / window_count} | "
-                f"avg_total_w={running_weighted['total'] / window_count} | "
-                f"avg_data={running_raw['da'] / window_count} | "
-                f"avg_eq={running_raw['eq'] / window_count} | "
-                f"avg_eq_w={running_weighted['eq'] / window_count}"
-            )
-    finally:
-        for param, requires_grad in zip(model.parameters(), param_requires_grad):
-            param.requires_grad_(requires_grad)
-        model.train(was_training)
+    return torch.load(
+        filename,
+        map_location="cpu",
+        weights_only=False,
+    )
 
 
-
-def init_experinment(train_cfg, fno):
+def init_experinment(train_cfg):
     from hesel_scraper.bout_dump import BOUTHESELInfo
     from hesel_scraper.bout_phys import BOUTHESELPhys
-
-    from SciML.PINO_z.utils.model import WrappedFNO
     from SciML.PINO_z.utils.data_loader import make_dataloaders
+    from SciML.PINO_z.utils.wrapper import WrappedFNO
 
     info = BOUTHESELInfo(train_cfg["root"])
     phys = BOUTHESELPhys(info)
-
-    data_dir = (train_cfg["data_dir"]).resolve()
+    data_dir = Path(train_cfg["data_dir"]).resolve()
     data_dir.mkdir(parents=True, exist_ok=True)
-    history = HistoryBuffer(data_dir / "history.json")
 
-    train_loader, val_loader, test_loader = make_dataloaders(info,
-                                                             train_split=train_cfg["train_split"],
-                                                             val_split=train_cfg["val_split"],
-                                                             batch_size=train_cfg["batch_size"],
-                                                             shuffle=train_cfg["shuffle"],
-                                                             num_workers=train_cfg["num_workers"],
-                                                             prefetch_factor=train_cfg["prefetch_factor"],
-                                                             pin_memory=train_cfg["pin_memory"],
-                                                             m=train_cfg["m"])
+    model = WrappedFNO(info=info,
+                       phys=phys,
+                       m=train_cfg["z_width"],
+                       fno = nop.models.FNO(**train_cfg["fno"])
+                       ).to(info.device)
+    
+    optimizer = torch.optim.Adam(model.parameters(),
+                             lr=train_cfg["lr"],
+                             betas= (0.7, 0.95),
+                             eps=1e-8,
+                             weight_decay=1e-5)
+    
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
+                                                           mode="min",
+                                                           factor=0.5,
+                                                           patience=1,
+                                                           min_lr=1e-7)
 
-    model = WrappedFNO(fno, info, phys, m=train_cfg["m"]).to(info.device)
+    return (model,
+            *make_dataloaders(info=info, train_config=train_cfg),
+            torch.nn.MSELoss(),
+            optimizer,
+            scheduler,
+            HistoryBuffer(data_dir / "history.json"),
+            phys,
+            info
+            )
 
-    condition = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=train_cfg["lr"])
+def chunk_info(train_loader, train_config):
+    sample_batch = next(iter(train_loader))
+    u = sample_batch[0]  # samme som i iterator(...)
+    u_chunks = u.chunk(train_config["num_eq_chunk"], dim=2)
+    chunk_sizes = [chunk.shape[2] for chunk in u_chunks]
 
-    return model, train_loader, val_loader, test_loader, condition, optimizer, history, phys, info
+    print(f"Requested num_eq_chunk: {train_config['num_eq_chunk']}")
+    print(f"Actual number of chunks: {len(u_chunks)}")
+    print(f"Chunk sizes along dim=2: {chunk_sizes}")
+
+def iterator(loader,
+             start_batch_idx,
+             train_config,
+             total_loader_batches,
+             state,
+             history,
+             model,
+             optimizer,
+             condition,
+             processed_batches,
+             last_batch_idx,
+             info,
+             phys
+             ):
+
+    is_training = state["split"] == "training"
+    param_requires_grad = None
+    if not is_training:
+        optimizer.zero_grad(set_to_none=True)
+        param_requires_grad = [param.requires_grad for param in model.parameters()]
+        for param in model.parameters():
+            param.requires_grad_(False)
+
+    total_loss = 0.0
+    num_loss_batches = 0
+    status_total_loss = 0.0
+    status_da_loss = 0.0
+    status_eq_loss = 0.0
+    status_loss_batches = 0
+    try:
+        for batch_idx, batch in enumerate(loader, start=start_batch_idx):
+
+            if state["batch_idx"] % train_config["flush_frequency"] == 0:
+                history.flush()
+                save_checkpoint(train_config,
+                                model_state=model,
+                                optimizer=optimizer,
+                                condition=condition,
+                                split=state["split"],
+                                epoch=state["epoch"],
+                                batch_idx=state["batch_idx"],
+                                best_val_loss=state["best_val_loss"],
+                                patience_counter=state["patience_counter"]
+                                )
+
+            batch = [x.to(info.device, non_blocking=True) for x in batch]
+            last_batch_idx = batch_idx
+
+            # Data loss
+            optimizer.zero_grad(set_to_none=True)
+            if is_training:
+                f_theta, _ = model(batch, requires_coord_grad=False)
+            else:
+                with torch.no_grad():
+                    f_theta, _ = model(batch, requires_coord_grad=False)
+            pred_da = torch.cat([f_theta[name] for name in ("lnn", "lnpe", "lnpi", "phi")], dim=1)
+            data_loss = condition(pred_da, batch[1])
+            data_loss_value = data_loss.detach().cpu().item()
+
+            if not torch.isfinite(data_loss):
+                print(f"Skipping batch {batch_idx + 1}: non-finite data loss.")
+                del f_theta, pred_da, data_loss, batch
+                processed_batches += 1
+                state["batch_idx"] = batch_idx + 1
+                continue
+
+            if is_training:
+                data_loss.backward()
+                optimizer.step()
+
+            del f_theta, pred_da, data_loss
+
+            # Equation loss
+            optimizer.zero_grad(set_to_none=True)
+            skip_eq_step = False
+
+            u, _, avg_z, coords_fys, coords_num = batch
+            u_chunks = u.chunk(train_config["num_eq_chunk"], dim=2)
+            num_chunks = len(u_chunks)
+            avg_chunks = avg_z.chunk(num_chunks, dim=2)
+            num_coord_chunks = coords_num.chunk(num_chunks, dim=2)
+            loss_total_value_eq_chunk = 0.0
+
+            for chunk_idx, (u_chunk, avg_chunk, num_chunk) in enumerate(zip(u_chunks, avg_chunks, num_coord_chunks)):
+                chunk_batch = (u_chunk, None, avg_chunk, coords_fys, num_chunk)
+                f_chunk, coord_chunk = model(
+                    chunk_batch,
+                    chunking=True,
+                    requires_coord_grad=True,
+                )
+                eq_res_chunk = phys.eq_res(avg_chunk, f_chunk, coord_chunk, num_chunk)
+                eq_res_chunk = torch.stack(list(eq_res_chunk.values()))
+                loss_eq = condition(eq_res_chunk, torch.zeros_like(eq_res_chunk)) / num_chunks
+
+                if not torch.isfinite(loss_eq):
+                    print(f"Skipping batch {batch_idx + 1}: non-finite eq loss at chunk {chunk_idx + 1}.")
+                    skip_eq_step = True
+                    optimizer.zero_grad(set_to_none=True)
+                    del f_chunk, coord_chunk, eq_res_chunk, loss_eq
+                    break
+
+                loss_total_value_eq_chunk += loss_eq.item()
+
+                if is_training:
+                    loss_eq.backward(retain_graph=chunk_idx < num_chunks - 1)
+
+                del f_chunk, coord_chunk, eq_res_chunk, loss_eq
+
+            if not skip_eq_step and is_training:
+                optimizer.step()
+
+            if not skip_eq_step:
+                batch_total_loss = data_loss_value + loss_total_value_eq_chunk
+                total_loss += batch_total_loss
+                num_loss_batches += 1
+                status_total_loss += batch_total_loss
+                status_da_loss += data_loss_value
+                status_eq_loss += loss_total_value_eq_chunk
+                status_loss_batches += 1
+                history.append(
+                    split=state["split"],
+                    loss_type="raw",
+                    values={
+                        "total": batch_total_loss,
+                        "da": data_loss_value,
+                        "eq": loss_total_value_eq_chunk},
+                    )
+                history.append(
+                    split=state["split"],
+                    loss_type="weighted",
+                    values={
+                        "total": batch_total_loss,
+                        "da": data_loss_value,
+                        "eq": loss_total_value_eq_chunk},
+                    )
+
+            del u, avg_z, coords_fys, coords_num
+            del u_chunks, avg_chunks, num_coord_chunks, batch
+
+            processed_batches += 1
+            state["batch_idx"] = batch_idx + 1
+
+            if (
+                train_config["status_frequency"]
+                and status_loss_batches
+                and processed_batches % train_config["status_frequency"] == 0
+            ):
+                print(
+                    f"Split: {state['split']}, Batch {batch_idx + 1}/{total_loader_batches} |\t "
+                    f"avg total_loss: {status_total_loss / status_loss_batches:.6e} | "
+                    f"avg da_loss: {status_da_loss / status_loss_batches:.6e} | "
+                    f"avg eq_loss: {status_eq_loss / status_loss_batches:.6e}"
+                )
+                status_total_loss = 0.0
+                status_da_loss = 0.0
+                status_eq_loss = 0.0
+                status_loss_batches = 0
+    finally:
+        if param_requires_grad is not None:
+            for param, old_value in zip(model.parameters(), param_requires_grad):
+                param.requires_grad_(old_value)
+
+    if train_config["status_frequency"] and status_loss_batches:
+        print(
+            f"Split: {state['split']}, Batch {state['batch_idx']}/{total_loader_batches} | "
+            f"avg total_loss: {status_total_loss / status_loss_batches:.6e} | "
+            f"avg da_loss: {status_da_loss / status_loss_batches:.6e} | "
+            f"avg eq_loss: {status_eq_loss / status_loss_batches:.6e}"
+        )
+
+    state["batch_idx"] = max(0, last_batch_idx + 1)
+    history.flush()
+    save_checkpoint(train_config,
+                    model_state=model,
+                    optimizer=optimizer,
+                    condition=condition,
+                    epoch=state["epoch"],
+                    split=state["split"],
+                    batch_idx=state["batch_idx"],
+                    best_val_loss=state["best_val_loss"],
+                    patience_counter=state["patience_counter"])
+    
+
+    del loader
+    avg_loss = total_loss / num_loss_batches if num_loss_batches else float("inf")
+
+    return avg_loss
+
+
+

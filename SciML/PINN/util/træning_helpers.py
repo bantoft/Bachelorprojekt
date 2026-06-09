@@ -10,9 +10,9 @@ sys.path.append(str(ROOT_DIR))
 import torch
 import torch.nn as nn
 
-from util.PINN.model import PINN
-from util.PINN.structure import NN_STRUCTURE
-from util.PINN.data_loader import make_dataloader, move_batch_to_device
+from SciML.PINN.util.model import PINN
+from SciML.PINN.util.structure import NN_STRUCTURE
+from SciML.PINN.util.data_loader import make_dataloader, move_batch_to_device
 
 import json
 
@@ -106,7 +106,7 @@ def init_trainer(training_config: dict):
     from hesel_scraper.bout_dump import BOUTHESELInfo
     from hesel_scraper.bout_phys import BOUTHESELPhys
 
-    root = Path(__file__).parents[2] / training_config["root"]
+    root = Path(__file__).parents[3] / training_config["root"]
     info = BOUTHESELInfo(root)
     phys = BOUTHESELPhys(info)
 
@@ -199,7 +199,7 @@ def step(info,
     
     cord_fys = cord_fys.clone().detach().requires_grad_(True)
     state = model.forward(info.standardized, cord_fys, input)
-    pred_da = torch.cat([state["lnn"], state["lnpe"], state["lnpi"], state["phi"]], dim=1)
+    
 
     res_eq = phys.eq_res(avg_z, state, cord_fys, cord_num)
     res_ic = phys.ic_res(model, cord_fys, cord_num, input, info.standardized)

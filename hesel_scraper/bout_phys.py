@@ -14,7 +14,8 @@ from torch import Tensor
 from hesel_scraper.bout_dump import BOUTHESELInfo
 from hesel_scraper.api.operators import grad_components, grad_x, grad_z, laplacian_perp, d2dx2, d2dz2, d2dxdz
 
-from util.PINN.model import PINN
+from SciML.PINN.util.model import PINN
+
 
 class BOUTHESELPhys:
     def __init__(self, info: BOUTHESELInfo):

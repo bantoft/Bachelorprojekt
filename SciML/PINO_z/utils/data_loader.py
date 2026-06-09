@@ -1,121 +1,73 @@
 import torch
-
 from torch.utils.data import DataLoader, Dataset, Subset
 
 
-class HESELOneStepDataset(Dataset):
+FIELDS = ("lnn", "lnpe", "lnpi", "phi")
+AVG_FIELDS = ("avg_n", "avg_te", "avg_ti", "avg_phi")
+
+
+class HESEL_z_Dataset(Dataset):
     def __init__(self, info, m: int = 3):
-        if m <= 0 or m % 2 != 1:
-            raise ValueError("m skal vaere et positivt ulige tal.")
+        self.info = info
+        self.dtype = info.dtype
+
+        self.start_t = 8
 
         self.m = m
-        self.info = info
-        self.dtype = self.info.dtype
+        self.half = m // 2
 
-        self.nx = self.info.parameters.num_x
-        self.nz = self.info.parameters.num_z
-        self.nt = self.info.parameters.num_t
+        self.nz = info.parameters.num_z
+        self.nt = info.parameters.num_t
+        self.dz = info.parameters.dz
+        self.dt = info.parameters.dt
 
-        self.dx = self.info.parameters.dx
-        self.dz = self.info.parameters.dz
-        self.dt = self.info.parameters.dt
+        self.z_offsets = torch.arange(-self.half, self.half + 1, dtype=torch.long)
+        self.x_idx = torch.arange(info.parameters.num_x, dtype=torch.long).view(1, info.parameters.num_x, 1)
 
-        self.lx = self.info.parameters.Lx
-        self.lz = self.info.parameters.Lz
-        self.lt = self.info.parameters.Lt
-
-        self.nt_samples = self.nt - 1
-        self.t = torch.arange(self.nt, dtype=self.dtype) * self.dt
-
-        # [nt, 4, nx]
-        self.avg_z = torch.stack((self.info.avg_in_z["avg_n"].squeeze(-1),
-                                  self.info.avg_in_z["avg_te"].squeeze(-1),
-                                  self.info.avg_in_z["avg_ti"].squeeze(-1),
-                                  self.info.avg_in_z["avg_phi"].squeeze(-1)), dim=1).to(dtype=self.dtype)
-
-        # [nt, 4, nx, nz]
-        self.data = torch.stack([self.info.data.lnn,
-                                 self.info.data.lnpe,
-                                 self.info.data.lnpi,
-                                 self.info.data.phi], dim=1).to(dtype=self.dtype)
-
-        half = self.m // 2
-        self.z_offsets = torch.arange(-half, half + 1, dtype=torch.long)
-        self.x_idx = torch.arange(self.nx, dtype=torch.long).view(1, self.nx, 1)
+        self.data = torch.stack([getattr(info.data, name)[self.start_t:] for name in FIELDS], dim=1)
+        self.avg_z = torch.stack([info.avg_in_z[name].squeeze(-1)[self.start_t:] for name in AVG_FIELDS], dim=1)
+        self.nt = self.data.shape[0]
 
     def __len__(self):
-        return self.nt_samples * self.nz
+        return (self.nt - 1) * self.nz
 
-    def _decode_index(self, idx: int) -> tuple[int, int]:
-        time_idx = idx // self.nz
-        z_center_idx = idx % self.nz
-        return time_idx, z_center_idx
+    def _window(self, t_idx: int, z_idx: int):
+        return self.data[t_idx, :, :, (z_idx + self.z_offsets) % self.nz]
 
     def __getitem__(self, idx):
-        time_idx, z_center_idx = self._decode_index(idx)
+        t_idx, z_idx = divmod(idx, self.nz)
+        z_idx_window = (z_idx + self.z_offsets) % self.nz
+        shape = (1, self.info.parameters.num_x, self.m)
 
-        z_idx = (z_center_idx + self.z_offsets) % self.nz
-        z_idx_grid = z_idx.view(1, 1, self.m).expand(1, self.nx, self.m)
+
+        u = self._window(t_idx, z_idx)
+        y = self._window(t_idx + 1, z_idx)
         
-        t_idx = torch.full((1, self.nx, self.m), time_idx + 1, dtype=torch.long)
+        avg_z = self.avg_z[t_idx + 1].unsqueeze(-1).expand(-1, -1, self.m)
 
-        avg_z = self.avg_z[time_idx + 1].unsqueeze(-1).expand(-1, -1, self.m)
-        u_subset = self.data[time_idx].index_select(-1, z_idx)
-        t = self.t[time_idx + 1]
-        y_subset = self.data[time_idx + 1].index_select(-1, z_idx)
-        cord_num = torch.cat([self.x_idx.expand(1, -1, self.m), z_idx_grid, t_idx], dim=0)
+        # Kun center for z og t
+        coords_fys = torch.tensor([self.dz * z_idx, self.dt * (t_idx + self.start_t + 1)], dtype=self.dtype)
 
-        return avg_z, u_subset, t, y_subset, cord_num
+        x_idx_expanded = self.x_idx.expand(*shape)
+        z_idx_expanded = z_idx_window.view(1, 1, self.m).expand(*shape)
+        t_idx_tensor = torch.full(shape, t_idx + self.start_t + 1, dtype=torch.long)
+
+        coords_num = torch.cat([x_idx_expanded, z_idx_expanded, t_idx_tensor], dim=0)
+
+        return u, y, avg_z, coords_fys, coords_num
 
 
-def make_dataloaders(info,
-                     batch_size=1,
-                     train_split=0.8,
-                     val_split=0.1,
-                     num_workers=1,
-                     prefetch_factor=2,
-                     pin_memory=True,
-                     shuffle=True,
-                     m=3
-                     ):
-    
-    if pin_memory is None:
-        pin_memory = info.device.type == "cuda"
-
-    dataset = HESELOneStepDataset(info, m=m)
-
-    n_time_total = dataset.nt_samples
-    n_train_time = int(train_split * n_time_total)
-    n_val_time = int(val_split * n_time_total)
-    n_test_time = n_time_total - n_train_time - n_val_time
-
-    if n_train_time <= 0 or n_val_time < 0 or n_test_time <= 0:
-        raise ValueError("train/val/test split gav ugyldige tidsblokke.")
-
-    samples_per_time = dataset.nz
-
-    train_indices = range(0, n_train_time * samples_per_time)
-    val_stop = (n_train_time + n_val_time) * samples_per_time
-    test_stop = (n_train_time + n_val_time + n_test_time) * samples_per_time
-
-    val_indices = range(n_train_time * samples_per_time, val_stop)
-    test_indices = range(val_stop, test_stop)
-
-    train_dataset = Subset(dataset, train_indices)
-    val_dataset = Subset(dataset, val_indices)
-    test_dataset = Subset(dataset, test_indices)
-
-    loader_kwargs = {
-        "batch_size": batch_size,
-        "shuffle": shuffle,
-        "num_workers": num_workers,
-        "pin_memory": pin_memory,
+def make_dataloaders(info, train_config):
+    dataset = HESEL_z_Dataset(info, m=train_config.get("z_width"))
+    n_total = len(dataset)
+    n_train = int(train_config.get("train_split") * n_total)
+    n_val = int(train_config.get("val_split") * n_total)
+    splits = ((0, n_train), (n_train, n_train + n_val), (n_train + n_val, n_total))
+    kwargs = {
+        "batch_size": train_config.get("batch_size"),
+        "shuffle": train_config.get("shuffle"),
+        "num_workers": train_config.get("num_workers"),
+        "pin_memory": train_config.get("pin_memory"),
+        "prefetch_factor": train_config.get("prefetch_factor"),
     }
-    if num_workers > 0:
-        loader_kwargs["prefetch_factor"] = prefetch_factor
-
-    train_loader = DataLoader(train_dataset, **loader_kwargs)
-    val_loader = DataLoader(val_dataset, **loader_kwargs)
-    test_loader = DataLoader(test_dataset, **loader_kwargs)
-
-    return train_loader, val_loader, test_loader
+    return tuple(DataLoader(Subset(dataset, range(start, end)), **kwargs) for start, end in splits)
