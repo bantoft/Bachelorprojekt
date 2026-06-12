@@ -2,6 +2,7 @@
 
 # Data filder
 sim_data
+sim_data_1
 SciML/PINN/history*
 SciML/PINO_z/experiments*
 

@@ -3,16 +3,9 @@
 \contentsline {section}{\numberline {2}Teori}{2}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Det matematiske grundlag}{2}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Fysikken bag Hesel modellen}{3}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Numeriske metoder, BOUT-HESEL simuleringer}{3}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Datadrevne og fysik informeede metoder}{4}{subsection.2.4}%
-\contentsline {section}{\numberline {3}Metode}{6}{section.3}%
-\contentsline {section}{\numberline {4}Implementering}{7}{section.4}%
-\contentsline {section}{\numberline {5}Resultater}{8}{section.5}%
-\contentsline {section}{\numberline {6}Diskussion}{9}{section.6}%
-\contentsline {section}{\numberline {7}Konklusion}{10}{section.7}%
-\contentsline {section}{\numberline {8}Fremtidigt arbejde}{11}{section.8}%
-\contentsline {section}{List of Figures}{I}{section.8}%
-\contentsline {section}{List of Tables}{II}{section.8}%
-\contentsline {section}{Nomenclature}{III}{section.8}%
-\contentsline {section}{References}{III}{section.8}%
-\contentsline {section}{\numberline {9}Appendix A}{IV}{section.9}%
+\contentsline {section}{List of Figures}{I}{equation.9}%
+\contentsline {section}{List of Tables}{II}{equation.9}%
+\contentsline {section}{Nomenclature}{III}{equation.9}%
+\contentsline {section}{References}{IV}{equation.9}%
+\contentsline {section}{\numberline {3}Appendix A}{V}{section.3}%
+\contentsline {section}{\numberline {4}Appendix B}{VI}{section.4}%

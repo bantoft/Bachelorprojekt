@@ -1,178 +1,131 @@
 
-
-
-Dette afsnit introducerer de grundlæggende fysiske principper bag HESEL-modellen.
-Først introduceres plasma og fusion, hvorefter de centrale fysiske mekanismer, som beskriver transport og turbulens i plasmaets randregion, gennemgås.
-Afslutningsvis præsenteres hele HESEL-modellen
-
-Plasma og fusion
-Når man skal udvinde energi fra fusion bruges ovarmes lette grundstoffer op til meget høje temperaturer, hvor plasma kan vedligeholdes. Dog er det ekstremt svært at 
-kontrollere plasma da 
-
-% ## 2.2.1 Plasma og fusion
-
-% Plasma betegnes ofte som stoffets fjerde tilstandsform. Et plasma består af frie elektroner og ioner, som opstår når et neutralt gasformigt stof tilføres tilstrækkelig energi til, at elektronerne frigøres fra atomernes elektronskaller.
-
-% I modsætning til almindelige gasser består plasma derfor af elektrisk ladede partikler. Disse partikler påvirkes af både elektriske og magnetiske felter, hvilket giver anledning til en række kollektive fænomener, som ikke forekommer i neutrale væsker og gasser. Plasmaets bevægelse kan derfor ikke beskrives alene ved klassisk fluiddynamik, men kræver en kombination af elektromagnetisme og transportteori.
-
-% Størstedelen af det synlige univers består af plasma. Eksempler herpå er stjerner, solvinden og interstellare skyer. På Jorden findes plasma blandt andet i lyn, lysstofrør og i magnetisk indesluttede fusionsreaktorer.
-
-% Fusion er den proces, hvor lette atomkerner sammensmeltes til tungere atomkerner under frigivelse af energi. Den mest relevante reaktion for fremtidige fusionskraftværker er deuterium-tritium-reaktionen
-
-% [
-% D + T \rightarrow , ^4He + n + 17.6 \text{ MeV},
-% ]
-
-% hvor deuterium og tritium fusionerer til helium og en neutron samtidig med, at der frigives en betydelig mængde energi.
-
-% For at fusion kan finde sted, skal de positivt ladede atomkerner bringes så tæt på hinanden, at den stærke kernekraft kan overvinde den elektrostatiske frastødning mellem kernerne. Dette kræver temperaturer på størrelsesordenen
-
-% [
-% 10^8 ; \text{K},
-% ]
-
-% hvilket er langt højere end smeltepunkterne for alle kendte materialer.
-
-% Ved disse temperaturer eksisterer brændstoffet nødvendigvis som et plasma. Plasmaet kan derfor ikke indesluttes ved hjælp af fysiske vægge alene, men må kontrolleres ved hjælp af magnetiske felter.
-
-% ---
-
-% ## 2.2.2 Tokamaker og plasmaets randregion
-
-% Den mest udbredte metode til magnetisk indeslutning af plasma er tokamaken. En tokamak består af et torusformet vakuumkammer omgivet af kraftige elektromagneter, som genererer et magnetfelt, der tvinger de ladede partikler til at bevæge sig langs magnetfeltlinjerne.
-
-% På grund af deres elektriske ladning udfører elektroner og ioner en spiralbevægelse omkring magnetfeltlinjerne. Dette reducerer transporten på tværs af magnetfeltet og forbedrer dermed indeslutningen af plasmaet.
-
-% Selvom magnetfeltet begrænser partikeltransporten, vil der stadig forekomme tab af masse og energi. Disse tab er særligt udtalte i plasmaets randregion, hvor turbulente strukturer transporterer partikler og varme fra plasmaets kerne mod reaktorvæggen.
-
-% Randregionen spiller derfor en afgørende rolle for fusionsreaktorens samlede ydeevne. For store energitab reducerer plasmaets temperatur, mens kraftige varmebelastninger kan beskadige reaktorens materialer.
-
-% Det er netop denne randdynamik, som HESEL-modellen er udviklet til at beskrive.
-
-% ---
-
-% ## 2.2.3 Bevarelseslove
-
-% Store dele af plasmafysikken kan beskrives ved hjælp af bevarelseslove. Disse beskriver udviklingen af fysiske størrelser såsom masse, momentum og energi.
-
-% Generelt kan en bevarelseslov skrives som
-
-% [
-% \frac{\partial u}{\partial t}
-% +
-% \nabla \cdot \mathbf{\Gamma}
-% ============================
-
-% S,
-% ]
-
-% hvor
-
-% * (u) er den bevarede størrelse,
-% * (\mathbf{\Gamma}) er en flux,
-% * (S) er en kilde- eller tabsterm.
-
-% Ligningen beskriver, at ændringen af en fysisk størrelse inden for et volumen skyldes transport gennem volumenets grænse samt eventuelle lokale kilder eller tab.
-
-% Denne struktur genfindes i stort set alle plasmafysiske modeller, herunder HESEL-modellen.
-
-% ---
-
-% ## 2.2.4 Advektion, diffusion og kilder
-
-% Transportprocesser i plasma beskrives ofte ved en kombination af advektion, diffusion og kildeled.
-
-% Advektion beskriver transport forårsaget af en hastighed
-
-% [
-% \frac{\partial u}{\partial t}
-% +
-% \mathbf{v}\cdot\nabla u
-% =======================
-
-% 0.
-
-% ]
-
-% Fysisk svarer dette til, at en størrelse flyttes gennem domænet uden at ændre form.
-
-% Diffusion beskriver derimod en udjævning af gradienter
-
-% [
-% \frac{\partial u}{\partial t}
-% =============================
-
-% D\nabla^2 u,
-% ]
-
-% hvor (D) er en diffusionskoefficient.
-
-% I plasmaer forekommer både advektion og diffusion samtidigt. Derudover optræder forskellige kildeterms, som beskriver opvarmning, partikeltilførsel eller energitab.
-
-% HESEL-modellen indeholder alle disse mekanismer.
-
-% ---
-
-% ## 2.2.5 Turbulens og transport
-
-% Et af de største problemer inden for magnetisk indesluttet fusion er turbulens.
-
-% Turbulens opstår, når små forstyrrelser i plasmaet vokser og interagerer på tværs af mange længde- og tidsskalaer. Resultatet er komplekse og tilsyneladende tilfældige bevægelsesmønstre.
-
-% I plasmaets randregion fører turbulens til dannelsen af koherente strukturer, ofte kaldet blobs, som transporterer masse og energi væk fra plasmaets kerne.
-
-% Disse turbulente transportmekanismer er ansvarlige for en væsentlig del af de samlede energi- og partikeltab i moderne tokamaker.
-
-% Da turbulensen spænder over mange skalaer samtidigt, er direkte simulering af alle relevante processer ekstremt beregningstung. Dette motiverer udviklingen af reducerede modeller såsom HESEL-modellen.
-
-% ---
-
-% ## 2.2.6 HESEL-ligningerne
-
-% HESEL (Hot Edge-SOL Electrostatic) er en reduceret fluidmodel udviklet til simulering af turbulens og transport i plasmaets randregion.
-
-% Modellen beskriver udviklingen af fire koblede felter:
-
-% [
-% n,
-% \qquad
-% p_e,
-% \qquad
-% p_i,
-% \qquad
-% \phi,
-% ]
-
-% hvor
-
-% * (n) er partikeltætheden,
-% * (p_e) er elektrontrykket,
-% * (p_i) er iontrykket,
-% * (\phi) er det elektrostatiske potentiale.
-
-% HESEL kan matematisk beskrives som et koblet system af ikke-lineære partielle differentialligninger
-
-% [
-% \frac{\partial \mathbf{u}}{\partial t}
-% ======================================
-
-% \mathcal{F}
-% \left(
-% \mathbf{u},
-% \nabla\mathbf{u},
-% \nabla^2\mathbf{u}
-% \right),
-% ]
-
-% hvor
-
-% [
-% \mathbf{u}
-% ==========
-
-% [n,p_e,p_i,\phi]^T.
-% ]
-
-% Ligningerne indeholder bidrag fra advektion, diffusion, krumningseffekter, parallel transport og forskellige dissipative processer.
-
-% Da systemet er stærkt ikke-lineært og koblet, findes der generelt ingen analytisk løsning. I stedet approksimeres løsningen numerisk ved hjælp af simuleringer. Disse simuleringer udgør datagrundlaget for de datadrevne og fysikinformerede modeller, som introduceres senere i rapporten.
+HESEL modellen (Hot Edge SOL Electrostatic) er en reduceret plasma model udviklet til at beskrive turbulens og transportfænomener i plasmaets rand i en tokamak.
+Særligt fokuserer modellen på overgangsområdet mellem det indelukkede plasma og scrape off layer (SOL), hvor magnetfeltlinjerne ikke længere er lukkede.
+I dette område transporteres partikler og energi på tværs af magnetfeltlinjerne gennem turbulente strukturer, kaldet blobs. 
+HESEL modellen er baseret på drift fluid approksimationen af Braginskii's plasma fluidligninger\cite{udledning_af_hesel}. 
+
+HESEL modellen er reduceret ved at udnytte de karakteristiske tids og længdeskalaer i plasmaets rand, hvilket vedligeholder simulering fysisk realitet og numerisk stabilitet.
+
+I dette afsnit gennemgås de grundlæggende trin i Braginskii's udledning, hvorefter den endelige HESEL model præsenteres.
+Formålet er ikke at give en fuldstændig fysisk redegørelse for HESEL modellen, men derimod at introducere de centrale idéer og ligninger, som modellen bygger på.
+
+
+Udgangspunktet er energi bevarelses sætningen i fase rummet. Denne siger at ændring af energi i faserummet er nul. Da energi og masse er 
+raleteret gennem Einsteins berømte ligning $E=mc^2$, kan denne sætning også udtrykkes som ændring af masse $f_a$.
+Faserummet består af både partiklernes position $\mathbf{r}$ og hastighed $\mathbf{v}$. For et kollisionsfrit system gælder
+
+\begin{equation*}
+    \frac{\mathrm{d}f_a}{\mathrm{d}t}=0.
+\end{equation*}
+Anvendes kædereglen i faserummet fås:
+
+\begin{equation*}
+    \frac{\mathrm{d}f_a}{\mathrm{d}t} = \frac{\partial f_a}{\partial t} + \frac{\mathrm{d}x_\beta}{\mathrm{d}t} \frac{\partial f_a}{\partial x_\beta}
+    + \frac{\mathrm{d}v_\beta}{\mathrm{d}t} \frac{\partial f_a}{\partial v_\beta}.
+\end{equation*}
+Herefter sættes:
+
+\begin{align*}
+    \frac{\mathrm{d}x_\beta}{\mathrm{d}t} &= v_\beta, \\
+    \frac{\mathrm{d}v_\beta}{\mathrm{d}t} &= \frac{F_{a\beta}}{m_a}
+\end{align*}
+Når kollisioner inkluderes opnås Boltzmann ligningen
+
+\begin{equation}
+    \frac{\partial f_a}{\partial t} + \frac{\partial}{\partial x_\beta} \left(v_\beta f_a\right) +
+    \frac{\partial}{\partial v_\beta} \left(\frac{F_{a\beta}}{m_a} f_a\right) = C_a
+    \label{eq:boltzmann_plasma}
+\end{equation}
+Her er $\beta$ indeks for koordinater i det fysiske rum. Det første led, $\partial_t f_a$, beskriver den lokale tidslige ændring af fordelingsfunktionen.
+Det andet led, $\partial_{x_\beta}(v_\beta f_a)$, beskriver transport i det fysiske rum.
+Det tredje led, $\partial_{v_\beta}\left( \frac{F_{a\beta}}{m_a} f_a \right)$, beskriver transport i hastighedsrummet.
+Højresiden $C_a$ beskriver ændringen i fordelingsfunktionen som følge af kollisioner mellem partikler.
+Et lille eksempel på anvendelse af \eqref{eq:boltzmann_plasma} kan ses i \eqref{Braginskii example} i appendix B.
+
+
+I ligningen indgår følgende størrelser:
+\begin{align*}
+    f_a &= f_a(t,\mathbf{r},\mathbf{v}) &&\text{fordelingsfunktion for partikelart $a$}, \\
+    \mathbf{F}_a &= e_a\mathbf{E} + \frac{e_a}{c}\left(\mathbf{v}\times\mathbf{B}\right) &&\text{Lorentzkraften på partikelart $a$}, \\
+    m_a &&&\text{massen af partikelart $a$}, \\
+    e_a &&&\text{ladningen af partikelart $a$}, \\
+    C_a &&&\text{kollisionsleddet for partikelart $a$}.
+\end{align*}
+Her beskriver $f_a(t,\mathbf{r},\mathbf{v})\mathrm{d}\mathbf{v}\mathrm{d}\mathbf{r}$ antal partikler af art $a$ i det fysiske rum $\mathrm{d}\mathbf{r}$ omkring punktet $\mathbf{r}$.
+I resten af udledningen undlades det at specificere hvilken partikelart der er tale om på samme måde Braginskii gør. 
+Da kollisioener over alle hasitgheder ikke ændre det totale antal partilkler gælder for kollisions termet.
+
+\begin{equation*}
+    \int C\,d\mathbf{v} = 0, 
+\end{equation*}
+Herefter defineres følgende makroskopiske størrelser:
+\begin{align*}
+    n(\mathbf{r},t) &= \int f(\mathbf{r},\mathbf{v},t)\,d\mathbf{v}\\
+    V_{a}(\mathbf{r},t) &= \frac{1}{n} \int \mathbf{v} f(\mathbf{r},\mathbf{v},t)\,d\mathbf{v} = \langle v \rangle\\
+    T(\mathbf{r},t) &= \frac{m}{3}\langle (v - V)^2 \rangle
+\end{align*}
+Her er $n$, $V$ og $T$ makroskopiske størrelser for tætheden, middelhastigheden og temperaturen for partikler i punktet $\mathbf{r}$ til tid $t$.
+For at komme frem til Braginskii's 3 ligninger der beskriver tætheds, impuls og energi ligningerne ganges
+\eqref{eq:boltzmann_plasma} med $1$, $m v$ og $\frac{1}{2} m v^2$, integrere over hele hastighedsrummet og
+undytte definationer for $n$, $V$ og $T$ fås Braginskii's ligninger.
+Selve integrationen og udledningen af ligningerne er ikke udført i denne rapport.
+
+\begin{align}
+    &\frac{\partial n}{\partial t} + \nabla \cdot (n \mathbf{V}) = 0 \label{eq:kontinuitetsligning}\\
+    &\frac{\partial}{\partial t}\left(m n \mathbf{V}\right) + \frac{\partial}{\partial x_\beta} \left(m n \langle v v_b \rangle \right) 
+    - en\left(E + \frac{1}{c} \left[\mathbf{VB}\right]\right) = \int mv C d\mathbf{v} \label{eq:impulsligning_ikke_simplificeret}\\
+    &\frac{\partial}{\partial t} \left(\frac{mn}{2} \langle v^2 \rangle\right)  + \nabla \left(\frac{m n}{2} \langle v^2\mathbf{v} \rangle \right)
+    -en\mathbf{EV} = \int \frac{mv^2}{2}Cd\mathbf{v} \label{eq:energiligning_ikke_simplificeret_ikke_simplificeret}
+\end{align}
+Ligning \eqref{eq:kontinuitetsligning} kaldes kontinuitetsligningen og beskriver bevarelsen af partikler.
+Ligningerne \eqref{eq:impulsligning_ikke_simplificeret} og \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret}
+kaldes henholdsvis impuls og energiligningen og beskriver bevarelsen af henholdsvis impuls og energi i plasmaet.
+\eqref{eq:impulsligning_ikke_simplificeret} og \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret} blvier yderligere 
+reduceret. 
+
+For hasitgheden af partikeltyper defineres middel hastighed $\mathbf{V}$ og tilfældig hastighed, $\mathbf{v'} =  \mathbf{v - V}$.
+Herfra bruger Braginskii idenditetsætningen for to tilfældige variabler, som siger:
+\begin{gather*}
+    \mathbb{E}\left[XY\right] = \mathbb{E}\left[X\right]\mathbb{E}\left[Y\right] + \mathrm{Cov}(X,Y) \\
+    \mathrm{Cov}(X,Y) = \mathbb{E}\left[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])\right] 
+\end{gather*}
+Med dette udledes størrelsen
+\begin{gather*}
+    \left\langle v_\alpha v_\beta \right\rangle = \left\langle(V_\alpha + v_\alpha')(V_\beta + v_\beta')\right\rangle \\
+    = V_\alpha V_\beta + V_\alpha \left\langle v_\beta' \right\rangle + V_\beta \left\langle v_\alpha' \right\rangle + \left\langle v_\alpha'v_\beta' \right\rangle
+\end{gather*}
+Da den tilfældige hastighed er defineret som afvigelsen fra middelhastigheden,
+\begin{equation*}
+    v_\alpha' = v_\alpha - V_\alpha
+\end{equation*}
+gælder
+\begin{equation*} \left\langle v_\alpha' \right\rangle = \left\langle v_\beta' \right\rangle = 0
+\end{equation*}
+Dermed fås
+\begin{equation*} 
+    \left\langle v_\alpha v_\beta \right\rangle = V_\alpha V_\beta + \left\langle v_\alpha'v_\beta' \right\rangle
+\end{equation*}
+For at simplificere Braginskii's impuls ligning \eqref{eq:impulsligning_ikke_simplificeret} defineres følgene:
+\begin{align}
+    &\frac{\mathrm{d}f}{\mathrm{d}t}
+    = \frac{\partial f}{\partial t} + V_\beta \frac{\partial f}{\partial x_\beta}
+    = \frac{\partial f}{\partial t} + (\mathbf{V}\nabla)f \label{op:substantive derivative} \\
+    &p = \frac{mn \langle v'^2\rangle}{3} = nT \label{eq:preasure}\\
+    &\pi_{\alpha\beta} = nm\langle v_\alpha ' v_\beta ' - \frac{1}{3}v'^2\delta_{\alpha\beta} \rangle \label{eq:stress tensor}\\
+    &\mathbf{R} = \int m\mathbf{v}'C \mathrm{d}\mathbf{v} \label{eq:mean change in momentum}
+\end{align}
+Her er\eqref{op:substantive derivative} operatoren substative afledte anvendt på funktionen $f$,
+Ligning \eqref{eq:preasure} definerer det isotrope tryk,
+\eqref{eq:stress tensor} den viskøse spændingstensor der  beskriver afvigelser fra isotropt tryk,
+\eqref{eq:mean change in momentum} beskriver netto momentumoverførsel som følge af kollisioner mellem partikler.
+
+Braginskii's impuls ligning kan skrives på formen:
+\begin{equation}
+    mn\frac{\mathrm{d}V_a}{\mathrm{d}t} = - \frac{\partial p}{\partial x_a} - \frac{\partial \pi_{a\beta}}{\partial x_\beta}
+    + en\left(E_a + \frac{1}{c} \left[\mathbf{VB}\right]_a\right) + R_a \label{eq:Braginskii's momentum ligning}
+\end{equation}
+
+For at reducere energiligningen defineres størrelserne
+
+
+\newpage

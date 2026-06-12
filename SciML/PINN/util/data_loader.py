@@ -13,6 +13,7 @@ class WeightedTrainSampler(Sampler[int]):
         self.x_weight = x_weight
         self.num_samples = train_end * dataset.num_x * dataset.num_z
 
+        # Hvor langt ind i x-dimensionen skal have øget vægt? (50/257) og (200/257) er valgt for at fokusere på midten af x-dimensionen
         self.x_min = int(dataset.num_x * (50 / 257))
         self.x_max = int(dataset.num_x * (200 / 257))
 
@@ -89,7 +90,8 @@ class BOUTDataset(Dataset):
         z_idx = (index // self.num_x) % self.num_z
         t_idx = index // (self.num_x * self.num_z)
 
-        avg_z = self.avg_z[t_idx, x_idx]
+        # Target avg_z, bliver brugt til phys.eq_res()
+        avg_z = self.avg_z[t_idx + 2, x_idx]
 
         z_cord_fys = torch.rand(1, dtype=self.dtype) * self.num_z * self.dz
         z_cord_fys = z_cord_fys.squeeze(0)
@@ -119,42 +121,36 @@ def make_dataloader(info, training_config: dict):
     train_end = int(training_config["train_ratio"] * (info.parameters.num_t - 2))
     val_end = train_end + int(training_config["val_ratio"] * (info.parameters.num_t - 2))
 
-    # Sampler med bias 
+    # Sampler med bias og sørger for train kun indeholder [t_0, train_end]
     train_sampler = WeightedTrainSampler(dataset, train_end, min_t=50, x_weight=3.0)
 
 
-    train_loader = DataLoader(
-        dataset,
-        batch_size=training_config["batch_size"],
-        sampler=train_sampler,
-        shuffle=False,
-        num_workers=training_config["num_workers"],
-        pin_memory=training_config["pin_memory"],
-        persistent_workers=training_config["persistent_workers"],
-        prefetch_factor=training_config["prefetch_factor"],
-        collate_fn=collate_stack,
-    )
+    train_loader = DataLoader(dataset,
+                              batch_size=training_config["batch_size"],
+                              sampler=train_sampler,
+                              shuffle=False,
+                              num_workers=training_config["num_workers"],
+                              pin_memory=training_config["pin_memory"],
+                              persistent_workers=training_config["persistent_workers"],
+                              prefetch_factor=training_config["prefetch_factor"],
+                              collate_fn=collate_stack)
 
-    val_loader = DataLoader(
-        Subset(dataset, range( train_end * dataset.num_x * dataset.num_z, val_end * dataset.num_x * dataset.num_z, )),
-        batch_size=training_config["batch_size"],
-        shuffle=training_config["shuffle"],
-        num_workers=training_config["num_workers"],
-        pin_memory=training_config["pin_memory"],
-        persistent_workers=training_config["persistent_workers"],
-        prefetch_factor=training_config["prefetch_factor"],
-        collate_fn=collate_stack,
-    )
+    val_loader = DataLoader(Subset(dataset, range( train_end * dataset.num_x * dataset.num_z, val_end * dataset.num_x * dataset.num_z, )),
+                            batch_size=training_config["batch_size"],
+                            shuffle=training_config["shuffle"],
+                            num_workers=training_config["num_workers"],
+                            pin_memory=training_config["pin_memory"],
+                            persistent_workers=training_config["persistent_workers"],
+                            prefetch_factor=training_config["prefetch_factor"],
+                            collate_fn=collate_stack)
 
-    test_loader = DataLoader(
-        Subset(dataset, range(val_end * dataset.num_x * dataset.num_z, len(dataset))),
-        batch_size=training_config["batch_size"],
-        shuffle=training_config["shuffle"],
-        num_workers=training_config["num_workers"],
-        pin_memory=training_config["pin_memory"],
-        persistent_workers=training_config["persistent_workers"],
-        prefetch_factor=training_config["prefetch_factor"],
-        collate_fn=collate_stack,
-    )
+    test_loader = DataLoader(Subset(dataset, range(val_end * dataset.num_x * dataset.num_z, len(dataset))),
+                             batch_size=training_config["batch_size"],
+                             shuffle=training_config["shuffle"],
+                             num_workers=training_config["num_workers"],
+                             pin_memory=training_config["pin_memory"],
+                             persistent_workers=training_config["persistent_workers"],
+                             prefetch_factor=training_config["prefetch_factor"],
+                             collate_fn=collate_stack)
 
     return train_loader, val_loader, test_loader

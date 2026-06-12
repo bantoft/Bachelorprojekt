@@ -5,12 +5,12 @@ import torch
 from torch import Tensor
 
 
-def grad(
-    f: Tensor,
-    coord: Tensor,
-    create_graph: bool = True,
-    retain_graph: bool | None = None,
-) -> Tensor:
+def grad(f: Tensor,
+         coord: Tensor,
+         create_graph: bool = True,
+         retain_graph: bool | None = None
+         ) -> Tensor:
+    
     if retain_graph is None:
         retain_graph = create_graph
 
@@ -25,18 +25,18 @@ def grad(
     )[0]
 
 
-def grad_components(
-    f: Tensor,
-    coord: Tensor,
-    create_graph: bool = True,
-    retain_graph: bool | None = None,
-) -> tuple[Tensor, Tensor, Tensor]:
-    gradients = grad(
-        f,
-        coord,
-        create_graph=create_graph,
-        retain_graph=retain_graph,
-    )
+def grad_components(f: Tensor,
+                    coord: Tensor,
+                    create_graph: bool = True,
+                    retain_graph: bool | None = None
+                    ) -> tuple[Tensor, Tensor, Tensor]:
+    
+    gradients = grad(f,
+                     coord,
+                     create_graph=create_graph,
+                     retain_graph=retain_graph
+                     )
+    # [batch, [x, z, t]]
     return gradients[:, 0:1], gradients[:, 1:2], gradients[:, 2:3]
 
 

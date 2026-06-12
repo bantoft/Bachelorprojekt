@@ -16,23 +16,22 @@ from SciML.PINN.util.træning_helpers import HistoryBuffer, save_checkpoint, ite
 if __name__ == "__main__":
 
     training_config = {
-        # !! Paths skal være referet fra projekt root folder !!
+        # !! Paths skal være referet fra ROOT_DIR !!
         # Folder med dump filer og settings fil
-        "root": r"sim_data/data_15_512_Alexander_",
+        "root" : r"sim_data/Alexander_std_256_1",
         # Output folder for checkpoints, history og best model
         # Kald folderen for: history<...> så det ikke flyttes til repo
-        "out_folder": r"SciML/PINN/history_stor_model_3asdfasfa",
-        # "out_folder": r"SciML2/PINN/eksperiment_data",
+        "out_folder": r"Experimenter/PINN/test_run",
         # Hvis resume er True læses checkpoint fra out_folder ellers startes ny træningen
         # Hvis checkpoint ikke findes, laves ny checkpoint og træningsdata appendes hvis history.json findes
         # Intet slettes
         "resume": False,
         
         # Optimization
-        "lr": 1e-5,
-        "epochs": 2,
-        "early_stopping_patience": 3,
-        "early_stopping_min_delta": 1.0,
+        "lr": 1e-6,
+        "epochs": 6,
+        "early_stopping_patience": 2,
+        "early_stopping_min_delta": 0.0,
 
         # Logging / status
         "status_frequency": 5,
@@ -49,7 +48,7 @@ if __name__ == "__main__":
         "bc": 1.0,
 
         # DataLoader
-        "batch_size": 2**10, # 8192 - 2048 + 1024 = 7168
+        "batch_size": 6000, # 8192 - 2048 + 1024 = 7168
         "shuffle": True, # Bruges kun i val/test loader, da sampler bruges i train loader
         "pin_memory": True,
         "persistent_workers": True,

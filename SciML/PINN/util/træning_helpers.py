@@ -4,7 +4,7 @@ from itertools import islice
 import sys
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parents[2]
+ROOT_DIR = Path(__file__).resolve().parents[3]
 sys.path.append(str(ROOT_DIR))
 
 import torch
@@ -200,6 +200,7 @@ def step(info,
     cord_fys = cord_fys.clone().detach().requires_grad_(True)
     state = model.forward(info.standardized, cord_fys, input)
     
+    pred_da = torch.cat(list(state.values()), dim=-1)
 
     res_eq = phys.eq_res(avg_z, state, cord_fys, cord_num)
     res_ic = phys.ic_res(model, cord_fys, cord_num, input, info.standardized)

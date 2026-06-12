@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 # Fiks path for imports
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys
 
+from pathlib import Path
 
 import re
 import math
@@ -11,8 +11,11 @@ import torch
 
 from torch import Tensor
 
+ROOT_DIR = Path(__file__).resolve().parents[2]
+sys.path.append(str(ROOT_DIR))
+
 from hesel_scraper.bout_dump import BOUTHESELInfo
-from hesel_scraper.api.operators import grad_components, grad_x, grad_z, laplacian_perp, d2dx2, d2dz2, d2dxdz
+from hesel_scraper.api.operators import grad_components, grad_x, grad_z, laplacian_perp
 
 from SciML.PINN.util.model import PINN
 
@@ -248,6 +251,9 @@ class BOUTHESELPhys:
         derivative_cache: dict[tuple[str, int], Tensor] = {}
         component_cache: dict[int, tuple[Tensor, Tensor, Tensor]] = {}
 
+
+        # Memory optimeret afledte, PINO har ekstremt store autgrad grafer. D
+        # ette undgås ved at cache første ordens afledte og genbruge dem i højere ordens afledte og andre udtryk. 
         def cache_key(field: Tensor) -> int:
             return id(field)
 
@@ -315,11 +321,11 @@ class BOUTHESELPhys:
             return -bracket if self.hes_settings.get("right_handed_coord", False) else bracket
 
         def curvature(f: Tensor) -> Tensor:
-            curv = (
-                (2.0 if self.hes_settings.get("double_curvature_coeff", False) else 1.0)
-                * curvature_scale
-                * ddz(f)
-            )
+            curv = ((2.0 if self.hes_settings.get("double_curvature_coeff", False) else 1.0)
+                    * curvature_scale
+                    * ddz(f)
+                    )
+            
             return -curv if self.hes_settings.get("right_handed_coord", False) else curv
 
         interchange = {name: torch.zeros_like(vort if name == "vort" else lnn) for name in ("lnn", "lnpe", "lnpi", "vort")}
@@ -332,11 +338,11 @@ class BOUTHESELPhys:
                 interchange["vort"] = interchange["vort"] - brackets(dphi_dx, dpi_dx) - brackets(dphi_dz, dpi_dz)
 
         ti_over_te_mode = self.hes_settings.get("ti_over_te", 3)
-        ti_rcpte = (
-            torch.ones_like(tau) * ti0_over_te0
-            if ti_over_te_mode == 1
-            else avg_tau if ti_over_te_mode == 2 else tau
-        )
+        ti_rcpte = (torch.ones_like(tau) * ti0_over_te0
+                    if ti_over_te_mode == 1
+                    else avg_tau if ti_over_te_mode == 2 else tau
+                    )
+        
         if ti_over_te_mode == 2:
             ti_rcpte = avg_tau
         elif ti_over_te_mode == 3:

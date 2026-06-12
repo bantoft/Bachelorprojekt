@@ -61,10 +61,10 @@ class WrappedFNO(BaseModel):
         return H_x, d_x
 
     def _create_model_input(self, u, center, x_base=None, requires_coord_grad: bool = True):
-        u_std = (u - self.mean) / self.std
 
-        if x_base is None:
-            x_base = self.x_base
+        u_grouped = u.reshape(u.shape[0], -1, self.mean.shape[1], *u.shape[2:])
+        u_std = ((u_grouped - self.mean.unsqueeze(1)) / self.std.unsqueeze(1)).reshape_as(u)
+
         num_rows = x_base.shape[1]
 
         z_line = center[:, 0:1] + self.z_offset

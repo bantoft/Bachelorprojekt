@@ -23,32 +23,62 @@ from SciML.PINO_z.utils.training_helpers import (
 # Til endelige test
 train_config = {
     "resume": False,
-    "root": ROOT_DIR / r"sim_data/data_15_512_Alexander_",
-    "data_dir": ROOT_DIR / r"SciML/PINO_z/experiments/test_run_4",
+    "root" : ROOT_DIR / r"sim_data/Alexander_std_256_1",
+    "data_dir": ROOT_DIR / r"Experimenter/PINO/test_run",
     "seed": np.random.randint(0, 2**32 - 1),
     "status_frequency": 1,
-    "flush_frequency": 2,
+    "flush_frequency": 50,
     "z_width": 3,
-    "num_eq_chunk": 24,
-    "batch_size": 128,
+    "num_eq_chunk": 18,
+    "batch_size": 130,
     "train_split": 0.8,
     "val_split": 0.1,
     "shuffle": True,
     "num_workers": 4,
     "prefetch_factor": 1,
     "pin_memory": True,
-    "lr": 5e-4,
+    "lr": 1e-7, # <- Min lr, max er sat til 5e-4 i CyclicLR
     "epochs": 10,
     "early_stopping_patience": 2,
     "early_stopping_min_delta": 0.0,
     "fno": {
-        "n_modes": (140, 140),
-        "in_channels": 8,
+        "n_modes": (150, 150),
+        "in_channels": 12,
         "out_channels": 4,
-        "hidden_channels": 25,
+        "hidden_channels": 30,
         "positional_embedding": None,
     }
 }
+
+# # Til debugging
+# train_config = {
+#     "resume": False,
+#     "root" : ROOT_DIR / r"sim_data/Alexander_std_256_1",
+#     "data_dir": ROOT_DIR / r"SciML/Experimenter/PINO/test_run",
+#     "seed": 42,
+#     "status_frequency": 1,
+#     "flush_frequency": 5,
+#     "z_width": 3,
+#     "num_eq_chunk": 2,
+#     "batch_size": 16,
+#     "train_split": 0.8,
+#     "val_split": 0.1,
+#     "shuffle": True,
+#     "num_workers": 4,
+#     "prefetch_factor": 1,
+#     "pin_memory": True,
+#     "lr": 1e-7, # <- Min lr, max er sat til 5e-4 i CyclicLR
+#     "epochs": 10,
+#     "early_stopping_patience": 2,
+#     "early_stopping_min_delta": 0.0,
+#     "fno": {
+#         "n_modes": (32, 32),
+#         "in_channels": 12,
+#         "out_channels": 4,
+#         "hidden_channels": 10,
+#         "positional_embedding": None,
+#     }
+# }
 
 
 state = {
@@ -86,6 +116,8 @@ if train_config["resume"] and (train_config["data_dir"] / "checkpoint.pt").exist
      info,
     ) = init_experinment(train_config)
 
+    scheduler.last_epoch = state["batch_idx"] - 1
+
     total_train_batches = len(train_loader)
     total_val_batches = len(val_loader)
     total_test_batches = len(test_loader)
@@ -95,6 +127,8 @@ if train_config["resume"] and (train_config["data_dir"] / "checkpoint.pt").exist
             model._buffers[name] = model._buffers[name].clone()
     model.load_state_dict(ckpt["model_state_dict"])
     optimizer.load_state_dict(ckpt["optimizer_state_dict"])
+    if "scheduler_state_dict" in ckpt:
+        scheduler.load_state_dict(ckpt["scheduler_state_dict"])
     condition.load_state_dict(ckpt["condition_state_dict"])
 else:
     print("Starting new training run.")
@@ -130,6 +164,10 @@ else:
         patience_counter=state["patience_counter"],
     )
 
+width = shutil.get_terminal_size().columns
+for name, value in train_config.items():
+    print(f"{name}: {value}".center(width))
+
 processed_batches = 0
 last_batch_idx = state["batch_idx"] - 1
 
@@ -156,6 +194,7 @@ while state["epoch"] < train_config["epochs"]:
                      history,
                      model,
                      optimizer,
+                     scheduler,
                      condition,
                      processed_batches,
                      last_batch_idx,
@@ -184,13 +223,14 @@ while state["epoch"] < train_config["epochs"]:
                             history,
                             model,
                             optimizer,
+                            scheduler,
                             condition,
                             processed_batches,
                             last_batch_idx,
                             info,
                             phys)
         
-        scheduler.step(val_loss)
+    
         
         if val_loss < state["best_val_loss"] - train_config["early_stopping_min_delta"]:
             state["best_val_loss"] = val_loss
@@ -275,6 +315,7 @@ if state["split"] == "test":
                  history,
                  model,
                  optimizer,
+                 scheduler,
                  condition,
                  processed_batches,
                  last_batch_idx,

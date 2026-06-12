@@ -11,7 +11,6 @@ class HESEL_z_Dataset(Dataset):
         self.info = info
         self.dtype = info.dtype
 
-        self.start_t = 8
 
         self.m = m
         self.half = m // 2
@@ -24,12 +23,12 @@ class HESEL_z_Dataset(Dataset):
         self.z_offsets = torch.arange(-self.half, self.half + 1, dtype=torch.long)
         self.x_idx = torch.arange(info.parameters.num_x, dtype=torch.long).view(1, info.parameters.num_x, 1)
 
-        self.data = torch.stack([getattr(info.data, name)[self.start_t:] for name in FIELDS], dim=1)
-        self.avg_z = torch.stack([info.avg_in_z[name].squeeze(-1)[self.start_t:] for name in AVG_FIELDS], dim=1)
+        self.data = torch.stack([getattr(info.data, name) for name in FIELDS], dim=1)
+        self.avg_z = torch.stack([info.avg_in_z[name].squeeze(-1) for name in AVG_FIELDS], dim=1)
         self.nt = self.data.shape[0]
 
     def __len__(self):
-        return (self.nt - 1) * self.nz
+        return (self.nt - 2) * self.nz
 
     def _window(self, t_idx: int, z_idx: int):
         return self.data[t_idx, :, :, (z_idx + self.z_offsets) % self.nz]
@@ -40,17 +39,17 @@ class HESEL_z_Dataset(Dataset):
         shape = (1, self.info.parameters.num_x, self.m)
 
 
-        u = self._window(t_idx, z_idx)
-        y = self._window(t_idx + 1, z_idx)
+        u = torch.cat([self._window(t_idx, z_idx), self._window(t_idx + 1, z_idx)], dim=0)
+        y = self._window(t_idx + 2, z_idx)
         
-        avg_z = self.avg_z[t_idx + 1].unsqueeze(-1).expand(-1, -1, self.m)
+        avg_z = self.avg_z[t_idx + 2].unsqueeze(-1).expand(-1, -1, self.m)
 
-        # Kun center for z og t
-        coords_fys = torch.tensor([self.dz * z_idx, self.dt * (t_idx + self.start_t + 1)], dtype=self.dtype)
+        # Kun center for z og t, wrapper expander selv ud
+        coords_fys = torch.tensor([self.dz * z_idx, self.dt * (t_idx + 2)], dtype=self.dtype)
 
         x_idx_expanded = self.x_idx.expand(*shape)
         z_idx_expanded = z_idx_window.view(1, 1, self.m).expand(*shape)
-        t_idx_tensor = torch.full(shape, t_idx + self.start_t + 1, dtype=torch.long)
+        t_idx_tensor = torch.full(shape, t_idx + 2, dtype=torch.long)
 
         coords_num = torch.cat([x_idx_expanded, z_idx_expanded, t_idx_tensor], dim=0)
 

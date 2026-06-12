@@ -3,11 +3,16 @@ from __future__ import annotations
 import ast
 import math
 import re
+import sys
 import torch
 import xarray
 
 from pathlib import Path
 from types import SimpleNamespace   
+
+ROOT_DIR = Path(__file__).resolve().parents[2]
+sys.path.append(str(ROOT_DIR))
+    
 
 from hesel_scraper.api.dump_helper import *
 

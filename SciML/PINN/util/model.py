@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import torch
-import torch.nn.functional as F
 
 from torch import Tensor, nn
 
@@ -31,12 +30,12 @@ class PINN(nn.Module):
         }
     
 
-    def forward(
-        self,
-        standardization,
-        cord_fys: Tensor,
-        state_inputs: Tensor,
-    ):
+    def forward(self,
+                standardization,
+                cord_fys: Tensor,
+                state_inputs: Tensor
+                ):
+        
         mean = standardization.mean.to(state_inputs.device)
         std = standardization.std.to(state_inputs.device)
 
@@ -49,5 +48,5 @@ class PINN(nn.Module):
         pred_std = self.network(network_input)
 
         pred = pred_std * std.view(1, -1) + mean.view(1, -1)
-
+        
         return self._split_outputs(pred)

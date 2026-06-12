@@ -57,7 +57,7 @@ def save_checkpoint(training_config: dict,
                     model_state: torch.nn.Module | None = None,
                     condition: torch.nn.Module| None = None,
                     optimizer: torch.optim.Optimizer | None = None,
-                    scheduler: torch.optim.lr_scheduler.ReduceLROnPlateau | None = None,
+                    scheduler: torch.optim.lr_scheduler.CyclicLR | None = None,
                     epoch: int| None = None,
                     split: str| None = None,
                     batch_idx: int | None = None,
@@ -129,11 +129,13 @@ def init_experinment(train_cfg):
                              eps=1e-8,
                              weight_decay=1e-5)
     
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
-                                                           mode="min",
-                                                           factor=0.5,
-                                                           patience=1,
-                                                           min_lr=1e-7)
+    scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer,
+                                                  max_lr=5e-4,
+                                                  base_lr=train_cfg["lr"],
+                                                  step_size_up=900,
+                                                  step_size_down=900,
+                                                  mode="triangular2",
+                                                  cycle_momentum=False)
 
     return (model,
             *make_dataloaders(info=info, train_config=train_cfg),
@@ -163,6 +165,7 @@ def iterator(loader,
              history,
              model,
              optimizer,
+             scheduler,
              condition,
              processed_batches,
              last_batch_idx,
@@ -192,6 +195,7 @@ def iterator(loader,
                 save_checkpoint(train_config,
                                 model_state=model,
                                 optimizer=optimizer,
+                                scheduler=scheduler,
                                 condition=condition,
                                 split=state["split"],
                                 epoch=state["epoch"],
@@ -216,6 +220,12 @@ def iterator(loader,
 
             if not torch.isfinite(data_loss):
                 print(f"Skipping batch {batch_idx + 1}: non-finite data loss.")
+                save_checkpoint(train_config,
+                                skipped_batch_info={
+                                    "reason": "non-finite data loss",
+                                    "batch_idx": batch_idx,
+                                    "data_loss": data_loss_value,
+                                })
                 del f_theta, pred_da, data_loss, batch
                 processed_batches += 1
                 state["batch_idx"] = batch_idx + 1
@@ -224,6 +234,8 @@ def iterator(loader,
             if is_training:
                 data_loss.backward()
                 optimizer.step()
+                if scheduler is not None:
+                    scheduler.step()
 
             del f_theta, pred_da, data_loss
 
@@ -251,6 +263,14 @@ def iterator(loader,
 
                 if not torch.isfinite(loss_eq):
                     print(f"Skipping batch {batch_idx + 1}: non-finite eq loss at chunk {chunk_idx + 1}.")
+                    save_checkpoint(train_config,
+                                skipped_batch_info={
+                                    "reason": "non-finite eq loss",
+                                    "batch_idx": batch_idx,
+                                    "data_loss": data_loss_value,
+                                    "chunk_idx": chunk_idx,
+                                })
+                    
                     skip_eq_step = True
                     optimizer.zero_grad(set_to_none=True)
                     del f_chunk, coord_chunk, eq_res_chunk, loss_eq
@@ -265,6 +285,8 @@ def iterator(loader,
 
             if not skip_eq_step and is_training:
                 optimizer.step()
+                if scheduler is not None:
+                    scheduler.step()
 
             if not skip_eq_step:
                 batch_total_loss = data_loss_value + loss_total_value_eq_chunk
@@ -303,7 +325,7 @@ def iterator(loader,
                 and processed_batches % train_config["status_frequency"] == 0
             ):
                 print(
-                    f"Split: {state['split']}, Batch {batch_idx + 1}/{total_loader_batches} |\t "
+                    f"{state['split']}, Batch {batch_idx + 1}/{total_loader_batches} |\t "
                     f"avg total_loss: {status_total_loss / status_loss_batches:.6e} | "
                     f"avg da_loss: {status_da_loss / status_loss_batches:.6e} | "
                     f"avg eq_loss: {status_eq_loss / status_loss_batches:.6e}"
@@ -319,7 +341,7 @@ def iterator(loader,
 
     if train_config["status_frequency"] and status_loss_batches:
         print(
-            f"Split: {state['split']}, Batch {state['batch_idx']}/{total_loader_batches} | "
+            f"{state['split']}, Batch {state['batch_idx']}/{total_loader_batches} | "
             f"avg total_loss: {status_total_loss / status_loss_batches:.6e} | "
             f"avg da_loss: {status_da_loss / status_loss_batches:.6e} | "
             f"avg eq_loss: {status_eq_loss / status_loss_batches:.6e}"
@@ -330,6 +352,7 @@ def iterator(loader,
     save_checkpoint(train_config,
                     model_state=model,
                     optimizer=optimizer,
+                    scheduler=scheduler,
                     condition=condition,
                     epoch=state["epoch"],
                     split=state["split"],
@@ -342,6 +365,3 @@ def iterator(loader,
     avg_loss = total_loss / num_loss_batches if num_loss_batches else float("inf")
 
     return avg_loss
-
-
-

@@ -30,6 +30,7 @@
 \usepackage[english]{nomencl}
 \usepackage{xcolor}
 \usepackage{lipsum}
+\makenomenclature
 
 
 % --- set footer and header ---
@@ -92,29 +93,29 @@ numbersep=0.5cm
 \section{Teori} \label{ch2}
 \input{sources/2_theory.tex}
 
-\newpage
-\section{Metode} \label{ch3}
-\input{sources/3_method.tex}
+% \newpage
+% \section{Metode} \label{ch3}
+% \input{sources/3_method.tex}
 
-\newpage
-\section{Implementering} \label{ch4}
-\input{sources/4_implimentering_og_repruse.tex}
+% \newpage
+% \section{Implementering} \label{ch4}
+% \input{sources/4_implimentering_og_repruse.tex}
 
-\newpage
-\section{Resultater} \label{ch5}
-\input{sources/5_resultater.tex}
+% \newpage
+% \section{Resultater} \label{ch5}
+% \input{sources/5_resultater.tex}
 
-\newpage
-\section{Diskussion}\label{ch6}
-\input{sources/6_disussion.tex}
+% \newpage
+% \section{Diskussion}\label{ch6}
+% \input{sources/6_disussion.tex}
 
-\newpage
-\section{Konklusion}\label{ch7}
-\input{sources/7_konklusion.tex}
+% \newpage
+% \section{Konklusion}\label{ch7}
+% \input{sources/7_konklusion.tex}
 
-\newpage
-\section{Fremtidigt arbejde}\label{ch8}
-\input{sources/8_fremtidig_arbejde.tex}
+% \newpage
+% \section{Fremtidigt arbejde}\label{ch8}
+% \input{sources/8_fremtidig_arbejde.tex}
 
 
 
@@ -134,7 +135,7 @@ numbersep=0.5cm
 
 \newpage
 \addcontentsline{toc}{section}{Nomenclature}
-\input{sources/9_nomenclat.tex}
+\input{sources/nomenclat.tex}
 
 \newpage
 \addcontentsline{toc}{section}{References}
@@ -143,6 +144,11 @@ numbersep=0.5cm
 
 \newpage
 \section{Appendix A} \label{appendixA}
+\input{sources/appendix_a.tex}
+
+\newpage
+\section{Appendix B} \label{appendixB}
+\input{sources/appendix_b.tex}
 
 \label{endOfDoc}
 \end{document}
