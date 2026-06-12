@@ -1,2 +1,4 @@
-Når du generer data skriv dem hertil med prefix Alexander_ for at undgå
-storre filer i repo'et
+Når du generer data foldere skal de have prefix Alexander_ for at undgå.\\
+Gem log filer i logs mappen
+
+Jeg har prøvet at være konsekvens så det burde være muligt at rekonstruere samme data med at inkludere inp filerne og deres oprindelige seed. Dog miskænker jeg at fil navnet  også bruges til at genere randomness da jeg har fået forskellige output alt efter forskellige filnavne. Da nogle simuleringer havde svært ved at generer tilfredsstillende lange simuleringer blev 3 næsten identiske seed generet med lille forskel. Disse foldere fik suffixet _(int) så flere simuleringer kunne køres på én gang.

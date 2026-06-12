@@ -8,19 +8,17 @@ AVG_FIELDS = ("avg_n", "avg_te", "avg_ti", "avg_phi")
 
 class HESEL_z_Dataset(Dataset):
     def __init__(self, info, m: int = 3):
+        self.m = m
         self.info = info
         self.dtype = info.dtype
-
-
-        self.m = m
-        self.half = m // 2
 
         self.nz = info.parameters.num_z
         self.nt = info.parameters.num_t
         self.dz = info.parameters.dz
         self.dt = info.parameters.dt
 
-        self.z_offsets = torch.arange(-self.half, self.half + 1, dtype=torch.long)
+        half_width = self.m // 2
+        self.z_offsets = torch.arange(-half_width, half_width + 1, dtype=torch.long)
         self.x_idx = torch.arange(info.parameters.num_x, dtype=torch.long).view(1, info.parameters.num_x, 1)
 
         self.data = torch.stack([getattr(info.data, name) for name in FIELDS], dim=1)
@@ -56,17 +54,24 @@ class HESEL_z_Dataset(Dataset):
         return u, y, avg_z, coords_fys, coords_num
 
 
-def make_dataloaders(info, train_config):
-    dataset = HESEL_z_Dataset(info, m=train_config.get("z_width"))
+def make_dataloaders(info, data_loader_config):
+    dataset = HESEL_z_Dataset(info, m=data_loader_config.get("z_width"))
     n_total = len(dataset)
-    n_train = int(train_config.get("train_split") * n_total)
-    n_val = int(train_config.get("val_split") * n_total)
+    n_train = int(data_loader_config.get("train_split") * n_total)
+    n_val = int(data_loader_config.get("val_split") * n_total)
     splits = ((0, n_train), (n_train, n_train + n_val), (n_train + n_val, n_total))
     kwargs = {
-        "batch_size": train_config.get("batch_size"),
-        "shuffle": train_config.get("shuffle"),
-        "num_workers": train_config.get("num_workers"),
-        "pin_memory": train_config.get("pin_memory"),
-        "prefetch_factor": train_config.get("prefetch_factor"),
+        "batch_size": data_loader_config.get("batch_size"),
+        "shuffle": data_loader_config.get("shuffle"),
+        "num_workers": data_loader_config.get("num_workers"),
+        "pin_memory": data_loader_config.get("pin_memory"),
+        "prefetch_factor": data_loader_config.get("prefetch_factor"),
     }
-    return tuple(DataLoader(Subset(dataset, range(start, end)), **kwargs) for start, end in splits)
+    if data_loader_config.get("TSSplit"):
+        return tuple(DataLoader(Subset(dataset, range(start, end)), **kwargs) for start, end in splits)
+
+    elif not data_loader_config.get("TSSplit"): # Random split
+        train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [n_train, n_val, n_total - n_train - n_val])
+        return tuple(DataLoader(ds, **kwargs) for ds in (train_dataset, val_dataset, test_dataset))
+    else:
+        raise ValueError("Invalid data_loader_config: TSSplit must be a boolean.")

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import gc
 import json
 from pathlib import Path
 
 import neuralop as nop
 import torch
+from torch.utils.data import ConcatDataset, DataLoader
+
 
 
 SPLITS = ("training", "validation", "test")
@@ -106,11 +107,61 @@ def load_checkpoint(training_config):
     )
 
 
+
+
+
+data_loader_setup1 = {
+    "TSSplit": True,
+    "train_split": 0.8,
+    "val_split": 0.1,
+}
+
+data_loader_setup2 = {
+    "TSSplit": False,
+    "train_split": 0.8,
+    "val_split": 0.1,
+}
+
 def init_experinment(train_cfg):
     from hesel_scraper.bout_dump import BOUTHESELInfo
     from hesel_scraper.bout_phys import BOUTHESELPhys
     from SciML.PINO_z.utils.data_loader import make_dataloaders
     from SciML.PINO_z.utils.wrapper import WrappedFNO
+
+    # Laver dobbelt data loader setup
+    if len(train_cfg["root"]) == 2:
+        info1 = BOUTHESELInfo(train_cfg["root"][0])
+        info2 = BOUTHESELInfo(train_cfg["root"][1])
+
+        data_loader_dict = {
+            "z_width": train_cfg["z_width"],
+            "batch_size": train_cfg["batch_size"],
+            "val_split": train_cfg["val_split"],
+            "shuffle": train_cfg["shuffle"],
+            "num_workers": train_cfg["num_workers"],
+            "prefetch_factor": train_cfg["prefetch_factor"],
+            "pin_memory": train_cfg["pin_memory"]}
+        
+        for key, value in data_loader_dict.items():
+            data_loader_setup1[key] = value
+            data_loader_setup2[key] = value
+
+        train_loader1, val_loader1, test_loader1 = make_dataloaders(info1, data_loader_setup1)
+        train_loader2, val_loader2, test_loader2 = make_dataloaders(info2, data_loader_setup2)
+
+        train_dataset = ConcatDataset([train_loader1.dataset, train_loader2.dataset])
+
+        train_loader = DataLoader(
+                        train_dataset,
+                        batch_size=train_config["batch_size"],
+                        shuffle=train_config["shuffle"],
+                        num_workers=train_config["num_workers"],
+                        pin_memory=train_config["pin_memory"],
+                        prefetch_factor=train_config["prefetch_factor"],
+                    )
+
+
+
 
     info = BOUTHESELInfo(train_cfg["root"])
     phys = BOUTHESELPhys(info)
