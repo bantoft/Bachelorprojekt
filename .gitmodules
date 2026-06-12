@@ -1,3 +1,0 @@
-[submodule "external/neuraloperator"]
-	path = external/neuraloperator
-	url = https://github.com/neuraloperator/neuraloperator.git

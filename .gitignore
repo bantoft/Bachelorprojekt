@@ -1,12 +1,16 @@
 .venv
 
-# Data filder
-sim_data
-sim_data_1
-SciML/PINN/history*
-SciML/PINO_z/experiments*
+# Data foldere
+# Ignorer alle filer i Alexander_* mapper
+sim_data/Alexander_*/*
+sim_data/logs/Output_*
 
-# Her er bøger der fylder meget...
+# Track input-filen
+!sim_data/Alexander_*/BOUT.inp
+
+
+
+# Her er bøger der fylder meget, ref til rapport for artikler og bøger...
 teori
 
 
@@ -17,5 +21,3 @@ build/
 dist/
 wheels/
 *.egg-info
-
-
