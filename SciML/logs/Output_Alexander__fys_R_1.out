@@ -1,1825 +1,0 @@
-BOUT++ version 4.3.2
-Revision: fd0b0e3e52c5934d3f94ac129e95f14b7220afb3
-MD5 checksum: d54d13c411006b245692697baf164721
-Code compiled on May 14 2026 at 01:34:29
-
-B.Dudson (University of York), M.Umansky (LLNL) 2007
-Based on BOUT by Xueqiao Xu, 1999
-
-Processor number: 0 of 16
-
-pid: 2716580
-
-Compile-time options:
-	Checking enabled, level 2
-	Signal handling enabled
-	netCDF support enabled
-	Parallel NetCDF support disabled
-	OpenMP parallelisation disabled
-	Compiled with flags : "-DMD5SUM=d54d13c411006b245692697baf164721 -DREVISION=fd0b0e3e52c5934d3f94ac129e95f14b7220afb3 -g -DHAS_PRETTY_FUNCTION -Wall -Wextra -Wnull-dereference -Wno-cast-function-type -O2 -DCHECK=2 -DSIGHANDLE -DLOGCOLOR -DBOUT_VERSION_STRING=\"4.3.2\" -DBOUT_VERSION_DOUBLE=4.32 -DBACKTRACE -DBOUT_HAS_FFTW -DNCDF -DHDF5 -DLAPACK -DBOUT_HAS_PVODE -DBOUT_HAS_GETTEXT -DBOUT_LOCALE_PATH=/usr/local/share/locale"
-	Command line options for this run : ./hesel -d Alexander__fys_R_1 
-Reading options file Alexander__fys_R_1/BOUT.inp
-Writing options to file Alexander__fys_R_1/BOUT.settings
-
-Getting grid data from options
-	Option mesh:type = bout (default)
-	Option mesh:StaggerGrids = 0 (default)
-	Option mesh:maxregionblocksize = 64 (default)
-	Option mesh:calcParallelSlices_on_communicate = 1 (default)
-	Option mesh:ddx:first = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddx:second = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddx:upwind = w3 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddx:flux = u1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:first = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:second = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:upwind = w3 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:flux = u1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddz:first = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddz:second = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddz:upwind = w3 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddz:flux = u1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:first = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:second = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:upwind = w3 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:flux = u1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddx:first = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddx:second = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddx:upwind = w3 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddx:flux = u1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:first = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:second = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:upwind = w3 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:flux = u1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddz:first = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddz:second = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddz:upwind = w3 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddz:flux = u1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:first = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:second = c2 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:upwind = w3 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddy:flux = u1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ddz:fft_filter = 0 (default)
-	Option mesh:symmetricGlobalX = 1 (default)
-	Option optionfile = BOUT.inp ()
-WARNING: The default of this option has changed in release 4.1.
-If you want the old setting, you have to specify mesh:symmetricGlobalY=false in BOUT.inp
-	Option mesh:symmetricGlobalY = 1 (default)
-Loading mesh
-	Option input:transform_from_field_aligned = 1 (default)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 258 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:ny = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nz = 256 (Alexander__fys_R_1/BOUT.inp)
-	Read nz from input grid file
-	Grid size: 258 x 1 x 256
-Variable 'MXG' not in mesh options. Setting to 0
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-Variable 'MYG' not in mesh options. Setting to 0
-	Option myg = 0 (Alexander__fys_R_1/BOUT.inp)
-	Guard cells (x,y,z): 1, 0, 0
-Variable 'ixseps1' not in mesh options. Setting to 258
-Variable 'ixseps2' not in mesh options. Setting to 258
-Variable 'jyseps1_1' not in mesh options. Setting to -1
-Variable 'jyseps1_2' not in mesh options. Setting to 0
-Variable 'jyseps2_1' not in mesh options. Setting to 0
-Variable 'jyseps2_2' not in mesh options. Setting to 0
-Variable 'ny_inner' not in mesh options. Setting to 0
-Finding value for NXPE (ideal = 64.000000)
-	Candidate value: 16
-	 -> Good value
-	Domain split (NXPE=16, NYPE=1) into domains (localNx=16, localNy=1)
-	Option IncIntShear = 0 (default)
-	Option periodicX = 0 (default)
-	Option async_send = 0 (default)
-	Option ZMIN = 0 (default)
-	Option ZMAX = 1 (default)
-	EQUILIBRIUM IS SINGLE NULL (SND) 
-Connection between top of Y processor 0 and bottom of 0 in range 0 <= x < 258
-=> This processor sending in up
-=> This processor sending in down
-WARNING adding connection: poloidal index -1 out of range
-	MYPE_IN_CORE = 1
-	DXS = 18, DIN = 0. DOUT = -1
-	UXS = 18, UIN = 0. UOUT = -1
-	XIN = -1, XOUT = 1
-	Twist-shift: DI UI 
-	Option TwistShift = 0 (default)
-Variable 'ShiftAngle' not in mesh options. Setting to empty vector
-Boundary regions in this processor: core, 
-Constructing default regions
-	Boundary region inner X
-	Option mesh:extrapolate_x = 0 (default)
-	Option mesh:extrapolate_y = 0 (default)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dy = 1.0 (Alexander__fys_R_1/BOUT.inp)
-	Option ZMIN = 0 (default)
-	Option ZMAX = 1 (default)
-	Option mesh:lz = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nz = 256 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dz = 0.54902 (Alexander__fys_R_1/BOUT.inp)
-Variable 'g11' not in mesh options. Setting to 1.000000e+00
-Variable 'g22' not in mesh options. Setting to 1.000000e+00
-Variable 'g33' not in mesh options. Setting to 1.000000e+00
-Variable 'g12' not in mesh options. Setting to 0.000000e+00
-Variable 'g13' not in mesh options. Setting to 0.000000e+00
-Variable 'g23' not in mesh options. Setting to 0.000000e+00
-	Local maximum error in diagonal inversion is 0.000000e+00
-	Local maximum error in off-diagonal inversion is 0.000000e+00
-Variable 'J' not in mesh options. Setting to 0.000000e+00
-	WARNING: Jacobian 'J' not found. Calculating from metric tensor
-Variable 'Bxy' not in mesh options. Setting to 0.000000e+00
-	WARNING: Magnitude of B field 'Bxy' not found. Calculating from metric tensor
-Calculating differential geometry terms
-	Communicating connection terms
-	Option non_uniform = 1 (default)
-Variable 'd2x' not in mesh options. Setting to 0.000000e+00
-	WARNING: differencing quantity 'd2x' not found. Calculating from dx
-Variable 'd2y' not in mesh options. Setting to 0.000000e+00
-	WARNING: differencing quantity 'd2y' not found. Calculating from dy
-Variable 'ShiftTorsion' not in mesh options. Setting to 0.000000e+00
-	WARNING: No Torsion specified for zShift. Derivatives may not be correct
-	Option mesh:paralleltransform = identity (default)
-	done
-	Option append = 0 (default)
-	Option dump_format = nc (default)
-Setting up output (dump) file
-	Option output:parallel = 0 (default)
-	Option output:flush = 1 (default)
-	Option output:guards = 1 (default)
-	Option output:floats = 0 (default)
-	Option output:openclose = 1 (default)
-	Option output:enabled = 1 (default)
-	Option output:init_missing = 0 (default)
-	Option output:shiftOutput = 0 (default)
-	Option output:shiftInput = 0 (default)
-	Option output:flushFrequency = 1 (default)
-	Using NetCDF format for file 'Alexander__fys_R_1/BOUT.dmp.nc'
-	Option restart:parallel = 0 (default)
-	Option restart:flush = 1 (default)
-	Option restart:guards = 1 (default)
-	Option restart:floats = 0 (default)
-	Option restart:openclose = 1 (default)
-	Option restart:enabled = 1 (default)
-	Option restart:init_missing = 0 (default)
-	Option restart:shiftOutput = 0 (default)
-	Option restart:shiftInput = 0 (default)
-	Option restart:flushFrequency = 1 (default)
-	Option fast_output:type = monitor (Alexander__fys_R_1/BOUT.inp)
-	Option timestep = 15 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:frequency_multiplier = 100 (default)
-	Option fast_output:prefix = BOUT.fast (default)
-	Option fast_output:dump_ext = nc (default)
-	Option datadir = Alexander__fys_R_1 ()
-	Option append = false (default)
-	Option fast_output:parallel = 0 (default)
-	Option fast_output:flush = 1 (default)
-	Option fast_output:guards = 1 (default)
-	Option fast_output:floats = 0 (default)
-	Option fast_output:openclose = 1 (default)
-	Option fast_output:enabled = 1 (default)
-	Option fast_output:init_missing = 0 (default)
-	Option fast_output:shiftOutput = 0 (default)
-	Option fast_output:shiftInput = 0 (default)
-	Option fast_output:flushfrequency = 100 (Alexander__fys_R_1/BOUT.inp)
-	Using NetCDF format for file 'Alexander__fys_R_1/BOUT.fast.nc'
-	Option solver:type = pvode (Alexander__fys_R_1/BOUT.inp)
-	Option solver:monitor_timestep = 0 (default)
-	Option solver:is_nonsplit_model_diffusive = 1 (default)
-	Option solver:mms = 0 (default)
-	Option solver:mms_initialise = 0 (default)
-	Option restart = 0 (default)
-Calculating differential geometry terms
-	Communicating connection terms
-	Option non_uniform = true (default)
-Variable 'd2x' not in mesh options. Setting to 0.000000e+00
-	WARNING: differencing quantity 'd2x' not found. Calculating from dx
-Variable 'd2y' not in mesh options. Setting to 0.000000e+00
-	WARNING: differencing quantity 'd2y' not found. Calculating from dy
-	Option hesel:power_source = 0 (default)
-	Option hesel:particle_source = 0 (default)
-	Option hesel:compact_output = 0 (default)
-	Option ============== got here =================
-hesel:test_blob = 0 (default)
-============== got here =================
-============== got here =================
-============== got here =================
-	Option hesel:test_laplace = 0 (default)
-============== got here =================
-============== got here =================
-============== got here =================
-============== got here =================
-============== got here =================
-============== got here =================
-	Option hesel:right_handed_coord = false (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:interchange_dynamics = true (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:parallel_dynamics = true (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:perpendicular_dynamics = true (============== got here =================
-============== got here =================
-============== got here =================
-Alexander__fys_R_1/BOUT.inp)
-	Option hesel:invert_w_star = 0 (============== got here =================
-default)
-	Option hesel:plasma_neutral_interactions = 0 (Alexander__fys_R_1/BOUT.inp)
-============== got here =================
-	Option hesel:parallel_transport = 0 (default)
-	Option hesel:force_profiles = true (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:floor_profiles = false (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:rampup_ti0 = 0 (default)
-	Option hesel:static_plasma = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:rampup_init_prof = 0 (default)
-	Option hesel:diagnostics = 1 (default)
-	Option hesel:init_zero_potential = 0 (default)
-	Option hesel:not_n_force = 0 (default)
-	Option hesel:not_p_force = 0 (default)
-	Option hesel:save_forcing = 0 (default)
-	Option hesel:input_sources = 0 (default)
-	Option hesel:prescribed_diffusion = 0 (default)
-	Option hesel:test_blob_use_gen_vort = 0 (default)
-	Option hesel:test_vort_cross_term = 0 (default)
-	Option hesel:collisional_model = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:perpend_heat_exchange = true (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:perpend_viscous_heating = true (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:perpend_hyper_diffusion = 0 (default)
-	Option hesel:parallel_conduction = 1 (Alexander__fys_R_1/BOUT.inp)
-============== got here =================
-	Option hesel:parallel_sheath_damping = 3 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:parallel_advection_damping = 3 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:parallel_drift_wave = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:ti_over_te = 3 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:diffusion_coeff = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:reciprocal_approx = 3 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:neoclass_correction_factor = -1 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:qdelta_approx = 3 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:diag_particle_flux = 1 (default)
-	Option hesel:diag_thermal = 15 (default)
-	Option hesel:double_curvature_coeff = 0 (default)
-	Option hesel:Lc_from_grid = 0 (default)
-	Option hesel:z_eff = 1.7 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:h_mode = 0 (default)
-	Option hesel:ramp_A = 2 (default)
-	Option hesel:ramp_t0 = 0 (default)
-	Option hesel:ramp_trans = 5000 (default)
-	Option hesel:ramp_peak = 50000 (default)
-	Option hesel:bracket_method = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:force_time = 50 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:floor_time = 50 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:floor_n = 0.005 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:floor_pe = 2.5e-05 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:floor_pi = 2.5e-05 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:n_bck = 0 (default)
-	Option hesel:te_bck = 0 (default)
-	Option hesel:ti_bck = 0 (default)
-	Option hesel:rampup_init_time = 1000 (default)
-	Option hesel:hyper_dc_n = 1 (default)
-	Option hesel:hyper_dc_pe = 1 (default)
-	Option hesel:hyper_dc_pi = 1 (default)
-	Option hesel:hyper_dc_vort = 1 (default)
-	Option hesel:hyper_order = 4 (default)
-	Option hesel:rmajor = 3 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:rminor = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:bt = 2.32 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:q = 4.8 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:te0 = 75.6 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:ti0 = 75.6 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:n0 = 3.4e+19 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:a = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:z = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:q = 4.8 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:rmajor = 3 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:lblob = 28.8 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:mach = 0.5 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:rampup_ti0_timax = 75.6 (default)
-	Option hesel:rampup_ti0_time = 0 (default)
-	Option hesel:x_lcfs = 0.4 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_wall = 0.8 (Alexander__fys_R_1/BOUT.inp)
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>> Use right-handed coordinate: off
->>>>>>> Invert Omega star: off
->>>>>>> Interchange dynamics: on
->>>>>>> Perpendicular dynamics: on
->>>>>>>     1) collisional model: standard
->>>>>>>     2) heat   exchange: on
->>>>>>>     3) viscous heating: on
->>>>>>>     4) hyper diffusion: off
->>>>>>>     5) approx of ti/te: 3
->>>>>>>     6) diffusion coeff: 1
->>>>>>>     7) Qdelta   approx: 3
->>>>>>> Parallel dynamics: on
->>>>>>>     1) sheath    : 3
->>>>>>>     2) advection : 3
->>>>>>>     3) conduction: 1
->>>>>>>     4) drift wave: 2
->>>>>>>     5) rcp approx: 3
->>>>>>> Plasma neutral interactions: off
->>>>>>> Plasma parallel transport: off
->>>>>>> Force profiles: on
->>>>>>> Floor profiles: off
->>>>>>> Ramp up Ti0: off
->>>>>>> Static plasma: off
->>>>>>> Ramp up Initial Profiles: off
->>>>>>> Diagnostics: on
->>>>>>>     1) thermal energy (ad, sh, neo, turb): 1111
->>>>>>> Brackets for ExB: Arakawa scheme
-
-Coulomb Log = 1.437414e+01
-vte         = 3.643984e+06	 vti       = 6.013219e+04	 cs      = 6.013219e+04
-oci         = 8.322265e+07	 oce       = 3.056190e+11
-rhoe        = 1.192329e-05	 rhoi      = 7.225460e-04	 rhos    = 7.225460e-04
-mi          = 3.345243e-27	 me        = 9.109382e-31
-n0          = 3.400000e+19	 Te0       = 7.560000e+01	 Ti0     = 7.560000e+01
-B0          = 1.740000e+00	 q95       = 4.800000e+00	 Rmajor  = 3.000000e+00
-nuei        = 2.155539e+06	 nuii      = 2.515195e+04	 nuee    = 1.524197e+06
-neo-classical correction factor: 7.012000e+01
-De          = 2.148771e-02	 Di        = 9.207559e-01
-De(1+tau)   = 4.297542e-02
-eta         = 1.963597e+11
-chi_i_perp  = 6.261140e+19
-chi_e_perp  = 3.404512e+18
-chi_i_par   = 1.906277e+25
-chi_e_par   = 6.618551e+26
-taun        = 4.789448e-04	 1/taun    = 2.087923e+03
-taudw       = 6.732216e-05	 1/taudw   = 1.485395e+04
-
-GyroBohm normalized parameters
-normalized diffusion coeff: 4.344828e+01
-nnuei       = 2.590088e-02	 nnuii     = 3.022248e-04	 nnuee   = 1.831468e-02
-nDe         = 4.945584e-04
-nDi         = 2.119200e-02
-neta        = 6.357600e-03
-nchi_i_perp = 4.238400e-02
-nchi_e_perp = 2.304642e-03
-nchi_i_par  = 1.290430e+04
-nchi_e_par  = 4.480345e+05
-ntaun       = 3.985905e+04	 1/ntaun   = 2.508840e-05
-ntaudw      = 5.602729e+03	 1/ntaudw  = 1.784845e-04
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	Option input:transform_from_field_aligned = true (default)
-	Option init_n:function = 0.5 * (n_inner - n_bg) * (1 - tanh( (hesel:xr - x_shift_n)/step_width)) + n_bg (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:n_inner = 1.5 (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:n_bg = 0.1 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:xr = mesh:xl - edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:xl = x*(lx+2*mxg*dx) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:edge_width = x_lcfs*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_lcfs = 0.40 (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:x_shift_n = 2.93794 (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:step_width = 10. (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option input:transform_from_field_aligned = true (default)
-	Option init_pe:function = (0.5 *(sqrt(pe_inner) - pe_bg) * (1 - tanh( (hesel:xr - x_shift_pe)/step_width)) + pe_bg) * edge_prof (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:pe_inner = 9.0 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:pe_bg = 0.01 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:xr = mesh:xl - edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:xl = x*(lx+2*mxg*dx) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:edge_width = x_lcfs*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_lcfs = 0.40 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:x_shift_pe = -3.51585 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:step_width = 10. (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:edge_prof = 1 - line_slope * sigma_closed:function * hesel:xr (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:line_slope = (sqrt(pe_inner)-1)/hesel:edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option sigma_closed:function = 0.5 * (1-tanh(hesel:xr/hesel:d_lcfs)) (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:d_lcfs = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option input:transform_from_field_aligned = true (default)
-	Option init_pi:function = (0.5 *(sqrt(pi_inner) - pi_bg) * (1 - tanh( (hesel:xr - x_shift_pi)/step_width)) + pi_bg) * edge_prof (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:pi_inner = 9.0 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:pi_bg = 0.01 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:xr = mesh:xl - edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:xl = x*(lx+2*mxg*dx) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:edge_width = x_lcfs*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_lcfs = 0.40 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:x_shift_pi = -3.51585 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:step_width = 10. (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:edge_prof = 1 - line_slope * sigma_closed:function * hesel:xr (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:line_slope = (sqrt(pi_inner)-1)/hesel:edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option sigma_closed:function = 0.5 * (1-tanh(hesel:xr/hesel:d_lcfs)) (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:d_lcfs = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option input:transform_from_field_aligned = true (default)
-	Option seed_n:function = pert_amp*(5 + mixmode(z, seed)*mixmode(2*pi*x, seed)) (Alexander__fys_R_1/BOUT.inp)
-	Option seed_n:pert_amp = 0.001 (Alexander__fys_R_1/BOUT.inp)
-	Option seed_n:seed = 83145 (Alexander__fys_R_1/BOUT.inp)
-	Option seed_n:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option input:transform_from_field_aligned = true (default)
-	Option all:function = 0.0 (default)
-	Option all:scale = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option input:transform_from_field_aligned = true (default)
-	Option all:function = 0.0 (default)
-	Option all:scale = 0 (Alexander__fys_R_1/BOUT.inp)
-Setting boundary for variable lnn
-	core region: 	Option lnn:bndry_xin = dirichlet_o2(log(init_n:n_inner)) (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:n_inner = 1.5 (Alexander__fys_R_1/BOUT.inp)
-
-	Option input:transform_from_field_aligned = true (default)
-	Option lnn:function = log(init_n:function+seed_n:function) (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:function = 0.5 * (n_inner - n_bg) * (1 - tanh( (hesel:xr - x_shift_n)/step_width)) + n_bg (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:n_inner = 1.5 (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:n_bg = 0.1 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:xr = mesh:xl - edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:xl = x*(lx+2*mxg*dx) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:edge_width = x_lcfs*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_lcfs = 0.40 (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:x_shift_n = 2.93794 (Alexander__fys_R_1/BOUT.inp)
-	Option init_n:step_width = 10. (Alexander__fys_R_1/BOUT.inp)
-	Option seed_n:function = pert_amp*(5 + mixmode(z, seed)*mixmode(2*pi*x, seed)) (Alexander__fys_R_1/BOUT.inp)
-	Option seed_n:pert_amp = 0.001 (Alexander__fys_R_1/BOUT.inp)
-	Option seed_n:seed = 83145 (Alexander__fys_R_1/BOUT.inp)
-	Option lnn:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option all:evolve_bndry = 0 (default)
-	Option lnn:evolve_bndry = 0 (default)
-Setting boundary for variable lnpe
-	core region: 	Option lnpe:bndry_xin = dirichlet_o2(log(init_pe:pe_inner)) (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:pe_inner = 9.0 (Alexander__fys_R_1/BOUT.inp)
-
-	Option input:transform_from_field_aligned = true (default)
-	Option lnpe:function = log(init_pe:function) (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:function = (0.5 *(sqrt(pe_inner) - pe_bg) * (1 - tanh( (hesel:xr - x_shift_pe)/step_width)) + pe_bg) * edge_prof (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:pe_inner = 9.0 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:pe_bg = 0.01 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:xr = mesh:xl - edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:xl = x*(lx+2*mxg*dx) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:edge_width = x_lcfs*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_lcfs = 0.40 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:x_shift_pe = -3.51585 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:step_width = 10. (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:edge_prof = 1 - line_slope * sigma_closed:function * hesel:xr (Alexander__fys_R_1/BOUT.inp)
-	Option init_pe:line_slope = (sqrt(pe_inner)-1)/hesel:edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option sigma_closed:function = 0.5 * (1-tanh(hesel:xr/hesel:d_lcfs)) (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:d_lcfs = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option lnpe:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option all:evolve_bndry = false (default)
-	Option lnpe:evolve_bndry = 0 (default)
-Setting boundary for variable lnpi
-	core region: 	Option lnpi:bndry_xin = dirichlet_o2(log(init_pi:pi_inner)) (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:pi_inner = 9.0 (Alexander__fys_R_1/BOUT.inp)
-
-	Option input:transform_from_field_aligned = true (default)
-	Option lnpi:function = log(init_pi:function) (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:function = (0.5 *(sqrt(pi_inner) - pi_bg) * (1 - tanh( (hesel:xr - x_shift_pi)/step_width)) + pi_bg) * edge_prof (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:pi_inner = 9.0 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:pi_bg = 0.01 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:xr = mesh:xl - edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:xl = x*(lx+2*mxg*dx) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:edge_width = x_lcfs*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_lcfs = 0.40 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:x_shift_pi = -3.51585 (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:step_width = 10. (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:edge_prof = 1 - line_slope * sigma_closed:function * hesel:xr (Alexander__fys_R_1/BOUT.inp)
-	Option init_pi:line_slope = (sqrt(pi_inner)-1)/hesel:edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option sigma_closed:function = 0.5 * (1-tanh(hesel:xr/hesel:d_lcfs)) (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:d_lcfs = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option lnpi:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option all:evolve_bndry = false (default)
-	Option lnpi:evolve_bndry = 0 (default)
-Setting boundary for variable vort
-	core region: 	Option vort:bndry_xin = dirichlet_o2(0.) (Alexander__fys_R_1/BOUT.inp)
-
-	Option input:transform_from_field_aligned = true (default)
-	Option vort:function = 0. (Alexander__fys_R_1/BOUT.inp)
-	Option vort:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option all:evolve_bndry = false (default)
-	Option vort:evolve_bndry = 0 (default)
-	Option input:transform_from_field_aligned = true (default)
-	Option sigma_open:function = 0.5 * (1+tanh(hesel:xr/hesel:d_lcfs)) + hesel:wall_amp*0.5 * (1+tanh((hesel:xr-hesel:sol_width)/hesel:d_wall)) (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:xr = mesh:xl - edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:xl = x*(lx+2*mxg*dx) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:edge_width = x_lcfs*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_lcfs = 0.40 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:d_lcfs = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:wall_amp = 8 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:sol_width = (x_wall-x_lcfs)*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_wall = 0.80 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:d_wall = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option sigma_open:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option input:transform_from_field_aligned = true (default)
-	Option sigma_closed:function = 0.5 * (1-tanh(hesel:xr/hesel:d_lcfs)) (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:xr = mesh:xl - edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:xl = x*(lx+2*mxg*dx) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:edge_width = x_lcfs*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_lcfs = 0.40 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:d_lcfs = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option sigma_closed:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option input:transform_from_field_aligned = true (default)
-	Option sigma_force:function = 0.5 * (1-tanh((mesh:xl-hesel:force_width)/hesel:d_force)) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:xl = x*(lx+2*mxg*dx) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:lx = 140 (Alexander__fys_R_1/BOUT.inp)
-	Option mxg = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:dx = lx/(nx-1-2*mxg) (Alexander__fys_R_1/BOUT.inp)
-	Option mesh:nx = 256+2*mxg (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:force_width = 0.5 * edge_width (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:edge_width = x_lcfs*mesh:lx (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:x_lcfs = 0.40 (Alexander__fys_R_1/BOUT.inp)
-	Option hesel:d_force = 2 (Alexander__fys_R_1/BOUT.inp)
-	Option sigma_force:scale = 1 (Alexander__fys_R_1/BOUT.inp)
-	Option laplace:type = cyclic (default)
-Initialising Laplacian inversion routines
-	Option laplace:async = 1 (default)
-	Option laplace:filter = 0 (default)
-	Option laplace:maxmode = 128 (default)
-	Option laplace:low_mem = 0 (default)
-	Option laplace:nonuniform = 1 (default)
-	Option laplace:all_terms = 1 (default)
-	Option laplace:global_flags = 0 (default)
-	Option laplace:inner_boundary_flags = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option laplace:outer_boundary_flags = 3 (Alexander__fys_R_1/BOUT.inp)
-	Option laplace:include_yguards = 0 (default)
-	Option laplace:extra_yguards_lower = 0 (default)
-	Option laplace:extra_yguards_upper = 0 (default)
-	Option laplace:dst = 0 (default)
-	Option fast_output:xpos0 = 0.2 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:ypos0 = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:zpos0 = 0.5 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:xpos1 = 0.3 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:ypos1 = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:zpos1 = 0.5 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:xpos2 = 0.4 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:ypos2 = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:zpos2 = 0.5 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:xpos3 = 0.5 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:ypos3 = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:zpos3 = 0.5 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:xpos4 = 0.6 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:ypos4 = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:zpos4 = 0.5 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:xpos5 = 0.7 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:ypos5 = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:zpos5 = 0.5 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:xpos6 = 0.8 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:ypos6 = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:zpos6 = 0.5 (Alexander__fys_R_1/BOUT.inp)
-	Option fast_output:xpos7 = -1 (default)
-	Option fast_output:ypos7 = -1 (default)
-	Option fast_output:zpos7 = -1 (default)
-	Added 7 fast_output points
-	Option datadir = Alexander__fys_R_1 ()
-	Option dump_format = nc (default)
-	Option restart_format = nc (default)
-	Using NetCDF format for file 'Alexander__fys_R_1/BOUT.restart.nc'
-	Option nout = 1000 (Alexander__fys_R_1/BOUT.inp)
-	Option timestep = 15 (Alexander__fys_R_1/BOUT.inp)
-	Option solver:NOUT = 1000 (default)
-	Option solver:output_step = 15 (default)
-Solver running for 100000 outputs with output timestep of 1.500000e-01
-Solver running for 1000 outputs with monitor timestep of 1.500000e+01
-Initialising solver
-Initialising PVODE solver
-	3d fields = 4, 2d fields = 0 neq=262144, local_N=16384
-	Option solver:mudq = 72 (default)
-	Option solver:mldq = 72 (default)
-	Option solver:mukeep = 0 (default)
-	Option solver:mlkeep = 0 (default)
-	Option solver:atol = 1e-10 (Alexander__fys_R_1/BOUT.inp)
-	Option solver:rtol = 1e-05 (Alexander__fys_R_1/BOUT.inp)
-	Option solver:use_precon = 0 (default)
-	Option solver:precon_dimens = 50 (default)
-	Option solver:precon_tol = 0.0001 (default)
-	Option solver:mxstep = 1000000 (Alexander__fys_R_1/BOUT.inp)
-	Option fft:fft_measure = 0 (default)
-	Option laplace:type = cyclic (default)
-Initialising Laplacian inversion routines
-	Option laplace:async = true (default)
-	Option laplace:filter = 0 (default)
-	Option laplace:maxmode = 128 (default)
-	Option laplace:low_mem = false (default)
-	Option laplace:nonuniform = true (default)
-	Option laplace:all_terms = true (default)
-	Option laplace:global_flags = 0 (default)
-	Option laplace:inner_boundary_flags = 0 (Alexander__fys_R_1/BOUT.inp)
-	Option laplace:outer_boundary_flags = 3 (Alexander__fys_R_1/BOUT.inp)
-	Option laplace:include_yguards = false (default)
-	Option laplace:extra_yguards_lower = 0 (default)
-	Option laplace:extra_yguards_upper = 0 (default)
-	Option laplace:dst = false (default)
-Running simulation
-
-
-Run started at  : Thu 11 Jun 2026 10:21:36 AM CEST
-	Option restart = false (default)
-	Option append = false (default)
-	Option dump_on_restart = 1 (default)
-	Option wall_limit = -1 (default)
-	Option stopCheck = 0 (default)
-Sim Time  |  RHS evals  | Wall Time |  Calc    Inv   Comm    I/O   SOLVER
-
-0.000e+00          2       2.37e-02   192.8   12.2   40.2   52.1  -197.3
-|  Step 0 of 1000. Elapsed 0:00:00.0 ETA 0:00:23.71.500e+01        199       1.81e+00    76.2    6.4    5.8    2.8    8.8
-/  Step 1 of 1000. Elapsed 0:00:01.8 ETA 0:30:03.53.000e+01        185       1.67e+00    77.0    6.4    5.3    2.7    8.6
--  Step 2 of 1000. Elapsed 0:00:03.5 ETA 0:27:44.14.500e+01        159       1.35e+00    81.8    5.6    3.9    3.1    5.6
-\  Step 3 of 1000. Elapsed 0:00:04.8 ETA 0:22:24.36.000e+01        143       1.24e+00    79.7    5.8    5.2    3.1    6.2
-|  Step 4 of 1000. Elapsed 0:00:06.1 ETA 0:20:39.67.500e+01        140       1.20e+00    80.7    5.5    3.9    3.5    6.3
-/  Step 5 of 1000. Elapsed 0:00:07.3 ETA 0:19:52.49.000e+01        125       1.05e+00    82.5    5.5    3.6    4.0    4.4
--  Step 6 of 1000. Elapsed 0:00:08.3 ETA 0:17:21.91.050e+02        129       1.12e+00    80.5    5.8    5.0    4.0    4.9
-\  Step 7 of 1000. Elapsed 0:00:09.5 ETA 0:18:31.31.200e+02        123       1.08e+00    79.1    5.5    4.1    4.8    6.5
-|  Step 8 of 1000. Elapsed 0:00:10.5 ETA 0:17:53.21.350e+02        119       1.03e+00    80.0    5.6    4.4    3.4    6.6
-/  Step 9 of 1000. Elapsed 0:00:11.6 ETA 0:16:58.81.500e+02        124       1.05e+00    81.8    5.5    3.5    4.3    4.9
--  Step 10 of 1000. Elapsed 0:00:12.6 ETA 0:17:20.31.650e+02        121       1.06e+00    79.1    5.8    5.1    3.5    6.6
-\  Step 11 of 1000. Elapsed 0:00:13.7 ETA 0:17:23.41.800e+02        118       1.00e+00    81.9    5.5    3.8    4.0    4.8
-|  Step 12 of 1000. Elapsed 0:00:14.7 ETA 0:16:31.51.950e+02        120       1.04e+00    80.4    5.4    3.7    4.5    5.9
-/  Step 13 of 1000. Elapsed 0:00:15.7 ETA 0:17:02.82.100e+02        114       9.60e-01    81.6    5.5    3.6    4.6    4.8
--  Step 14 of 1000. Elapsed 0:00:16.7 ETA 0:15:46.42.250e+02        119       1.01e+00    80.3    5.4    3.7    6.0    4.5
-\  Step 15 of 1000. Elapsed 0:00:17.7 ETA 0:16:36.52.400e+02        114       9.49e-01    81.5    5.6    3.7    4.1    5.1
-|  Step 16 of 1000. Elapsed 0:00:18.6 ETA 0:15:33.92.550e+02        119       1.04e+00    79.4    5.7    4.9    4.0    6.0
-/  Step 17 of 1000. Elapsed 0:00:19.7 ETA 0:17:02.92.700e+02        114       1.03e+00    77.3    5.4    3.8    7.1    6.5
--  Step 18 of 1000. Elapsed 0:00:20.7 ETA 0:16:46.72.850e+02        120       1.08e+00    77.3    5.5    4.4    5.4    7.5
-\  Step 19 of 1000. Elapsed 0:00:21.8 ETA 0:17:39.03.000e+02        115       1.06e+00    75.1    5.9    5.1    3.6   10.3
-|  Step 20 of 1000. Elapsed 0:00:22.8 ETA 0:17:18.33.150e+02        119       1.07e+00    77.0    5.5    4.1    3.2   10.3
-/  Step 21 of 1000. Elapsed 0:00:23.9 ETA 0:17:28.63.300e+02        115       1.05e+00    76.2    5.8    4.2    6.4    7.3
--  Step 22 of 1000. Elapsed 0:00:25.0 ETA 0:17:10.83.450e+02        120       1.03e+00    81.2    5.5    3.8    4.1    5.4
-\  Step 23 of 1000. Elapsed 0:00:26.0 ETA 0:16:48.83.600e+02        115       1.09e+00    72.2    5.5    5.5    6.6   10.2
-|  Step 24 of 1000. Elapsed 0:00:27.1 ETA 0:17:41.73.750e+02        120       1.01e+00    81.6    5.5    3.8    3.4    5.7
-/  Step 25 of 1000. Elapsed 0:00:28.1 ETA 0:16:22.93.900e+02        115       9.93e-01    78.8    5.5    4.1    4.3    7.2
--  Step 26 of 1000. Elapsed 0:00:29.1 ETA 0:16:06.94.050e+02        120       1.03e+00    80.4    5.5    4.4    3.4    6.3
-\  Step 27 of 1000. Elapsed 0:00:30.1 ETA 0:16:43.64.200e+02        115       1.00e+00    79.8    5.5    4.3    3.2    7.1
-|  Step 28 of 1000. Elapsed 0:00:31.1 ETA 0:16:11.74.350e+02        120       1.07e+00    77.8    5.6    4.6    3.9    8.1
-/  Step 29 of 1000. Elapsed 0:00:32.2 ETA 0:17:17.14.500e+02        115       1.02e+00    78.5    5.7    4.5    4.2    7.2
--  Step 30 of 1000. Elapsed 0:00:33.2 ETA 0:16:25.84.650e+02        120       1.07e+00    77.7    5.3    3.8    4.0    9.2
-\  Step 31 of 1000. Elapsed 0:00:34.3 ETA 0:17:14.34.800e+02        115       9.74e-01    82.3    5.5    3.5    4.3    4.4
-|  Step 32 of 1000. Elapsed 0:00:35.2 ETA 0:15:43.34.950e+02        120       1.04e+00    79.4    5.3    4.1    4.1    7.1
-/  Step 33 of 1000. Elapsed 0:00:36.3 ETA 0:16:47.55.100e+02        115       1.01e+00    79.6    5.6    4.9    4.1    5.8
--  Step 34 of 1000. Elapsed 0:00:37.3 ETA 0:16:14.85.250e+02        120       1.03e+00    80.9    5.4    3.7    3.8    6.1
-\  Step 35 of 1000. Elapsed 0:00:38.3 ETA 0:16:37.35.400e+02        115       9.93e-01    80.3    5.4    3.9    4.1    6.4
-|  Step 36 of 1000. Elapsed 0:00:39.3 ETA 0:15:57.65.550e+02        120       1.06e+00    79.0    5.3    4.2    4.1    7.4
-/  Step 37 of 1000. Elapsed 0:00:40.4 ETA 0:17:02.55.700e+02        115       1.00e+00    78.9    5.5    4.0    4.9    6.6
--  Step 38 of 1000. Elapsed 0:00:41.4 ETA 0:16:06.25.850e+02        120       1.08e+00    78.3    5.3    3.6    7.7    5.2
-\  Step 39 of 1000. Elapsed 0:00:42.5 ETA 0:17:15.26.000e+02        115       1.09e+00    73.5    6.0    5.0    4.0   11.6
-|  Step 40 of 1000. Elapsed 0:00:43.6 ETA 0:17:25.86.150e+02        120       1.05e+00    79.3    5.7    4.1    4.4    6.4
-/  Step 41 of 1000. Elapsed 0:00:44.6 ETA 0:16:43.16.300e+02        115       1.03e+00    78.4    5.7    4.5    4.2    7.2
--  Step 42 of 1000. Elapsed 0:00:45.6 ETA 0:16:26.56.450e+02        120       1.05e+00    79.2    5.8    4.3    4.0    6.8
-\  Step 43 of 1000. Elapsed 0:00:46.7 ETA 0:16:48.46.600e+02        115       9.85e-01    81.5    5.6    3.8    3.4    5.8
-|  Step 44 of 1000. Elapsed 0:00:47.7 ETA 0:15:41.46.750e+02        120       1.05e+00    79.4    5.5    4.2    3.4    7.5
-/  Step 45 of 1000. Elapsed 0:00:48.7 ETA 0:16:39.96.900e+02        114       9.94e-01    79.1    5.8    4.6    4.3    6.3
--  Step 46 of 1000. Elapsed 0:00:49.7 ETA 0:15:48.67.050e+02        120       1.03e+00    81.6    5.5    3.9    3.9    5.0
-\  Step 47 of 1000. Elapsed 0:00:50.7 ETA 0:16:17.27.200e+02        115       1.05e+00    76.8    5.2    3.6    8.5    5.9
-|  Step 48 of 1000. Elapsed 0:00:51.8 ETA 0:16:39.47.350e+02        120       1.09e+00    75.7    5.5    4.1    6.6    8.1
-/  Step 49 of 1000. Elapsed 0:00:52.9 ETA 0:17:21.27.500e+02        115       1.03e+00    78.0    5.5    4.7    4.6    7.3
--  Step 50 of 1000. Elapsed 0:00:53.9 ETA 0:16:22.27.650e+02        120       1.04e+00    80.1    5.5    4.1    3.7    6.7
-\  Step 51 of 1000. Elapsed 0:00:54.9 ETA 0:16:23.77.800e+02        116       1.00e+00    81.1    5.3    3.4    5.5    4.7
-|  Step 52 of 1000. Elapsed 0:00:55.9 ETA 0:15:48.27.950e+02        120       1.05e+00    80.0    5.4    3.7    3.7    7.2
-/  Step 53 of 1000. Elapsed 0:00:57.0 ETA 0:16:35.58.100e+02        115       9.75e-01    81.8    5.5    3.6    4.5    4.6
--  Step 54 of 1000. Elapsed 0:00:58.0 ETA 0:15:22.38.250e+02        120       1.06e+00    78.7    5.3    3.7    4.8    7.5
-\  Step 55 of 1000. Elapsed 0:00:59.0 ETA 0:16:38.38.400e+02        116       9.88e-01    81.6    5.4    3.5    4.7    4.7
-|  Step 56 of 1000. Elapsed 0:01:00.0 ETA 0:15:32.98.550e+02        120       1.03e+00    81.2    5.4    3.9    4.5    5.0
-/  Step 57 of 1000. Elapsed 0:01:01.0 ETA 0:16:11.68.700e+02        116       9.98e-01    80.7    5.5    3.9    4.1    5.8
--  Step 58 of 1000. Elapsed 0:01:02.0 ETA 0:15:40.38.850e+02        121       1.06e+00    80.0    5.5    4.0    4.1    6.4
-\  Step 59 of 1000. Elapsed 0:01:03.1 ETA 0:16:35.09.000e+02        115       1.00e+00    78.8    5.6    4.2    4.1    7.3
-|  Step 60 of 1000. Elapsed 0:01:04.1 ETA 0:15:44.69.150e+02        120       1.10e+00    75.6    6.0    4.9    3.8    9.7
-/  Step 61 of 1000. Elapsed 0:01:05.2 ETA 0:17:17.29.300e+02        116       9.97e-01    81.3    5.5    4.0    3.5    5.7
--  Step 62 of 1000. Elapsed 0:01:06.2 ETA 0:15:35.19.450e+02        126       1.15e+00    76.7    6.2    5.4    3.3    8.4
-\  Step 63 of 1000. Elapsed 0:01:07.4 ETA 0:17:55.19.600e+02        120       1.05e+00    79.2    5.5    4.1    3.8    7.4
-|  Step 64 of 1000. Elapsed 0:01:08.4 ETA 0:16:25.69.750e+02        126       1.08e+00    81.1    5.5    3.9    3.7    5.8
-/  Step 65 of 1000. Elapsed 0:01:09.5 ETA 0:16:47.59.900e+02        120       1.03e+00    80.4    5.4    3.8    4.2    6.2
--  Step 66 of 1000. Elapsed 0:01:10.5 ETA 0:16:02.31.005e+03        127       1.12e+00    78.5    5.4    3.8    5.7    6.6
-\  Step 67 of 1000. Elapsed 0:01:11.6 ETA 0:17:27.71.020e+03        118       1.00e+00    82.2    5.5    3.8    4.0    4.6
-|  Step 68 of 1000. Elapsed 0:01:12.6 ETA 0:15:34.01.035e+03        128       1.12e+00    80.3    5.5    4.0    3.9    6.3
-/  Step 69 of 1000. Elapsed 0:01:13.8 ETA 0:17:22.71.050e+03        128       1.12e+00    78.9    5.6    4.3    3.8    7.3
--  Step 70 of 1000. Elapsed 0:01:14.9 ETA 0:17:21.51.065e+03        121       1.10e+00    77.2    5.2    3.8    5.4    8.4
-\  Step 71 of 1000. Elapsed 0:01:16.0 ETA 0:17:01.11.080e+03        129       1.17e+00    77.1    5.2    3.5    5.1    9.1
-|  Step 72 of 1000. Elapsed 0:01:17.2 ETA 0:18:06.41.095e+03        121       1.05e+00    80.6    5.3    3.6    5.1    5.2
-/  Step 73 of 1000. Elapsed 0:01:18.2 ETA 0:16:16.81.110e+03        130       1.10e+00    82.7    5.5    3.7    4.8    3.3
--  Step 74 of 1000. Elapsed 0:01:19.3 ETA 0:16:57.71.125e+03        122       1.04e+00    81.8    5.4    3.5    5.7    3.5
-\  Step 75 of 1000. Elapsed 0:01:20.3 ETA 0:16:04.41.140e+03        131       1.16e+00    80.0    5.3    3.8    4.8    6.2
-|  Step 76 of 1000. Elapsed 0:01:21.5 ETA 0:17:48.41.155e+03        126       1.09e+00    80.6    5.4    3.8    4.3    5.9
-/  Step 77 of 1000. Elapsed 0:01:22.6 ETA 0:16:49.71.170e+03        134       1.15e+00    81.5    5.5    3.7    5.1    4.3
--  Step 78 of 1000. Elapsed 0:01:23.8 ETA 0:17:43.81.185e+03        132       1.15e+00    78.9    5.5    4.3    4.6    6.7
-\  Step 79 of 1000. Elapsed 0:01:24.9 ETA 0:17:42.01.200e+03        132       1.12e+00    82.9    5.4    3.5    5.1    3.1
-|  Step 80 of 1000. Elapsed 0:01:26.0 ETA 0:17:10.51.215e+03        138       1.23e+00    78.4    5.8    4.6    4.8    6.5
-/  Step 81 of 1000. Elapsed 0:01:27.3 ETA 0:18:51.01.230e+03        134       1.19e+00    79.8    5.8    4.2    4.3    6.0
--  Step 82 of 1000. Elapsed 0:01:28.4 ETA 0:18:11.41.245e+03        139       1.30e+00    76.9    6.1    5.0    4.5    7.4
-\  Step 83 of 1000. Elapsed 0:01:29.7 ETA 0:19:51.71.260e+03        140       1.21e+00    81.1    5.4    3.7    6.3    3.6
-|  Step 84 of 1000. Elapsed 0:01:31.0 ETA 0:18:32.71.275e+03        145       1.32e+00    83.0    5.2    3.5    4.8    3.5
-/  Step 85 of 1000. Elapsed 0:01:32.3 ETA 0:20:04.31.290e+03        140       1.21e+00    80.7    5.4    3.6    6.8    3.6
--  Step 86 of 1000. Elapsed 0:01:33.5 ETA 0:18:26.51.305e+03        152       1.32e+00    81.2    5.4    4.0    4.7    4.7
-\  Step 87 of 1000. Elapsed 0:01:34.8 ETA 0:20:08.91.320e+03        140       1.22e+00    80.7    5.4    4.1    4.6    5.1
-|  Step 88 of 1000. Elapsed 0:01:36.0 ETA 0:18:30.71.335e+03        149       1.32e+00    79.7    5.6    4.1    4.5    6.0
-/  Step 89 of 1000. Elapsed 0:01:37.3 ETA 0:19:58.41.350e+03        138       1.21e+00    80.1    5.5    4.2    4.7    5.5
--  Step 90 of 1000. Elapsed 0:01:38.6 ETA 0:18:22.21.365e+03        141       1.20e+00    82.4    5.4    3.6    4.7    3.8
-\  Step 91 of 1000. Elapsed 0:01:39.8 ETA 0:18:13.61.380e+03        142       1.22e+00    81.2    5.4    3.7    4.5    5.2
-|  Step 92 of 1000. Elapsed 0:01:41.0 ETA 0:18:29.91.395e+03        154       1.30e+00    82.7    5.4    3.5    4.7    3.7
-/  Step 93 of 1000. Elapsed 0:01:42.3 ETA 0:19:41.21.410e+03        159       1.37e+00    81.7    5.4    3.4    5.8    3.8
--  Step 94 of 1000. Elapsed 0:01:43.7 ETA 0:20:44.91.425e+03        155       1.32e+00    82.4    5.4    3.8    4.8    3.6
-\  Step 95 of 1000. Elapsed 0:01:45.0 ETA 0:19:53.71.440e+03        161       1.40e+00    80.9    5.5    3.7    4.6    5.4
-|  Step 96 of 1000. Elapsed 0:01:46.4 ETA 0:21:06.51.455e+03        165       1.43e+00    81.3    5.4    4.0    4.4    4.9
-/  Step 97 of 1000. Elapsed 0:01:47.8 ETA 0:21:35.51.470e+03        154       1.38e+00    78.7    5.9    4.3    4.6    6.4
--  Step 98 of 1000. Elapsed 0:01:49.2 ETA 0:20:46.51.485e+03        165       1.46e+00    79.8    5.7    4.1    4.6    5.9
-\  Step 99 of 1000. Elapsed 0:01:50.6 ETA 0:21:51.81.500e+03        175       1.53e+00    81.1    5.6    4.0    4.3    5.1
-|  Step 100 of 1000. Elapsed 0:01:52.2 ETA 0:22:55.91.515e+03        174       1.51e+00    81.8    5.5    3.8    4.4    4.5
-/  Step 101 of 1000. Elapsed 0:01:53.7 ETA 0:22:34.31.530e+03        183       1.62e+00    80.9    5.2    4.9    4.6    4.4
--  Step 102 of 1000. Elapsed 0:01:55.3 ETA 0:24:14.71.545e+03        186       1.64e+00    79.3    5.8    4.6    4.9    5.4
-\  Step 103 of 1000. Elapsed 0:01:56.9 ETA 0:24:35.21.560e+03        188       1.68e+00    77.8    5.8    4.3    4.0    8.1
-|  Step 104 of 1000. Elapsed 0:01:58.6 ETA 0:25:03.21.575e+03        214       1.87e+00    80.4    5.5    4.1    3.9    6.1
-/  Step 105 of 1000. Elapsed 0:02:00.5 ETA 0:27:57.71.590e+03        226       1.92e+00    82.5    5.4    3.5    3.8    4.8
--  Step 106 of 1000. Elapsed 0:02:02.4 ETA 0:28:40.31.605e+03        233       2.00e+00    81.9    5.3    3.7    3.5    5.5
-\  Step 107 of 1000. Elapsed 0:02:04.4 ETA 0:29:43.71.620e+03        261       2.26e+00    81.3    5.4    3.7    3.8    5.8
-|  Step 108 of 1000. Elapsed 0:02:06.7 ETA 0:33:39.21.635e+03        300       2.64e+00    80.0    5.3    3.9    3.3    7.5
-/  Step 109 of 1000. Elapsed 0:02:09.3 ETA 0:39:08.11.650e+03        289       2.60e+00    79.1    5.7    4.5    3.3    7.3
--  Step 110 of 1000. Elapsed 0:02:11.9 ETA 0:38:35.01.665e+03        309       2.80e+00    77.3    5.9    5.0    3.3    8.6
-\  Step 111 of 1000. Elapsed 0:02:14.7 ETA 0:41:31.61.680e+03        321       2.78e+00    80.8    5.5    3.9    3.0    6.8
-|  Step 112 of 1000. Elapsed 0:02:17.5 ETA 0:41:06.21.695e+03        310       2.67e+00    81.1    5.5    3.8    3.0    6.6
-/  Step 113 of 1000. Elapsed 0:02:20.2 ETA 0:39:29.21.710e+03        415       3.57e+00    80.5    5.6    4.0    3.1    6.8
--  Step 114 of 1000. Elapsed 0:02:23.7 ETA 0:52:44.11.725e+03        342       2.89e+00    82.1    5.4    3.7    3.3    5.5
-\  Step 115 of 1000. Elapsed 0:02:26.6 ETA 0:42:35.01.740e+03        356       3.06e+00    80.8    5.3    3.5    4.6    5.8
-|  Step 116 of 1000. Elapsed 0:02:29.7 ETA 0:45:00.91.755e+03        310       2.68e+00    80.4    5.4    3.9    3.4    6.8
-/  Step 117 of 1000. Elapsed 0:02:32.4 ETA 0:39:30.21.770e+03        299       2.67e+00    78.3    5.8    4.9    3.4    7.6
--  Step 118 of 1000. Elapsed 0:02:35.0 ETA 0:39:11.91.785e+03        312       2.73e+00    79.6    5.7    4.2    3.2    7.3
-\  Step 119 of 1000. Elapsed 0:02:37.8 ETA 0:40:09.11.800e+03        328       2.78e+00    82.2    5.4    3.7    3.5    5.2
-|  Step 120 of 1000. Elapsed 0:02:40.6 ETA 0:40:44.91.815e+03        304       2.64e+00    80.6    5.5    3.9    3.6    6.4
-/  Step 121 of 1000. Elapsed 0:02:43.2 ETA 0:38:40.71.830e+03        298       2.56e+00    81.2    5.5    4.3    3.4    5.6
--  Step 122 of 1000. Elapsed 0:02:45.7 ETA 0:37:24.51.845e+03        281       2.44e+00    80.9    5.3    3.7    3.5    6.6
-\  Step 123 of 1000. Elapsed 0:02:48.2 ETA 0:35:39.11.860e+03        319       2.71e+00    82.5    5.4    3.5    3.6    5.0
-|  Step 124 of 1000. Elapsed 0:02:50.9 ETA 0:39:30.41.875e+03        349       3.00e+00    81.5    5.4    3.8    3.0    6.3
-/  Step 125 of 1000. Elapsed 0:02:53.9 ETA 0:43:43.61.890e+03        304       2.73e+00    78.4    5.6    4.7    3.1    8.2
--  Step 126 of 1000. Elapsed 0:02:56.6 ETA 0:39:43.31.905e+03        302       2.67e+00    79.5    5.7    4.4    3.0    7.5
-\  Step 127 of 1000. Elapsed 0:02:59.3 ETA 0:38:50.31.920e+03        335       2.87e+00    81.7    5.4    4.0    3.1    5.8
-|  Step 128 of 1000. Elapsed 0:03:02.2 ETA 0:41:45.61.935e+03        338       2.91e+00    81.7    5.5    3.8    3.2    5.9
-/  Step 129 of 1000. Elapsed 0:03:05.1 ETA 0:42:13.51.950e+03        319       2.83e+00    79.2    5.4    4.0    3.2    8.2
--  Step 130 of 1000. Elapsed 0:03:07.9 ETA 0:40:58.21.965e+03        338       2.90e+00    81.9    5.4    3.6    3.9    5.3
-\  Step 131 of 1000. Elapsed 0:03:10.8 ETA 0:41:57.91.980e+03        316       2.71e+00    81.7    5.4    3.7    3.0    6.2
-|  Step 132 of 1000. Elapsed 0:03:13.5 ETA 0:39:09.61.995e+03        385       3.36e+00    80.6    5.5    4.3    3.0    6.7
-/  Step 133 of 1000. Elapsed 0:03:16.9 ETA 0:48:34.72.010e+03        368       3.29e+00    77.4    5.9    4.5    3.2    8.9
--  Step 134 of 1000. Elapsed 0:03:20.2 ETA 0:47:30.52.025e+03        357       3.14e+00    80.1    5.4    4.4    3.3    6.8
-\  Step 135 of 1000. Elapsed 0:03:23.3 ETA 0:45:18.62.040e+03        348       3.03e+00    80.8    5.4    4.0    3.3    6.6
-|  Step 136 of 1000. Elapsed 0:03:26.3 ETA 0:43:35.22.055e+03        371       3.18e+00    81.2    5.5    3.9    3.0    6.4
-/  Step 137 of 1000. Elapsed 0:03:29.5 ETA 0:45:43.02.070e+03        311       2.66e+00    82.1    5.4    3.7    3.4    5.4
--  Step 138 of 1000. Elapsed 0:03:32.2 ETA 0:38:15.22.085e+03        320       2.75e+00    81.7    5.3    3.6    3.4    5.9
-\  Step 139 of 1000. Elapsed 0:03:34.9 ETA 0:39:28.72.100e+03        324       2.79e+00    81.4    5.4    3.7    3.4    6.1
-|  Step 140 of 1000. Elapsed 0:03:37.7 ETA 0:40:02.62.115e+03        356       3.12e+00    80.4    5.6    4.2    3.4    6.4
-/  Step 141 of 1000. Elapsed 0:03:40.8 ETA 0:44:40.42.130e+03        352       3.12e+00    79.5    5.6    4.3    3.4    7.2
--  Step 142 of 1000. Elapsed 0:03:44.0 ETA 0:44:40.12.145e+03        326       2.84e+00    80.6    5.3    4.1    3.3    6.7
-\  Step 143 of 1000. Elapsed 0:03:46.8 ETA 0:40:30.22.160e+03        376       3.28e+00    80.6    5.5    4.0    3.1    6.8
-|  Step 144 of 1000. Elapsed 0:03:50.1 ETA 0:46:44.02.175e+03        351       3.00e+00    81.9    5.4    3.8    3.1    5.8
-/  Step 145 of 1000. Elapsed 0:03:53.1 ETA 0:42:46.42.190e+03        336       2.88e+00    81.9    5.4    3.7    3.0    6.0
--  Step 146 of 1000. Elapsed 0:03:55.9 ETA 0:40:58.52.205e+03        341       2.93e+00    81.6    5.4    3.8    3.2    6.0
-\  Step 147 of 1000. Elapsed 0:03:58.9 ETA 0:41:41.52.220e+03        325       2.87e+00    78.9    5.6    4.3    3.1    8.0
-|  Step 148 of 1000. Elapsed 0:04:01.8 ETA 0:40:49.42.235e+03        328       2.91e+00    78.5    5.7    4.3    3.2    8.4
-/  Step 149 of 1000. Elapsed 0:04:04.7 ETA 0:41:19.32.250e+03        350       3.02e+00    81.6    5.4    3.9    3.2    5.9
--  Step 150 of 1000. Elapsed 0:04:07.7 ETA 0:42:47.42.265e+03        355       3.07e+00    81.2    5.5    3.9    3.2    6.1
-\  Step 151 of 1000. Elapsed 0:04:10.8 ETA 0:43:25.02.280e+03        358       3.10e+00    81.3    5.5    3.9    3.2    6.2
-|  Step 152 of 1000. Elapsed 0:04:13.9 ETA 0:43:46.42.295e+03        385       3.32e+00    81.7    5.4    3.9    3.2    5.9
-/  Step 153 of 1000. Elapsed 0:04:17.2 ETA 0:46:53.32.310e+03        345       2.96e+00    82.0    5.4    3.7    3.2    5.7
--  Step 154 of 1000. Elapsed 0:04:20.1 ETA 0:41:45.32.325e+03        321       2.88e+00    78.6    5.7    4.8    3.3    7.6
-\  Step 155 of 1000. Elapsed 0:04:23.0 ETA 0:40:34.82.340e+03        298       2.69e+00    77.8    5.7    4.4    3.5    8.6
-|  Step 156 of 1000. Elapsed 0:04:25.7 ETA 0:37:50.62.355e+03        356       3.10e+00    80.6    5.4    3.9    3.3    6.8
-/  Step 157 of 1000. Elapsed 0:04:28.8 ETA 0:43:30.62.370e+03        394       3.41e+00    81.3    5.4    3.9    3.3    6.1
--  Step 158 of 1000. Elapsed 0:04:32.2 ETA 0:47:54.32.385e+03        309       2.69e+00    80.6    5.5    3.9    3.5    6.5
-\  Step 159 of 1000. Elapsed 0:04:34.9 ETA 0:37:45.12.400e+03        305       2.60e+00    82.2    5.4    3.6    3.4    5.4
-|  Step 160 of 1000. Elapsed 0:04:37.5 ETA 0:36:22.72.415e+03        322       2.75e+00    82.4    5.4    3.7    3.4    5.1
-/  Step 161 of 1000. Elapsed 0:04:40.3 ETA 0:38:28.52.430e+03        320       2.78e+00    80.6    5.4    4.1    3.1    6.9
--  Step 162 of 1000. Elapsed 0:04:43.0 ETA 0:38:48.92.445e+03        302       2.69e+00    79.1    5.6    4.4    3.2    7.7
-\  Step 163 of 1000. Elapsed 0:04:45.7 ETA 0:37:31.32.460e+03        294       2.64e+00    78.4    5.7    4.3    3.3    8.3
-|  Step 164 of 1000. Elapsed 0:04:48.4 ETA 0:36:45.72.475e+03        313       2.68e+00    81.6    5.4    4.1    3.1    5.8
-/  Step 165 of 1000. Elapsed 0:04:51.0 ETA 0:37:21.12.490e+03        290       2.51e+00    81.4    5.4    3.9    3.3    6.1
--  Step 166 of 1000. Elapsed 0:04:53.6 ETA 0:34:53.02.505e+03        282       2.47e+00    80.4    5.4    3.9    3.3    7.0
-\  Step 167 of 1000. Elapsed 0:04:56.0 ETA 0:34:18.22.520e+03        300       2.56e+00    81.8    5.4    3.6    3.3    6.0
-|  Step 168 of 1000. Elapsed 0:04:58.6 ETA 0:35:32.02.535e+03        291       2.52e+00    79.9    5.3    3.6    3.2    8.0
-/  Step 169 of 1000. Elapsed 0:05:01.1 ETA 0:34:52.42.550e+03        306       2.62e+00    82.0    5.4    3.7    3.4    5.4
--  Step 170 of 1000. Elapsed 0:05:03.7 ETA 0:36:17.92.565e+03        313       2.70e+00    81.4    5.5    3.9    3.2    6.0
-\  Step 171 of 1000. Elapsed 0:05:06.4 ETA 0:37:19.62.580e+03        286       2.55e+00    79.0    5.7    4.4    3.3    7.5
-|  Step 172 of 1000. Elapsed 0:05:09.0 ETA 0:35:07.52.595e+03        330       2.87e+00    80.9    5.5    4.1    3.3    6.1
-/  Step 173 of 1000. Elapsed 0:05:11.9 ETA 0:39:34.02.610e+03        309       2.66e+00    81.9    5.4    3.8    3.4    5.5
--  Step 174 of 1000. Elapsed 0:05:14.5 ETA 0:36:34.72.625e+03        298       2.60e+00    79.9    5.5    4.3    3.5    6.8
-\  Step 175 of 1000. Elapsed 0:05:17.1 ETA 0:35:49.02.640e+03        447       3.80e+00    82.0    5.4    3.7    3.1    5.7
-|  Step 176 of 1000. Elapsed 0:05:20.9 ETA 0:52:08.52.655e+03        332       2.88e+00    81.3    5.5    4.1    3.3    5.9
-/  Step 177 of 1000. Elapsed 0:05:23.8 ETA 0:39:30.22.670e+03        320       2.74e+00    81.8    5.4    3.8    3.2    5.9
--  Step 178 of 1000. Elapsed 0:05:26.5 ETA 0:37:34.32.685e+03        316       2.83e+00    78.9    5.6    4.4    3.1    8.1
-\  Step 179 of 1000. Elapsed 0:05:29.4 ETA 0:38:40.02.700e+03        325       2.87e+00    80.1    5.7    4.1    3.5    6.6
-|  Step 180 of 1000. Elapsed 0:05:32.2 ETA 0:39:14.02.715e+03        310       2.65e+00    81.8    5.4    3.7    3.5    5.5
-/  Step 181 of 1000. Elapsed 0:05:34.9 ETA 0:36:09.82.730e+03        307       2.68e+00    80.4    5.4    3.8    3.4    6.9
--  Step 182 of 1000. Elapsed 0:05:37.6 ETA 0:36:34.42.745e+03        339       2.98e+00    80.0    5.4    4.0    3.6    7.0
-\  Step 183 of 1000. Elapsed 0:05:40.5 ETA 0:40:35.32.760e+03        361       3.07e+00    82.3    5.4    3.6    3.2    5.5
-|  Step 184 of 1000. Elapsed 0:05:43.6 ETA 0:41:47.72.775e+03        267       2.29e+00    82.1    5.4    3.6    3.5    5.4
-/  Step 185 of 1000. Elapsed 0:05:45.9 ETA 0:31:03.72.790e+03        284       2.44e+00    81.7    5.4    3.7    3.3    5.9
--  Step 186 of 1000. Elapsed 0:05:48.3 ETA 0:33:03.62.805e+03        264       2.31e+00    79.4    5.5    4.2    3.5    7.4
-\  Step 187 of 1000. Elapsed 0:05:50.7 ETA 0:31:21.92.820e+03        275       2.43e+00    78.5    5.8    4.4    3.3    8.0
-|  Step 188 of 1000. Elapsed 0:05:53.1 ETA 0:32:54.72.835e+03        278       2.44e+00    80.5    5.5    4.0    3.3    6.7
-/  Step 189 of 1000. Elapsed 0:05:55.5 ETA 0:32:55.22.850e+03        264       2.30e+00    80.6    5.3    3.8    3.3    6.9
--  Step 190 of 1000. Elapsed 0:05:57.8 ETA 0:31:03.92.865e+03        272       2.39e+00    80.3    5.7    4.0    3.4    6.5
-\  Step 191 of 1000. Elapsed 0:06:00.2 ETA 0:32:12.42.880e+03        280       2.49e+00    80.2    5.4    4.1    3.3    6.9
-|  Step 192 of 1000. Elapsed 0:06:02.7 ETA 0:33:28.22.895e+03        289       2.53e+00    81.0    5.3    3.8    3.4    6.4
-/  Step 193 of 1000. Elapsed 0:06:05.2 ETA 0:33:58.72.910e+03        284       2.49e+00    80.6    5.3    3.8    3.5    6.9
--  Step 194 of 1000. Elapsed 0:06:07.7 ETA 0:33:26.32.925e+03        294       2.57e+00    81.0    5.4    4.0    3.4    6.2
-\  Step 195 of 1000. Elapsed 0:06:10.3 ETA 0:34:28.82.940e+03        324       2.94e+00    78.4    5.7    4.5    3.5    7.9
-|  Step 196 of 1000. Elapsed 0:06:13.2 ETA 0:39:22.02.955e+03        266       2.44e+00    77.0    5.8    4.7    3.7    8.8
-/  Step 197 of 1000. Elapsed 0:06:15.7 ETA 0:32:40.02.970e+03        261       2.32e+00    79.7    5.5    4.0    3.4    7.5
--  Step 198 of 1000. Elapsed 0:06:18.0 ETA 0:31:01.52.985e+03        257       2.25e+00    80.9    5.7    3.9    3.6    5.9
-\  Step 199 of 1000. Elapsed 0:06:20.2 ETA 0:29:58.53.000e+03        253       2.30e+00    78.0    5.6    4.4    4.4    7.7
-|  Step 200 of 1000. Elapsed 0:06:22.5 ETA 0:30:37.33.015e+03        254       2.31e+00    78.0    5.5    4.8    3.6    8.1
-/  Step 201 of 1000. Elapsed 0:06:24.8 ETA 0:30:43.83.030e+03        262       2.24e+00    82.1    5.4    3.6    3.7    5.2
--  Step 202 of 1000. Elapsed 0:06:27.1 ETA 0:29:50.43.045e+03        290       2.47e+00    82.3    5.4    3.6    3.5    5.2
-\  Step 203 of 1000. Elapsed 0:06:29.5 ETA 0:32:48.23.060e+03        280       2.38e+00    82.1    5.5    3.7    3.3    5.5
-|  Step 204 of 1000. Elapsed 0:06:31.9 ETA 0:31:36.13.075e+03        270       2.33e+00    81.1    5.4    3.8    3.3    6.4
-/  Step 205 of 1000. Elapsed 0:06:34.3 ETA 0:30:50.43.090e+03        281       2.49e+00    79.1    5.7    4.2    3.4    7.5
--  Step 206 of 1000. Elapsed 0:06:36.7 ETA 0:32:53.43.105e+03        318       2.83e+00    78.9    5.6    4.4    3.2    8.0
-\  Step 207 of 1000. Elapsed 0:06:39.6 ETA 0:37:23.63.120e+03        287       2.49e+00    80.2    5.4    3.9    3.4    7.0
-|  Step 208 of 1000. Elapsed 0:06:42.1 ETA 0:32:56.03.135e+03        288       2.48e+00    81.6    5.4    3.7    3.4    5.9
-/  Step 209 of 1000. Elapsed 0:06:44.5 ETA 0:32:40.43.150e+03        343       3.03e+00    79.4    5.5    4.2    3.5    7.4
--  Step 210 of 1000. Elapsed 0:06:47.6 ETA 0:39:55.93.165e+03        280       2.39e+00    82.0    5.5    3.8    3.5    5.3
-\  Step 211 of 1000. Elapsed 0:06:50.0 ETA 0:31:25.03.180e+03        277       2.37e+00    82.2    5.4    3.8    3.5    5.2
-|  Step 212 of 1000. Elapsed 0:06:52.3 ETA 0:31:11.53.195e+03        269       2.31e+00    81.9    5.4    3.6    3.6    5.6
-/  Step 213 of 1000. Elapsed 0:06:54.6 ETA 0:30:17.43.210e+03        257       2.27e+00    80.4    5.4    3.9    3.6    6.7
--  Step 214 of 1000. Elapsed 0:06:56.9 ETA 0:29:40.73.225e+03        264       2.41e+00    77.5    5.6    4.6    3.5    8.8
-\  Step 215 of 1000. Elapsed 0:06:59.3 ETA 0:31:34.23.240e+03        255       2.29e+00    78.4    5.6    4.3    3.3    8.3
-|  Step 216 of 1000. Elapsed 0:07:01.6 ETA 0:29:52.73.255e+03        254       2.21e+00    80.6    5.5    3.9    3.7    6.3
-/  Step 217 of 1000. Elapsed 0:07:03.8 ETA 0:28:46.93.270e+03        255       2.17e+00    81.8    5.4    3.8    3.7    5.4
--  Step 218 of 1000. Elapsed 0:07:06.0 ETA 0:28:14.83.285e+03        288       2.57e+00    78.8    5.5    4.3    4.2    7.1
-\  Step 219 of 1000. Elapsed 0:07:08.6 ETA 0:33:23.33.300e+03        261       2.25e+00    81.3    5.3    3.7    3.9    5.7
-|  Step 220 of 1000. Elapsed 0:07:10.8 ETA 0:29:17.43.315e+03        293       2.53e+00    81.7    5.4    3.7    3.7    5.7
-/  Step 221 of 1000. Elapsed 0:07:13.3 ETA 0:32:49.03.330e+03        297       2.56e+00    81.3    5.4    3.7    3.6    6.1
--  Step 222 of 1000. Elapsed 0:07:15.9 ETA 0:33:09.53.345e+03        287       2.52e+00    80.1    5.3    3.9    3.5    7.2
-\  Step 223 of 1000. Elapsed 0:07:18.4 ETA 0:32:36.13.360e+03        329       2.94e+00    78.8    5.7    4.4    3.3    7.7
-|  Step 224 of 1000. Elapsed 0:07:21.3 ETA 0:37:57.93.375e+03        282       2.57e+00    76.8    5.7    4.8    3.2    9.5
-/  Step 225 of 1000. Elapsed 0:07:23.9 ETA 0:33:11.93.390e+03        282       2.50e+00    79.1    5.5    4.3    3.4    7.7
--  Step 226 of 1000. Elapsed 0:07:26.4 ETA 0:32:17.03.405e+03        292       2.53e+00    80.6    5.3    3.9    3.2    6.9
-\  Step 227 of 1000. Elapsed 0:07:28.9 ETA 0:32:37.83.420e+03        289       2.57e+00    79.0    5.6    4.1    3.7    7.6
-|  Step 228 of 1000. Elapsed 0:07:31.5 ETA 0:33:04.23.435e+03        347       2.97e+00    82.0    5.4    3.6    3.3    5.7
-/  Step 229 of 1000. Elapsed 0:07:34.5 ETA 0:38:07.83.450e+03        290       2.49e+00    82.0    5.3    3.6    3.7    5.4
--  Step 230 of 1000. Elapsed 0:07:37.0 ETA 0:31:55.83.465e+03        316       2.73e+00    81.4    5.4    3.9    3.3    6.0
-\  Step 231 of 1000. Elapsed 0:07:39.7 ETA 0:35:02.93.480e+03        297       2.68e+00    78.0    5.4    4.5    4.6    7.4
-|  Step 232 of 1000. Elapsed 0:07:42.4 ETA 0:34:18.73.495e+03        330       2.97e+00    78.2    5.5    4.3    3.3    8.8
-/  Step 233 of 1000. Elapsed 0:07:45.4 ETA 0:38:01.03.510e+03        296       2.58e+00    80.8    5.4    3.9    3.4    6.5
--  Step 234 of 1000. Elapsed 0:07:47.9 ETA 0:32:59.03.525e+03        304       2.61e+00    81.7    5.3    3.7    3.5    5.8
-\  Step 235 of 1000. Elapsed 0:07:50.6 ETA 0:33:19.63.540e+03        304       2.70e+00    79.3    5.6    4.2    3.7    7.3
-|  Step 236 of 1000. Elapsed 0:07:53.3 ETA 0:34:21.23.555e+03        295       2.52e+00    82.4    5.4    3.7    3.5    5.0
-/  Step 237 of 1000. Elapsed 0:07:55.8 ETA 0:32:01.93.570e+03        297       2.55e+00    82.0    5.4    3.7    3.4    5.5
--  Step 238 of 1000. Elapsed 0:07:58.3 ETA 0:32:19.63.585e+03        321       2.81e+00    79.9    5.4    4.2    3.2    7.3
-\  Step 239 of 1000. Elapsed 0:08:01.1 ETA 0:35:41.13.600e+03        307       2.74e+00    79.1    5.6    4.3    3.4    7.6
-|  Step 240 of 1000. Elapsed 0:08:03.9 ETA 0:34:39.03.615e+03        286       2.59e+00    77.5    5.7    4.4    3.5    8.9
-/  Step 241 of 1000. Elapsed 0:08:06.5 ETA 0:32:46.33.630e+03        270       2.34e+00    80.9    5.5    3.9    3.7    6.1
--  Step 242 of 1000. Elapsed 0:08:08.8 ETA 0:29:34.93.645e+03        278       2.41e+00    81.2    5.4    3.8    3.6    6.1
-\  Step 243 of 1000. Elapsed 0:08:11.2 ETA 0:30:28.13.660e+03        268       2.58e+00    73.5    5.1    3.7   11.3    6.4
-|  Step 244 of 1000. Elapsed 0:08:13.8 ETA 0:32:32.73.675e+03        268       2.33e+00    81.1    5.4    3.7    3.5    6.2
-/  Step 245 of 1000. Elapsed 0:08:16.1 ETA 0:29:15.63.690e+03        266       2.25e+00    82.0    5.4    3.7    3.4    5.5
--  Step 246 of 1000. Elapsed 0:08:18.4 ETA 0:28:14.33.705e+03        288       2.46e+00    81.9    5.4    3.7    3.3    5.7
-\  Step 247 of 1000. Elapsed 0:08:20.8 ETA 0:30:54.03.720e+03        287       2.49e+00    81.0    5.4    3.9    3.2    6.5
-|  Step 248 of 1000. Elapsed 0:08:23.3 ETA 0:31:10.23.735e+03        373       3.33e+00    78.3    5.7    4.8    3.0    8.1
-/  Step 249 of 1000. Elapsed 0:08:26.7 ETA 0:41:42.53.750e+03        389       3.46e+00    78.8    5.5    4.3    3.0    8.4
--  Step 250 of 1000. Elapsed 0:08:30.1 ETA 0:43:17.93.765e+03        328       2.89e+00    79.7    5.3    4.0    3.2    7.8
-\  Step 251 of 1000. Elapsed 0:08:33.0 ETA 0:36:01.53.780e+03        354       3.10e+00    79.9    5.6    4.2    3.2    7.2
-|  Step 252 of 1000. Elapsed 0:08:36.1 ETA 0:38:41.53.795e+03        357       3.05e+00    82.3    5.4    3.7    3.2    5.5
-/  Step 253 of 1000. Elapsed 0:08:39.2 ETA 0:38:01.03.810e+03        307       2.63e+00    82.0    5.3    3.8    3.4    5.4
--  Step 254 of 1000. Elapsed 0:08:41.8 ETA 0:32:43.73.825e+03        356       3.10e+00    80.6    5.3    3.9    3.2    7.0
-\  Step 255 of 1000. Elapsed 0:08:44.9 ETA 0:38:32.43.840e+03        335       2.97e+00    79.7    5.5    4.2    3.3    7.2
-|  Step 256 of 1000. Elapsed 0:08:47.9 ETA 0:36:51.63.855e+03        422       3.73e+00    78.8    5.6    4.3    3.3    8.0
-/  Step 257 of 1000. Elapsed 0:08:51.6 ETA 0:46:11.23.870e+03        358       3.09e+00    81.7    5.4    3.8    3.4    5.7
--  Step 258 of 1000. Elapsed 0:08:54.7 ETA 0:38:15.73.885e+03        344       3.01e+00    80.5    5.4    4.0    3.2    6.8
-\  Step 259 of 1000. Elapsed 0:08:57.7 ETA 0:37:10.53.900e+03        346       3.01e+00    81.8    5.3    3.6    3.4    5.9
-|  Step 260 of 1000. Elapsed 0:09:00.7 ETA 0:37:08.03.915e+03        331       2.86e+00    81.4    5.4    3.6    3.4    6.2
-/  Step 261 of 1000. Elapsed 0:09:03.6 ETA 0:35:13.73.930e+03        349       3.00e+00    81.9    5.3    3.7    3.3    5.8
--  Step 262 of 1000. Elapsed 0:09:06.6 ETA 0:36:54.03.945e+03        344       3.05e+00    79.3    5.6    4.2    3.1    7.8
-\  Step 263 of 1000. Elapsed 0:09:09.6 ETA 0:37:26.53.960e+03        315       2.84e+00    78.3    5.6    4.3    2.9    9.0
-|  Step 264 of 1000. Elapsed 0:09:12.5 ETA 0:34:52.33.975e+03        296       2.60e+00    79.7    5.4    4.1    3.1    7.8
-/  Step 265 of 1000. Elapsed 0:09:15.1 ETA 0:31:54.53.990e+03        325       2.80e+00    81.2    5.4    3.9    3.1    6.4
--  Step 266 of 1000. Elapsed 0:09:17.9 ETA 0:34:15.74.005e+03        387       3.39e+00    80.1    5.4    4.0    3.1    7.4
-\  Step 267 of 1000. Elapsed 0:09:21.3 ETA 0:41:26.44.020e+03        359       3.07e+00    81.7    5.3    3.5    3.5    6.0
-|  Step 268 of 1000. Elapsed 0:09:24.3 ETA 0:37:27.24.035e+03        433       3.78e+00    80.2    5.5    3.9    3.7    6.7
-/  Step 269 of 1000. Elapsed 0:09:28.1 ETA 0:46:00.94.050e+03        356       3.12e+00    80.3    5.4    3.9    3.2    7.2
--  Step 270 of 1000. Elapsed 0:09:31.2 ETA 0:37:55.04.065e+03        346       3.08e+00    78.8    5.6    4.4    3.3    7.9
-\  Step 271 of 1000. Elapsed 0:09:34.3 ETA 0:37:27.54.080e+03        359       3.11e+00    81.2    5.4    3.8    3.3    6.3
-|  Step 272 of 1000. Elapsed 0:09:37.4 ETA 0:37:43.84.095e+03        306       2.70e+00    80.0    5.3    3.8    3.3    7.6
-/  Step 273 of 1000. Elapsed 0:09:40.1 ETA 0:32:40.04.110e+03        340       3.01e+00    79.3    5.4    4.0    2.9    8.3
--  Step 274 of 1000. Elapsed 0:09:43.1 ETA 0:36:28.74.125e+03        341       3.15e+00    76.3    5.0    3.6    3.1   12.0
-\  Step 275 of 1000. Elapsed 0:09:46.3 ETA 0:38:04.54.140e+03        335       2.88e+00    81.6    5.4    3.9    3.3    5.8
-|  Step 276 of 1000. Elapsed 0:09:49.2 ETA 0:34:44.44.155e+03        317       2.81e+00    79.2    5.3    4.2    3.3    7.9
-/  Step 277 of 1000. Elapsed 0:09:52.0 ETA 0:33:52.14.170e+03        283       2.54e+00    78.4    5.6    4.4    3.7    7.8
--  Step 278 of 1000. Elapsed 0:09:54.5 ETA 0:30:37.04.185e+03        309       2.81e+00    77.4    5.5    4.3    4.8    8.1
-\  Step 279 of 1000. Elapsed 0:09:57.3 ETA 0:33:43.44.200e+03        320       2.79e+00    80.8    5.4    3.9    3.6    6.3
-|  Step 280 of 1000. Elapsed 0:10:00.1 ETA 0:33:28.54.215e+03        295       2.61e+00    79.5    5.5    4.0    3.5    7.5
-/  Step 281 of 1000. Elapsed 0:10:02.7 ETA 0:31:17.94.230e+03        346       3.04e+00    80.3    5.3    4.0    3.7    6.7
--  Step 282 of 1000. Elapsed 0:10:05.8 ETA 0:36:22.14.245e+03        355       3.06e+00    81.5    5.4    3.7    3.3    6.1
-\  Step 283 of 1000. Elapsed 0:10:08.8 ETA 0:36:33.94.260e+03        320       2.76e+00    81.2    5.3    3.8    3.1    6.5
-|  Step 284 of 1000. Elapsed 0:10:11.6 ETA 0:32:59.34.275e+03        307       2.67e+00    81.3    5.3    3.7    3.5    6.1
-/  Step 285 of 1000. Elapsed 0:10:14.3 ETA 0:31:52.64.290e+03        308       2.78e+00    78.1    5.6    4.4    3.2    8.7
--  Step 286 of 1000. Elapsed 0:10:17.0 ETA 0:33:05.24.305e+03        341       3.06e+00    77.8    5.5    4.2    3.1    9.3
-\  Step 287 of 1000. Elapsed 0:10:20.1 ETA 0:36:23.04.320e+03        343       2.96e+00    80.6    5.5    3.9    3.0    7.0
-|  Step 288 of 1000. Elapsed 0:10:23.1 ETA 0:35:06.44.335e+03        342       3.06e+00    79.6    5.4    4.2    3.1    7.6
-/  Step 289 of 1000. Elapsed 0:10:26.1 ETA 0:36:17.24.350e+03        397       3.46e+00    80.3    5.4    4.0    3.8    6.5
--  Step 290 of 1000. Elapsed 0:10:29.6 ETA 0:40:57.64.365e+03        378       3.28e+00    81.1    5.3    3.9    3.1    6.6
-\  Step 291 of 1000. Elapsed 0:10:32.9 ETA 0:38:43.84.380e+03        348       3.01e+00    81.4    5.4    3.7    3.3    6.2
-|  Step 292 of 1000. Elapsed 0:10:35.9 ETA 0:35:30.74.395e+03        313       2.82e+00    78.1    5.6    4.3    3.3    8.7
-/  Step 293 of 1000. Elapsed 0:10:38.7 ETA 0:33:15.74.410e+03        319       2.89e+00    78.3    5.6    4.4    3.3    8.4
--  Step 294 of 1000. Elapsed 0:10:41.6 ETA 0:33:57.74.425e+03        347       3.03e+00    81.3    5.3    3.7    3.3    6.2
-\  Step 295 of 1000. Elapsed 0:10:44.6 ETA 0:35:32.74.440e+03        342       3.06e+00    79.2    5.5    4.3    3.4    7.7
-|  Step 296 of 1000. Elapsed 0:10:47.7 ETA 0:35:55.34.455e+03        323       2.84e+00    80.7    5.3    3.8    3.7    6.4
-/  Step 297 of 1000. Elapsed 0:10:50.5 ETA 0:33:18.44.470e+03        368       3.18e+00    82.1    5.4    3.7    3.5    5.3
--  Step 298 of 1000. Elapsed 0:10:53.7 ETA 0:37:14.34.485e+03        331       2.89e+00    81.0    5.3    3.8    3.7    6.2
-\  Step 299 of 1000. Elapsed 0:10:56.6 ETA 0:33:46.54.500e+03        321       2.81e+00    81.2    5.3    3.7    3.5    6.3
-|  Step 300 of 1000. Elapsed 0:10:59.4 ETA 0:32:46.14.515e+03        316       3.14e+00    78.3    5.3    4.3    4.1    8.0
-/  Step 301 of 1000. Elapsed 0:11:02.5 ETA 0:36:35.74.530e+03        302       3.63e+00    59.2    4.1    3.1   16.5   17.2
--  Step 302 of 1000. Elapsed 0:11:06.2 ETA 0:42:13.44.545e+03        305       2.97e+00    75.3    4.8    3.4    8.0    8.4
-\  Step 303 of 1000. Elapsed 0:11:09.1 ETA 0:34:28.54.560e+03        303       2.76e+00    77.0    5.3    3.9    5.3    8.5
-|  Step 304 of 1000. Elapsed 0:11:11.9 ETA 0:32:03.64.575e+03        370       3.26e+00    82.2    5.3    3.6    3.0    5.9
-/  Step 305 of 1000. Elapsed 0:11:15.2 ETA 0:37:44.54.590e+03        435       3.85e+00    81.9    5.2    3.6    3.0    6.3
--  Step 306 of 1000. Elapsed 0:11:19.0 ETA 0:44:31.24.605e+03        389       3.60e+00    78.4    5.3    4.1    3.6    8.6
-\  Step 307 of 1000. Elapsed 0:11:22.6 ETA 0:41:33.84.620e+03        458       4.03e+00    79.9    5.6    4.0    3.0    7.5
-|  Step 308 of 1000. Elapsed 0:11:26.6 ETA 0:46:25.64.635e+03        430       3.77e+00    80.4    5.4    4.1    3.0    7.2
-/  Step 309 of 1000. Elapsed 0:11:30.4 ETA 0:43:28.34.650e+03        331       2.96e+00    78.4    5.4    4.0    3.2    8.9
--  Step 310 of 1000. Elapsed 0:11:33.4 ETA 0:34:01.84.665e+03        387       3.30e+00    82.2    5.4    3.6    3.2    5.6
-\  Step 311 of 1000. Elapsed 0:11:36.7 ETA 0:37:57.14.680e+03        300       2.58e+00    81.8    5.4    3.5    3.5    5.8
-|  Step 312 of 1000. Elapsed 0:11:39.2 ETA 0:29:34.34.695e+03        327       2.84e+00    81.0    5.4    3.9    3.4    6.3
-/  Step 313 of 1000. Elapsed 0:11:42.1 ETA 0:32:32.14.710e+03        344       3.11e+00    78.1    5.6    4.4    3.3    8.6
--  Step 314 of 1000. Elapsed 0:11:45.2 ETA 0:35:32.14.725e+03        402       3.52e+00    80.6    5.5    3.9    3.2    6.8
-\  Step 315 of 1000. Elapsed 0:11:48.7 ETA 0:40:12.94.740e+03        402       3.51e+00    80.5    5.3    3.8    3.5    6.9
-|  Step 316 of 1000. Elapsed 0:11:52.2 ETA 0:40:01.04.755e+03        338       2.98e+00    80.1    5.4    3.9    3.7    6.9
-/  Step 317 of 1000. Elapsed 0:11:55.2 ETA 0:33:55.54.770e+03        391       3.34e+00    82.3    5.4    3.5    3.4    5.4
--  Step 318 of 1000. Elapsed 0:11:58.6 ETA 0:38:00.84.785e+03        376       3.25e+00    81.5    5.4    3.6    3.0    6.6
-\  Step 319 of 1000. Elapsed 0:12:01.8 ETA 0:36:52.94.800e+03        337       2.96e+00    80.0    5.5    4.0    3.0    7.6
-|  Step 320 of 1000. Elapsed 0:12:04.8 ETA 0:33:35.34.815e+03        383       3.44e+00    78.3    5.6    4.2    3.0    9.0
-/  Step 321 of 1000. Elapsed 0:12:08.2 ETA 0:38:56.64.830e+03        350       3.10e+00    79.3    5.4    3.9    3.1    8.2
--  Step 322 of 1000. Elapsed 0:12:11.3 ETA 0:34:59.84.845e+03        344       2.99e+00    80.7    5.5    3.8    3.1    6.9
-\  Step 323 of 1000. Elapsed 0:12:14.3 ETA 0:33:42.64.860e+03        344       2.98e+00    81.0    5.5    3.8    3.1    6.6
-|  Step 324 of 1000. Elapsed 0:12:17.3 ETA 0:33:37.64.875e+03        327       2.84e+00    81.1    5.3    3.4    4.1    6.0
-/  Step 325 of 1000. Elapsed 0:12:20.1 ETA 0:31:55.64.890e+03        328       2.79e+00    81.1    5.4    3.6    3.3    6.6
--  Step 326 of 1000. Elapsed 0:12:22.9 ETA 0:31:20.74.905e+03        300       2.60e+00    80.8    5.4    3.9    3.3    6.7
-\  Step 327 of 1000. Elapsed 0:12:25.5 ETA 0:29:08.24.920e+03        271       2.45e+00    77.9    5.7    4.3    3.4    8.7
-|  Step 328 of 1000. Elapsed 0:12:27.9 ETA 0:27:25.74.935e+03        398       3.59e+00    77.8    5.7    4.5    2.9    9.1
-/  Step 329 of 1000. Elapsed 0:12:31.5 ETA 0:40:11.54.950e+03        311       2.66e+00    80.8    5.5    3.8    3.2    6.6
--  Step 330 of 1000. Elapsed 0:12:34.2 ETA 0:29:43.74.965e+03        286       2.47e+00    81.3    5.4    3.7    3.4    6.2
-\  Step 331 of 1000. Elapsed 0:12:36.7 ETA 0:27:33.94.980e+03        295       2.64e+00    78.5    5.6    4.1    3.2    8.7
-|  Step 332 of 1000. Elapsed 0:12:39.3 ETA 0:29:22.04.995e+03        284       2.42e+00    82.1    5.4    3.6    3.5    5.4
-/  Step 333 of 1000. Elapsed 0:12:41.7 ETA 0:26:52.35.010e+03        307       2.62e+00    81.9    5.4    3.5    3.6    5.6
--  Step 334 of 1000. Elapsed 0:12:44.3 ETA 0:29:03.35.025e+03        321       2.76e+00    82.0    5.4    3.6    3.4    5.6
-\  Step 335 of 1000. Elapsed 0:12:47.1 ETA 0:30:33.95.040e+03        370       3.28e+00    79.4    5.6    4.1    3.9    7.0
-|  Step 336 of 1000. Elapsed 0:12:50.4 ETA 0:36:20.45.055e+03        290       2.60e+00    78.4    5.7    4.2    3.5    8.2
-/  Step 337 of 1000. Elapsed 0:12:53.0 ETA 0:28:43.15.070e+03        307       2.73e+00    79.8    5.3    4.1    3.3    7.4
--  Step 338 of 1000. Elapsed 0:12:55.7 ETA 0:30:06.35.085e+03        366       3.22e+00    80.2    5.4    4.0    3.1    7.3
-\  Step 339 of 1000. Elapsed 0:12:58.9 ETA 0:35:27.95.100e+03        398       3.46e+00    81.0    5.4    3.8    3.1    6.7
-|  Step 340 of 1000. Elapsed 0:13:02.4 ETA 0:38:01.55.115e+03        461       3.96e+00    81.7    5.3    3.7    2.8    6.4
-/  Step 341 of 1000. Elapsed 0:13:06.4 ETA 0:43:30.15.130e+03        330       2.85e+00    81.4    5.3    3.6    3.6    6.0
--  Step 342 of 1000. Elapsed 0:13:09.2 ETA 0:31:16.55.145e+03        324       2.86e+00    79.4    5.5    4.1    3.1    7.8
-\  Step 343 of 1000. Elapsed 0:13:12.1 ETA 0:31:18.65.160e+03        328       2.97e+00    77.6    5.6    4.6    2.9    9.2
-|  Step 344 of 1000. Elapsed 0:13:15.0 ETA 0:32:25.35.175e+03        305       2.67e+00    80.3    5.4    4.2    3.1    7.0
-/  Step 345 of 1000. Elapsed 0:13:17.7 ETA 0:29:07.15.190e+03        301       2.65e+00    79.8    5.3    3.9    3.0    7.9
--  Step 346 of 1000. Elapsed 0:13:20.4 ETA 0:28:55.05.205e+03        331       2.93e+00    79.1    5.5    4.1    3.1    8.3
-\  Step 347 of 1000. Elapsed 0:13:23.3 ETA 0:31:55.95.220e+03        312       2.77e+00    80.4    5.3    3.7    3.1    7.6
-|  Step 348 of 1000. Elapsed 0:13:26.1 ETA 0:30:06.85.235e+03        297       2.56e+00    81.3    5.4    3.7    3.2    6.4
-/  Step 349 of 1000. Elapsed 0:13:28.6 ETA 0:27:48.85.250e+03        363       3.15e+00    80.7    5.5    4.1    3.1    6.5
--  Step 350 of 1000. Elapsed 0:13:31.8 ETA 0:34:09.95.265e+03        367       3.31e+00    78.8    5.6    4.4    3.1    8.1
-\  Step 351 of 1000. Elapsed 0:13:35.1 ETA 0:35:46.15.280e+03        438       3.90e+00    79.1    5.5    4.2    3.1    8.1
-|  Step 352 of 1000. Elapsed 0:13:39.0 ETA 0:42:05.15.295e+03        333       2.89e+00    81.2    5.4    3.8    3.4    6.1
-/  Step 353 of 1000. Elapsed 0:13:41.9 ETA 0:31:07.85.310e+03        320       2.86e+00    79.6    5.5    4.1    3.5    7.3
--  Step 354 of 1000. Elapsed 0:13:44.7 ETA 0:30:49.25.325e+03        305       2.63e+00    81.9    5.3    3.5    4.2    5.1
-\  Step 355 of 1000. Elapsed 0:13:47.4 ETA 0:28:14.25.340e+03        345       2.96e+00    82.0    5.4    3.8    3.4    5.5
-|  Step 356 of 1000. Elapsed 0:13:50.3 ETA 0:31:49.15.355e+03        382       3.32e+00    80.8    5.3    3.9    3.1    6.9
-/  Step 357 of 1000. Elapsed 0:13:53.6 ETA 0:35:34.55.370e+03        341       3.00e+00    78.7    5.6    4.2    3.1    8.4
--  Step 358 of 1000. Elapsed 0:13:56.6 ETA 0:32:08.35.385e+03        353       3.17e+00    78.1    5.6    4.3    2.9    9.0
-\  Step 359 of 1000. Elapsed 0:13:59.8 ETA 0:33:54.25.400e+03        378       3.31e+00    80.1    5.4    3.9    3.1    7.5
-|  Step 360 of 1000. Elapsed 0:14:03.1 ETA 0:35:18.35.415e+03        314       2.74e+00    80.4    5.4    4.0    3.2    6.9
-/  Step 361 of 1000. Elapsed 0:14:05.9 ETA 0:29:10.85.430e+03        368       3.30e+00    78.8    5.2    3.9    5.1    7.1
--  Step 362 of 1000. Elapsed 0:14:09.2 ETA 0:35:03.75.445e+03        361       3.10e+00    81.7    5.4    3.6    3.7    5.5
-\  Step 363 of 1000. Elapsed 0:14:12.3 ETA 0:32:55.55.460e+03        319       2.73e+00    81.0    5.4    3.8    3.3    6.6
-|  Step 364 of 1000. Elapsed 0:14:15.0 ETA 0:28:54.75.475e+03        286       2.52e+00    79.6    5.5    4.2    3.4    7.3
-/  Step 365 of 1000. Elapsed 0:14:17.5 ETA 0:26:43.45.490e+03        291       2.61e+00    78.4    5.7    4.3    3.2    8.5
--  Step 366 of 1000. Elapsed 0:14:20.1 ETA 0:27:35.85.505e+03        291       2.60e+00    78.8    5.4    4.0    3.4    8.4
-\  Step 367 of 1000. Elapsed 0:14:22.7 ETA 0:27:23.25.520e+03        300       2.58e+00    80.3    5.4    3.8    3.4    7.1
-|  Step 368 of 1000. Elapsed 0:14:25.3 ETA 0:27:07.55.535e+03        343       3.03e+00    79.9    5.4    4.7    3.3    6.8
-/  Step 369 of 1000. Elapsed 0:14:28.3 ETA 0:31:51.15.550e+03        326       2.83e+00    81.3    5.5    3.8    3.4    6.0
--  Step 370 of 1000. Elapsed 0:14:31.2 ETA 0:29:45.25.565e+03        313       2.70e+00    81.4    5.4    4.0    3.5    5.7
-\  Step 371 of 1000. Elapsed 0:14:33.9 ETA 0:28:20.95.580e+03        287       2.54e+00    79.7    5.3    3.7    3.8    7.5
-|  Step 372 of 1000. Elapsed 0:14:36.4 ETA 0:26:32.65.595e+03        274       2.39e+00    80.5    5.3    4.0    4.0    6.2
-/  Step 373 of 1000. Elapsed 0:14:38.8 ETA 0:24:58.55.610e+03        325       2.88e+00    79.6    5.6    4.1    3.6    7.1
--  Step 374 of 1000. Elapsed 0:14:41.7 ETA 0:30:04.75.625e+03        268       2.40e+00    78.7    5.7    4.4    3.3    8.0
-\  Step 375 of 1000. Elapsed 0:14:44.1 ETA 0:25:00.15.640e+03        280       2.48e+00    79.3    5.3    4.0    3.4    8.0
-|  Step 376 of 1000. Elapsed 0:14:46.6 ETA 0:25:45.95.655e+03        279       2.41e+00    80.9    5.5    3.8    3.2    6.6
-/  Step 377 of 1000. Elapsed 0:14:49.0 ETA 0:25:03.35.670e+03        270       2.43e+00    77.7    5.5    4.5    3.2    9.1
--  Step 378 of 1000. Elapsed 0:14:51.4 ETA 0:25:14.05.685e+03        312       2.68e+00    81.4    5.4    4.0    3.1    6.2
-\  Step 379 of 1000. Elapsed 0:14:54.1 ETA 0:27:47.05.700e+03        336       2.89e+00    81.1    5.4    3.7    3.1    6.7
-|  Step 380 of 1000. Elapsed 0:14:57.0 ETA 0:29:53.25.715e+03        319       2.76e+00    81.1    5.4    3.7    3.1    6.7
-/  Step 381 of 1000. Elapsed 0:14:59.7 ETA 0:28:25.75.730e+03        314       2.81e+00    78.6    5.6    4.4    2.9    8.4
--  Step 382 of 1000. Elapsed 0:15:02.5 ETA 0:28:55.75.745e+03        340       3.02e+00    78.4    5.6    4.3    3.0    8.7
-\  Step 383 of 1000. Elapsed 0:15:05.6 ETA 0:31:02.35.760e+03        358       3.10e+00    80.8    5.5    4.0    3.1    6.6
-|  Step 384 of 1000. Elapsed 0:15:08.7 ETA 0:31:49.45.775e+03        447       3.90e+00    80.4    5.4    4.1    2.9    7.2
-/  Step 385 of 1000. Elapsed 0:15:12.6 ETA 0:39:59.45.790e+03        345       2.98e+00    81.3    5.4    3.7    3.3    6.3
--  Step 386 of 1000. Elapsed 0:15:15.5 ETA 0:30:30.75.805e+03        387       3.35e+00    81.2    5.3    3.7    3.3    6.5
-\  Step 387 of 1000. Elapsed 0:15:18.9 ETA 0:34:14.65.820e+03        342       3.00e+00    80.1    5.4    3.8    3.0    7.7
-|  Step 388 of 1000. Elapsed 0:15:21.9 ETA 0:30:38.45.835e+03        356       3.19e+00    78.8    5.6    4.3    3.3    8.1
-/  Step 389 of 1000. Elapsed 0:15:25.1 ETA 0:32:32.15.850e+03        322       2.89e+00    78.1    5.6    4.3    3.3    8.7
--  Step 390 of 1000. Elapsed 0:15:28.0 ETA 0:29:25.65.865e+03        299       2.59e+00    81.1    5.4    3.8    3.5    6.2
-\  Step 391 of 1000. Elapsed 0:15:30.6 ETA 0:26:18.15.880e+03        333       2.98e+00    78.8    5.7    4.5    3.4    7.7
-|  Step 392 of 1000. Elapsed 0:15:33.6 ETA 0:30:08.85.895e+03        367       3.18e+00    81.4    5.4    3.8    3.7    5.7
-/  Step 393 of 1000. Elapsed 0:15:36.7 ETA 0:32:10.75.910e+03        353       3.04e+00    81.5    5.3    3.7    3.5    6.0
--  Step 394 of 1000. Elapsed 0:15:39.8 ETA 0:30:43.05.925e+03        337       2.99e+00    80.1    5.3    3.8    3.1    7.6
-\  Step 395 of 1000. Elapsed 0:15:42.8 ETA 0:30:07.35.940e+03        412       3.75e+00    77.5    5.6    4.5    2.8    9.7
-|  Step 396 of 1000. Elapsed 0:15:46.5 ETA 0:37:47.85.955e+03        431       3.87e+00    78.6    5.6    4.3    3.0    8.5
-/  Step 397 of 1000. Elapsed 0:15:50.4 ETA 0:38:55.45.970e+03        561       4.87e+00    81.2    5.5    3.9    2.7    6.8
--  Step 398 of 1000. Elapsed 0:15:55.3 ETA 0:48:53.55.985e+03        393       3.45e+00    80.3    5.4    3.9    3.1    7.3
-\  Step 399 of 1000. Elapsed 0:15:58.7 ETA 0:34:34.76.000e+03        392       3.41e+00    81.5    5.3    3.7    3.1    6.4
-|  Step 400 of 1000. Elapsed 0:16:02.1 ETA 0:34:05.16.015e+03        357       3.12e+00    81.0    5.3    3.8    3.2    6.7
-/  Step 401 of 1000. Elapsed 0:16:05.2 ETA 0:31:09.16.030e+03        343       3.00e+00    80.7    5.4    3.9    3.3    6.7
--  Step 402 of 1000. Elapsed 0:16:08.2 ETA 0:29:54.56.045e+03        410       3.66e+00    78.9    5.6    4.2    3.1    8.2
-\  Step 403 of 1000. Elapsed 0:16:11.9 ETA 0:36:26.16.060e+03        432       3.72e+00    81.8    5.4    3.7    3.1    6.0
-|  Step 404 of 1000. Elapsed 0:16:15.6 ETA 0:36:58.76.075e+03        438       3.86e+00    79.7    5.4    4.0    3.1    7.8
-/  Step 405 of 1000. Elapsed 0:16:19.5 ETA 0:38:18.06.090e+03        454       3.83e+00    82.6    5.4    3.6    3.2    5.2
--  Step 406 of 1000. Elapsed 0:16:23.3 ETA 0:37:52.26.105e+03        554       4.80e+00    82.3    5.4    3.7    3.0    5.7
-\  Step 407 of 1000. Elapsed 0:16:28.1 ETA 0:47:25.06.120e+03        353       3.18e+00    77.5    5.6    4.6    3.3    9.1
-|  Step 408 of 1000. Elapsed 0:16:31.3 ETA 0:31:20.96.135e+03        394       3.51e+00    78.8    5.7    4.4    3.3    7.7
-/  Step 409 of 1000. Elapsed 0:16:34.8 ETA 0:34:33.86.150e+03        387       3.34e+00    81.6    5.4    3.6    3.6    5.8
--  Step 410 of 1000. Elapsed 0:16:38.1 ETA 0:32:52.06.165e+03        413       3.57e+00    80.5    5.5    3.9    3.0    7.1
-\  Step 411 of 1000. Elapsed 0:16:41.7 ETA 0:35:04.16.180e+03        397       3.38e+00    81.7    5.4    3.7    3.0    6.1
-|  Step 412 of 1000. Elapsed 0:16:45.1 ETA 0:33:09.66.195e+03        338       2.96e+00    80.3    5.3    3.8    3.5    7.0
-/  Step 413 of 1000. Elapsed 0:16:48.1 ETA 0:28:54.76.210e+03        336       2.93e+00    80.4    5.4    4.0    3.2    7.0
--  Step 414 of 1000. Elapsed 0:16:51.0 ETA 0:28:39.26.225e+03        361       3.21e+00    78.6    5.7    4.3    3.1    8.3
-\  Step 415 of 1000. Elapsed 0:16:54.2 ETA 0:31:20.86.240e+03        407       3.62e+00    79.0    5.6    4.2    3.0    8.2
-|  Step 416 of 1000. Elapsed 0:16:57.8 ETA 0:35:15.46.255e+03        377       3.24e+00    81.5    5.4    3.9    2.9    6.3
-/  Step 417 of 1000. Elapsed 0:17:01.1 ETA 0:31:30.86.270e+03        312       2.76e+00    79.3    5.6    4.2    3.3    7.6
--  Step 418 of 1000. Elapsed 0:17:03.8 ETA 0:26:44.46.285e+03        297       2.56e+00    81.8    5.3    3.6    3.1    6.1
-\  Step 419 of 1000. Elapsed 0:17:06.4 ETA 0:24:45.86.300e+03        333       2.86e+00    81.8    5.4    3.9    3.1    5.8
-|  Step 420 of 1000. Elapsed 0:17:09.2 ETA 0:27:37.86.315e+03        340       2.99e+00    80.0    5.3    3.9    3.2    7.6
-/  Step 421 of 1000. Elapsed 0:17:12.2 ETA 0:28:51.06.330e+03        490       4.31e+00    79.3    5.7    4.3    3.0    7.8
--  Step 422 of 1000. Elapsed 0:17:16.5 ETA 0:41:29.66.345e+03        401       3.48e+00    81.1    5.4    4.0    3.1    6.4
-\  Step 423 of 1000. Elapsed 0:17:20.0 ETA 0:33:29.46.360e+03        303       2.64e+00    80.4    5.4    3.9    3.4    6.9
-|  Step 424 of 1000. Elapsed 0:17:22.7 ETA 0:25:20.26.375e+03        277       2.46e+00    79.3    5.5    4.1    3.6    7.6
-/  Step 425 of 1000. Elapsed 0:17:25.1 ETA 0:23:36.16.390e+03        279       2.41e+00    81.3    5.4    3.7    3.5    6.1
--  Step 426 of 1000. Elapsed 0:17:27.5 ETA 0:23:05.86.405e+03        273       2.38e+00    81.1    5.3    3.6    3.6    6.3
-\  Step 427 of 1000. Elapsed 0:17:29.9 ETA 0:22:42.66.420e+03        279       2.39e+00    82.0    5.3    3.6    3.6    5.4
-|  Step 428 of 1000. Elapsed 0:17:32.3 ETA 0:22:48.26.435e+03        277       2.44e+00    80.5    5.5    4.0    3.9    6.1
-/  Step 429 of 1000. Elapsed 0:17:34.7 ETA 0:23:11.86.450e+03        306       2.75e+00    79.1    5.6    4.4    3.1    7.7
--  Step 430 of 1000. Elapsed 0:17:37.5 ETA 0:26:05.96.465e+03        261       2.34e+00    78.1    5.7    4.5    3.5    8.3
-\  Step 431 of 1000. Elapsed 0:17:39.8 ETA 0:22:13.56.480e+03        260       2.27e+00    80.4    5.4    3.9    3.5    6.8
-|  Step 432 of 1000. Elapsed 0:17:42.1 ETA 0:21:32.06.495e+03        266       2.30e+00    81.4    5.3    3.9    3.4    5.9
-/  Step 433 of 1000. Elapsed 0:17:44.4 ETA 0:21:46.66.510e+03        285       2.54e+00    78.8    5.4    4.2    3.4    8.3
--  Step 434 of 1000. Elapsed 0:17:47.0 ETA 0:23:57.86.525e+03        274       2.33e+00    81.4    5.4    3.7    3.3    6.2
-\  Step 435 of 1000. Elapsed 0:17:49.3 ETA 0:21:58.16.540e+03        284       2.43e+00    81.6    5.3    3.6    3.4    6.1
-|  Step 436 of 1000. Elapsed 0:17:51.7 ETA 0:22:48.96.555e+03        295       2.51e+00    82.0    5.4    3.6    3.3    5.7
-/  Step 437 of 1000. Elapsed 0:17:54.2 ETA 0:23:34.86.570e+03        265       2.30e+00    81.3    5.4    3.8    3.6    6.0
--  Step 438 of 1000. Elapsed 0:17:56.5 ETA 0:21:30.26.585e+03        278       2.49e+00    78.1    5.7    4.6    3.6    8.0
-\  Step 439 of 1000. Elapsed 0:17:59.0 ETA 0:23:17.46.600e+03        289       2.61e+00    78.0    5.5    4.3    4.0    8.0
-|  Step 440 of 1000. Elapsed 0:18:01.6 ETA 0:24:20.86.615e+03        324       2.82e+00    81.1    5.4    4.0    3.4    6.1
-/  Step 441 of 1000. Elapsed 0:18:04.4 ETA 0:26:14.76.630e+03        319       2.73e+00    81.2    5.5    3.9    3.1    6.4
--  Step 442 of 1000. Elapsed 0:18:07.2 ETA 0:25:24.16.645e+03        326       2.84e+00    80.4    5.5    4.1    3.1    6.9
-\  Step 443 of 1000. Elapsed 0:18:10.0 ETA 0:26:23.96.660e+03        360       3.10e+00    81.7    5.3    3.8    3.2    6.0
-|  Step 444 of 1000. Elapsed 0:18:13.1 ETA 0:28:41.06.675e+03        328       2.80e+00    82.1    5.4    3.7    3.3    5.6
-/  Step 445 of 1000. Elapsed 0:18:15.9 ETA 0:25:54.46.690e+03        292       2.53e+00    81.1    5.4    4.0    3.3    6.3
--  Step 446 of 1000. Elapsed 0:18:18.4 ETA 0:23:22.46.705e+03        303       2.72e+00    78.3    5.6    4.2    3.4    8.5
-\  Step 447 of 1000. Elapsed 0:18:21.2 ETA 0:25:06.76.720e+03        289       2.57e+00    78.9    5.7    4.2    3.6    7.7
-|  Step 448 of 1000. Elapsed 0:18:23.7 ETA 0:23:40.06.735e+03        282       2.42e+00    80.7    5.5    4.1    3.6    6.0
-/  Step 449 of 1000. Elapsed 0:18:26.2 ETA 0:22:15.46.750e+03        268       2.34e+00    80.5    5.4    3.9    3.5    6.7
--  Step 450 of 1000. Elapsed 0:18:28.5 ETA 0:21:24.96.765e+03        280       2.54e+00    77.5    5.4    4.2    3.0    9.9
-\  Step 451 of 1000. Elapsed 0:18:31.0 ETA 0:23:12.76.780e+03        284       2.49e+00    79.9    5.4    4.0    3.0    7.6
-|  Step 452 of 1000. Elapsed 0:18:33.5 ETA 0:22:42.86.795e+03        273       2.37e+00    79.2    5.4    4.0    3.1    8.3
-/  Step 453 of 1000. Elapsed 0:18:35.9 ETA 0:21:39.16.810e+03        288       2.46e+00    81.8    5.4    4.0    3.3    5.5
--  Step 454 of 1000. Elapsed 0:18:38.4 ETA 0:22:24.56.825e+03        283       2.51e+00    79.5    5.4    4.3    3.2    7.5
-\  Step 455 of 1000. Elapsed 0:18:40.9 ETA 0:22:45.56.840e+03        300       2.75e+00    76.7    5.6    4.3    4.1    9.2
-|  Step 456 of 1000. Elapsed 0:18:43.6 ETA 0:24:55.16.855e+03        297       2.65e+00    78.8    5.6    4.3    3.3    7.9
-/  Step 457 of 1000. Elapsed 0:18:46.3 ETA 0:23:56.76.870e+03        297       2.59e+00    80.5    5.4    4.1    3.4    6.6
--  Step 458 of 1000. Elapsed 0:18:48.8 ETA 0:23:24.26.885e+03        335       2.93e+00    80.4    5.5    4.2    3.2    6.8
-\  Step 459 of 1000. Elapsed 0:18:51.8 ETA 0:26:23.56.900e+03        334       2.93e+00    80.5    5.4    3.9    3.8    6.4
-|  Step 460 of 1000. Elapsed 0:18:54.7 ETA 0:26:20.56.915e+03        347       2.98e+00    82.2    5.4    3.7    3.5    5.3
-/  Step 461 of 1000. Elapsed 0:18:57.7 ETA 0:26:44.66.930e+03        352       3.05e+00    80.9    5.3    3.9    3.4    6.6
--  Step 462 of 1000. Elapsed 0:19:00.7 ETA 0:27:23.06.945e+03        352       3.09e+00    80.4    5.5    4.1    3.2    6.8
-\  Step 463 of 1000. Elapsed 0:19:03.8 ETA 0:27:37.66.960e+03        348       3.11e+00    78.9    5.6    4.3    3.1    8.1
-|  Step 464 of 1000. Elapsed 0:19:06.9 ETA 0:27:47.76.975e+03        380       3.29e+00    80.1    5.4    4.0    3.7    6.7
-/  Step 465 of 1000. Elapsed 0:19:10.2 ETA 0:29:19.76.990e+03        380       3.30e+00    81.0    5.4    4.0    3.3    6.3
--  Step 466 of 1000. Elapsed 0:19:13.5 ETA 0:29:20.77.005e+03        505       4.36e+00    81.5    5.4    3.8    3.0    6.3
-\  Step 467 of 1000. Elapsed 0:19:17.9 ETA 0:38:44.97.020e+03        451       3.88e+00    81.9    5.4    3.7    3.2    5.9
-|  Step 468 of 1000. Elapsed 0:19:21.8 ETA 0:34:23.27.035e+03        452       3.99e+00    79.4    5.5    4.2    3.1    7.8
-/  Step 469 of 1000. Elapsed 0:19:25.7 ETA 0:35:20.17.050e+03        417       3.71e+00    79.0    5.6    4.3    2.8    8.4
--  Step 470 of 1000. Elapsed 0:19:29.5 ETA 0:32:44.67.065e+03        433       3.76e+00    80.8    5.4    3.8    3.5    6.5
-\  Step 471 of 1000. Elapsed 0:19:33.2 ETA 0:33:10.77.080e+03        359       3.18e+00    79.3    5.5    4.3    3.2    7.6
-|  Step 472 of 1000. Elapsed 0:19:36.4 ETA 0:28:00.27.095e+03        328       2.83e+00    81.3    5.4    3.8    3.3    6.2
-/  Step 473 of 1000. Elapsed 0:19:39.2 ETA 0:24:49.47.110e+03        323       2.78e+00    81.4    5.3    3.8    3.3    6.2
--  Step 474 of 1000. Elapsed 0:19:42.0 ETA 0:24:24.97.125e+03        385       3.33e+00    81.5    5.3    3.8    3.2    6.2
-\  Step 475 of 1000. Elapsed 0:19:45.3 ETA 0:29:05.97.140e+03        397       3.52e+00    79.4    5.5    4.3    3.3    7.5
-|  Step 476 of 1000. Elapsed 0:19:48.9 ETA 0:30:43.57.155e+03        406       3.60e+00    79.3    5.5    4.3    3.2    7.7
-/  Step 477 of 1000. Elapsed 0:19:52.5 ETA 0:31:20.47.170e+03        336       2.94e+00    80.4    5.4    4.0    3.4    6.9
--  Step 478 of 1000. Elapsed 0:19:55.4 ETA 0:25:33.67.185e+03        374       3.26e+00    79.8    5.5    4.1    3.2    7.4
-\  Step 479 of 1000. Elapsed 0:19:58.6 ETA 0:28:18.37.200e+03        449       3.91e+00    81.1    5.3    3.9    3.4    6.3
-|  Step 480 of 1000. Elapsed 0:20:02.6 ETA 0:33:51.37.215e+03        451       3.90e+00    81.8    5.3    3.7    3.2    5.9
-/  Step 481 of 1000. Elapsed 0:20:06.5 ETA 0:33:42.77.230e+03        508       4.54e+00    78.8    5.6    4.4    3.4    7.9
--  Step 482 of 1000. Elapsed 0:20:11.0 ETA 0:39:11.67.245e+03        407       3.62e+00    79.4    5.6    4.3    3.3    7.5
-\  Step 483 of 1000. Elapsed 0:20:14.6 ETA 0:31:10.37.260e+03        423       3.66e+00    81.5    5.3    3.8    3.3    6.1
-|  Step 484 of 1000. Elapsed 0:20:18.3 ETA 0:31:27.17.275e+03        447       3.96e+00    78.9    5.5    4.1    2.8    8.7
-/  Step 485 of 1000. Elapsed 0:20:22.2 ETA 0:34:01.97.290e+03        489       4.19e+00    81.4    5.3    3.6    3.2    6.4
--  Step 486 of 1000. Elapsed 0:20:26.4 ETA 0:35:55.57.305e+03        577       4.96e+00    80.8    5.3    4.0    2.7    7.1
-\  Step 487 of 1000. Elapsed 0:20:31.4 ETA 0:42:24.17.320e+03        544       4.85e+00    78.0    5.7    4.5    2.7    9.1
-|  Step 488 of 1000. Elapsed 0:20:36.2 ETA 0:41:23.67.335e+03        712       6.16e+00    80.3    5.4    3.9    2.6    7.7
-/  Step 489 of 1000. Elapsed 0:20:42.4 ETA 0:52:27.57.350e+03        613       5.30e+00    80.5    5.3    3.6    3.8    6.7
--  Step 490 of 1000. Elapsed 0:20:47.7 ETA 0:45:01.27.365e+03        827       7.16e+00    81.0    5.4    3.9    2.7    7.0
-\  Step 491 of 1000. Elapsed 0:20:54.9 ETA 1:00:44.87.380e+03        858       7.47e+00    80.5    5.4    4.0    2.7    7.4
-|  Step 492 of 1000. Elapsed 0:21:02.3 ETA 1:03:16.47.395e+03       1164       1.01e+01    81.3    5.4    3.8    2.6    6.9
-/  Step 493 of 1000. Elapsed 0:21:12.4 ETA 1:24:58.07.410e+03       1822       1.59e+01    80.4    5.4    4.0    2.5    7.7
--  Step 494 of 1000. Elapsed 0:21:28.3 ETA 2:14:16.57.425e+03       2809       2.45e+01    80.6    5.4    3.9    2.3    7.7
-\  Step 495 of 1000. Elapsed 0:21:52.8 ETA 3:25:49.37.440e+03       2543       2.21e+01    80.9    5.4    3.9    2.5    7.4
-|  Step 496 of 1000. Elapsed 0:22:14.8 ETA 3:05:32.77.455e+03       2363       2.06e+01    80.8    5.4    3.9    2.5    7.4
-/  Step 497 of 1000. Elapsed 0:22:35.4 ETA 2:52:18.57.470e+03       2295       2.01e+01    80.6    5.4    3.8    2.4    7.8
--  Step 498 of 1000. Elapsed 0:22:55.5 ETA 2:48:01.47.485e+03       2518       2.22e+01    80.5    5.4    3.9    2.4    7.8
-\  Step 499 of 1000. Elapsed 0:23:17.7 ETA 3:05:39.57.500e+03       2485       2.19e+01    79.9    5.4    3.9    2.4    8.4
-|  Step 500 of 1000. Elapsed 0:23:39.6 ETA 3:02:33.97.515e+03       2065       1.80e+01    80.6    5.4    3.9    2.7    7.5
-/  Step 501 of 1000. Elapsed 0:23:57.6 ETA 2:29:32.17.530e+03       1616       1.40e+01    81.0    5.4    3.8    2.4    7.4
--  Step 502 of 1000. Elapsed 0:24:11.6 ETA 1:55:51.47.545e+03       1541       1.36e+01    79.3    5.5    4.2    2.5    8.5
-\  Step 503 of 1000. Elapsed 0:24:25.2 ETA 1:52:53.27.560e+03       1327       1.19e+01    78.8    5.3    4.0    2.5    9.5
-|  Step 504 of 1000. Elapsed 0:24:37.1 ETA 1:38:04.97.575e+03       1395       1.21e+01    80.6    5.4    4.2    2.5    7.2
-/  Step 505 of 1000. Elapsed 0:24:49.2 ETA 1:40:05.77.590e+03       1251       1.09e+01    80.3    5.4    4.0    2.4    7.8
--  Step 506 of 1000. Elapsed 0:25:00.1 ETA 1:29:53.87.605e+03        995       8.70e+00    80.0    5.4    4.0    2.5    8.0
-\  Step 507 of 1000. Elapsed 0:25:08.8 ETA 1:11:26.87.620e+03       1066       9.20e+00    81.6    5.4    3.8    2.5    6.7
-|  Step 508 of 1000. Elapsed 0:25:18.0 ETA 1:15:27.17.635e+03        995       8.81e+00    79.3    5.5    4.3    2.6    8.4
-/  Step 509 of 1000. Elapsed 0:25:26.8 ETA 1:12:07.67.650e+03        996       8.59e+00    81.1    5.4    3.9    2.7    6.9
--  Step 510 of 1000. Elapsed 0:25:35.4 ETA 1:10:07.1CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.21773e-13
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=7.61081e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- Warning.. internal t=7662.2 and step size h=1.9027e-15
-are such that t + h == t on the next step.
-The solver will continue anyway.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-CVode-- At t=7662.2 and step size h=7.25823e-21, the corrector
-convergence failed repeatedly or with |h| = hmin.
-
-ERROR CVODE step failed, flag = -6
-Timestep failed. Aborting
-Error encountered in solver run
-PVODE timestep failed
-Error encountered
-====== Exception path ======
-[bt] #5 ./hesel() [0x464e75]
-_start at ??:?
-[bt] #4 /lib64/libc.so.6(__libc_start_main+0x80) [0x7f765e62a6c0]
-__libc_start_main_alias_2 at :?
-[bt] #3 /lib64/libc.so.6(+0x2a610) [0x7f765e62a610]
-__libc_start_call_main at ??:?
-[bt] #2 ./hesel() [0x44913f]
-main at /zhome/bf/5/186685/Andreas/BOUT-HESEL/hesel.cxx:1861 (discriminator 17)
-[bt] #1 ./hesel() [0x4a9bf9]
-Solver::solve(int, double) at /zhome/bf/5/186685/Andreas/BOUT-dev/src/solver/solver.cxx:490
-====== Back trace ======
- -> NcFormat::close on line 286 of 'nc_format.cxx'
- -> PvodeSolver::run() on line 214 of 'pvode.cxx'
-
-====== Exception thrown ======
-PVODE timestep failed
-
-
-------------------------------------------------------------
-Sender: LSF System <lsfadmin@hpc.dtu.dk>
-Subject: Job 28626871: <Plsma_sim> in cluster <dcc> Exited
-
-Job <Plsma_sim> was submitted from host <n-62-29-7> by user <s224041> in cluster <dcc> at Thu Jun 11 10:21:32 2026
-Job was executed on host(s) <16*n-62-11-59>, in queue <hpc>, as user <s224041> in cluster <dcc> at Thu Jun 11 10:21:33 2026
-</zhome/bf/5/186685> was used as the home directory.
-</zhome/bf/5/186685/Andreas> was used as the working directory.
-Started at Thu Jun 11 10:21:33 2026
-Terminated at Thu Jun 11 10:47:33 2026
-Results reported at Thu Jun 11 10:47:33 2026
-
-Your job looked like:
-
-------------------------------------------------------------
-# LSBATCH: User input
-#!/bin/sh
-
-### =========================
-### General settings
-### =========================
-
-# ##  queue
-#BSUB -q hpc
-
-#BSUB -J Plsma_sim
-#BSUB -W 6:00
-
-# ## Output og error logs
-# ## -o/-e append, -oo/-eo overwrite
-#BSUB -o Bachelorprojekt/logs_sim/Output_Alexander__fys_R_1.out
-#BSUB -e Bachelorprojekt/logs_sim/Output_Alexander__fys_R_1.err
-
-# ## Email notifications
-# ## BSUB -u s224041@dtu.dk
-# ## BSUB -B
-
-# ##BSUB -N
-
-
-### =========================
-### CPU settings
-### =========================
-
-# ## Antal CPU cores
-#BSUB -n 16
-
-# ## Alle cores på samme node
-#BSUB -R "span[hosts=1]"
-
-# ## RAM per core
-#BSUB -R "rusage[mem=4GB]"
-
-# ## Kill job hvis den overstiger memory per core
-#BSUB -M 5GB
-
-
-### =========================
-### Run commands
-### =========================
-
-module load mpi/5.0.3-gcc-13.3.0-binutils-2.42
-module load fftw3/3.3.10-openmpi-5.0.3-gcc-13.3.0
-module load netcdf-c/4.9.3-hdf5-1.14.6-intel-2021-update4
-module load intel/2021.4.0
-
-
-(... more ...)
-------------------------------------------------------------
-
-Exited with exit code 1.
-
-Resource usage summary:
-
-    CPU time :                                   24547.00 sec.
-    Max Memory :                                 1801 MB
-    Average Memory :                             1800.38 MB
-    Total Requested Memory :                     65536.00 MB
-    Delta Memory :                               63735.00 MB
-    Max Swap :                                   -
-    Max Processes :                              20
-    Max Threads :                                55
-    Run time :                                   1560 sec.
-    Turnaround time :                            1561 sec.
-
-The output (if any) is above this job summary.
-
-
-
-PS:
-
-Read file <Bachelorprojekt/logs_sim/Output_Alexander__fys_R_1.err> for stderr output of this job.
-
