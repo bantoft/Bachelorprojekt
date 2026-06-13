@@ -71,13 +71,13 @@ undytte definationer for $n$, $V$ og $T$ fås Braginskii's ligninger.
 Selve integrationen og udledningen af ligningerne er ikke udført i denne rapport.
 
 \begin{align}
-    &\frac{\partial n}{\partial t} + \nabla \cdot (n \mathbf{V}) = 0 \label{eq:kontinuitetsligning}\\
+    &\frac{\partial n}{\partial t} + \nabla \cdot (n \mathbf{V}) = 0 \label{eq:Braginsiis kontinuitetsligning}\\
     &\frac{\partial}{\partial t}\left(m n \mathbf{V}\right) + \frac{\partial}{\partial x_\beta} \left(m n \langle v v_b \rangle \right) 
     - en\left(E + \frac{1}{c} \left[\mathbf{VB}\right]\right) = \int mv C d\mathbf{v} \label{eq:impulsligning_ikke_simplificeret}\\
     &\frac{\partial}{\partial t} \left(\frac{mn}{2} \langle v^2 \rangle\right)  + \nabla \left(\frac{m n}{2} \langle v^2\mathbf{v} \rangle \right)
     -en\mathbf{EV} = \int \frac{mv^2}{2}Cd\mathbf{v} \label{eq:energiligning_ikke_simplificeret_ikke_simplificeret}
 \end{align}
-Ligning \eqref{eq:kontinuitetsligning} kaldes kontinuitetsligningen og beskriver bevarelsen af partikler.
+Ligning \eqref{eq:Braginsiis kontinuitetsligning} kaldes kontinuitetsligningen og beskriver bevarelsen af partikler.
 Ligningerne \eqref{eq:impulsligning_ikke_simplificeret} og \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret}
 kaldes henholdsvis impuls og energiligningen og beskriver bevarelsen af henholdsvis impuls og energi i plasmaet.
 \eqref{eq:impulsligning_ikke_simplificeret} og \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret} blvier yderligere 
@@ -125,7 +125,35 @@ Braginskii's impuls ligning kan skrives på formen:
     + en\left(E_a + \frac{1}{c} \left[\mathbf{VB}\right]_a\right) + R_a \label{eq:Braginskii's momentum ligning}
 \end{equation}
 
-For at reducere energiligningen defineres størrelserne
+Braginskii's energi transport ligning \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret} er også 
+ønsket at skrive på en mere kompakt form. Til dette udledes følgende størrelser:
+
+\begin{align*}
+    \langle \frac{v^2}{2} v_\beta \rangle &= \frac{1}{2} V^2 V_\beta + V_\alpha 
+    \langle v_\alpha' v_\beta' \rangle + \frac{1}{2} \langle v'^2 \rangle V_\beta +
+    \langle \frac{v'^2}{2} v_\beta' \rangle \\
+    &= \left( \frac{1}{2} V^2 + \frac{5P}{2mn} \right) V_\beta + 
+    \frac{1}{mn} V_\alpha \pi_{\alpha\beta}  + \langle \frac{1}{2} v'^2 v_\beta' \rangle
+\end{align*}
+Ved at introducere følgende definitioner:
+\begin{align*}
+    &Q = \int \frac{m}{2} v'^2 C \mathrm{d}\mathbf{v}\\
+    &\mathbf{q} = \int \frac{m}{2} v'^2 \mathbf{v}' f \mathrm{d}\mathbf{v} = \langle \frac{1}{2} m v'^2 \mathbf{v}' \rangle \\
+\end{align*}
+Hvor $Q$ beskriver varme genereret af kollisioner mellem partikler.
+$\mathbf{q}$ er flux tætheden for tilfældig transport.
+Herfra kan Braginskii's energi ligning skrives på følgende form og endelige form::
+\begin{align}
+    \frac{\partial}{\partial t}\left(\frac{nm}{2}  V^2 + \frac{3}{2} n T\right) +
+    \frac{\partial}{\partial x_\beta} \left( \left(\frac{mn}{2}V^2  +\frac{5}{2} nT\right)V_\beta +
+    \left(\pi_{\alpha \beta} V_\alpha \right) + q_\beta \right) = en\mathbf{EV} + \mathbf{RV} + Q \label{eq:Braginskii's energitransport ligning}
+\end{align}
+Braginskii's energi transport ligning\eqref{eq:Braginskii's energitransport ligning} beskriver bevarelsen af 
+energi for en plasmaart. Det første led repræsenterer ændringen i den totale energi, som består af summen af
+den kinetiske energi og den interne termiske energi. 
+Det andet led beskriver energifluxen og indeholder bidrag fra konvektiv energitransport, viskøse spændinger og varmeledning.
+Højresiden repræsenterer arbejdet udført af ydre kræfter samt varmeproduktion og energiudveksling forårsaget af kollisioner.
+
 
 
 \newpage

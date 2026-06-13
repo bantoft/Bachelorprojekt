@@ -11,7 +11,7 @@ sim_data/logs/Output_*
 
 
 # Her er bøger der fylder meget, ref til rapport for artikler og bøger...
-teori
+teori/bog*
 
 
 # Python-generated files
