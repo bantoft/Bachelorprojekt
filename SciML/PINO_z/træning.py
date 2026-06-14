@@ -22,15 +22,17 @@ from SciML.PINO_z.utils.training_helpers import (
 
 # Til endelige test
 train_config = {
-    "resume": False,
-    "root" : ROOT_DIR / r"sim_data/Alexander_std_256_1",
+    "resume": True,
+    # root er folder med output fra simulering
+    "root" : [ROOT_DIR / r"sim_data/Alexander_e", ROOT_DIR / r"sim_data/Alexander_phi_0"],
+    # data_dir er folder hvor experiment data og modeller gemmes/læses alt efter resume
     "data_dir": ROOT_DIR / r"Experimenter/PINO/test_run",
     "seed": np.random.randint(0, 2**32 - 1),
     "status_frequency": 1,
-    "flush_frequency": 50,
+    "flush_frequency": 2,
     "z_width": 3,
-    "num_eq_chunk": 18,
-    "batch_size": 130,
+    "num_eq_chunk": 14,
+    "batch_size": 128,
     "train_split": 0.8,
     "val_split": 0.1,
     "shuffle": True,
@@ -45,7 +47,7 @@ train_config = {
         "n_modes": (150, 150),
         "in_channels": 12,
         "out_channels": 4,
-        "hidden_channels": 30,
+        "hidden_channels": 25,
         "positional_embedding": None,
     }
 }
@@ -53,7 +55,7 @@ train_config = {
 # # Til debugging
 # train_config = {
 #     "resume": False,
-#     "root" : ROOT_DIR / r"sim_data/Alexander_std_256_1",
+#     "root" : [ROOT_DIR / r"sim_data/Alexander_e", ROOT_DIR / r"sim_data/Alexander_phi_0"],
 #     "data_dir": ROOT_DIR / r"SciML/Experimenter/PINO/test_run",
 #     "seed": 42,
 #     "status_frequency": 1,
@@ -70,7 +72,7 @@ train_config = {
 #     "lr": 1e-7, # <- Min lr, max er sat til 5e-4 i CyclicLR
 #     "epochs": 10,
 #     "early_stopping_patience": 2,
-#     "early_stopping_min_delta": 0.0,
+#     "early_stopping_min_delta": 1000.0,
 #     "fno": {
 #         "n_modes": (32, 32),
 #         "in_channels": 12,
@@ -88,6 +90,15 @@ state = {
     "best_val_loss": float("inf"),
     "patience_counter": 0,
 }
+
+
+def _strip_state_dict_metadata(state_dict):
+    if state_dict is None:
+        raise ValueError("Checkpoint is missing a model state_dict.")
+    if "_metadata" in state_dict:
+        state_dict = dict(state_dict)
+        state_dict.pop("_metadata", None)
+    return state_dict
 
 
 
@@ -123,9 +134,10 @@ if train_config["resume"] and (train_config["data_dir"] / "checkpoint.pt").exist
     total_test_batches = len(test_loader)
 
     for name in ("g_x", "H_x", "D_x"):
-        if name in model._buffers and model._buffers[name] is not None:
-            model._buffers[name] = model._buffers[name].clone()
-    model.load_state_dict(ckpt["model_state_dict"])
+        buffer = model._buffers.get(name)
+        if isinstance(buffer, torch.Tensor):
+            model._buffers[name] = buffer.clone()
+    model.load_state_dict(_strip_state_dict_metadata(ckpt["model_state_dict"]))
     optimizer.load_state_dict(ckpt["optimizer_state_dict"])
     if "scheduler_state_dict" in ckpt:
         scheduler.load_state_dict(ckpt["scheduler_state_dict"])
@@ -288,11 +300,14 @@ while state["epoch"] < train_config["epochs"]:
                         patience_counter=state["patience_counter"]
                         )
 
+    print("")
+
+
 if (train_config["data_dir"] / "checkpoint.pt").exists():
     ckpt = load_checkpoint(train_config)
     best_val_model_state = ckpt.get("best_val_model")
     if best_val_model_state is not None:
-        model.load_state_dict(best_val_model_state)
+        model.load_state_dict(_strip_state_dict_metadata(best_val_model_state))
 
 state["split"] = "test"
 state["batch_idx"] = 0
@@ -321,3 +336,5 @@ if state["split"] == "test":
                  last_batch_idx,
                  info,
                  phys)
+    
+    history.flush()

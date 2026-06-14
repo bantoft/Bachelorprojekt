@@ -108,8 +108,6 @@ def load_checkpoint(training_config):
 
 
 
-
-
 data_loader_setup1 = {
     "TSSplit": True,
     "train_split": 0.8,
@@ -130,8 +128,16 @@ def init_experinment(train_cfg):
 
     # Laver dobbelt data loader setup
     if len(train_cfg["root"]) == 2:
-        info1 = BOUTHESELInfo(train_cfg["root"][0])
+        info = BOUTHESELInfo(train_cfg["root"][0])
         info2 = BOUTHESELInfo(train_cfg["root"][1])
+
+        phys = BOUTHESELPhys(info)  # Assuming phys is the same for both datasets, otherwise this needs to be handled differently
+        model = WrappedFNO(info=info,
+                           phys=phys,
+                           m=train_cfg["z_width"],
+                           fno = nop.models.FNO(**train_cfg["fno"])
+                           ).to(info.device)
+
 
         data_loader_dict = {
             "z_width": train_cfg["z_width"],
@@ -146,34 +152,53 @@ def init_experinment(train_cfg):
             data_loader_setup1[key] = value
             data_loader_setup2[key] = value
 
-        train_loader1, val_loader1, test_loader1 = make_dataloaders(info1, data_loader_setup1)
+        train_loader1, val_loader1, test_loader1 = make_dataloaders(info, data_loader_setup1)
         train_loader2, val_loader2, test_loader2 = make_dataloaders(info2, data_loader_setup2)
 
         train_dataset = ConcatDataset([train_loader1.dataset, train_loader2.dataset])
-
-        train_loader = DataLoader(
-                        train_dataset,
-                        batch_size=train_config["batch_size"],
-                        shuffle=train_config["shuffle"],
-                        num_workers=train_config["num_workers"],
-                        pin_memory=train_config["pin_memory"],
-                        prefetch_factor=train_config["prefetch_factor"],
-                    )
+        test_dataset = ConcatDataset([test_loader1.dataset, test_loader2.dataset])
+        val_dataset = ConcatDataset([val_loader1.dataset, val_loader2.dataset])
 
 
+        train_loader = DataLoader(train_dataset,
+                                  batch_size=train_cfg["batch_size"],
+                                  shuffle=train_cfg["shuffle"],
+                                  num_workers=train_cfg["num_workers"],
+                                  pin_memory=train_cfg["pin_memory"],
+                                  prefetch_factor=train_cfg["prefetch_factor"]
+                                  )
+        val_loader = DataLoader(val_dataset,
+                                batch_size=train_cfg["batch_size"],
+                                shuffle=False,
+                                num_workers=train_cfg["num_workers"],
+                                pin_memory=train_cfg["pin_memory"],
+                                prefetch_factor=train_cfg["prefetch_factor"]
+                                )
+        test_loader = DataLoader(test_dataset,
+                                batch_size=train_cfg["batch_size"],
+                                shuffle=False,
+                                num_workers=train_cfg["num_workers"],
+                                pin_memory=train_cfg["pin_memory"],
+                                prefetch_factor=train_cfg["prefetch_factor"]
+                                )
+
+    else:
+        info = BOUTHESELInfo(train_cfg["root"][0])
+        phys = BOUTHESELPhys(info)
+
+        model = WrappedFNO(info=info,
+                        phys=phys,
+                        m=train_cfg["z_width"],
+                        fno = nop.models.FNO(**train_cfg["fno"])
+                        ).to(info.device)
+        
+
+        train_loader, val_loader, test_loader = make_dataloaders(info=info, data_loader_config=train_cfg)
 
 
-    info = BOUTHESELInfo(train_cfg["root"])
-    phys = BOUTHESELPhys(info)
     data_dir = Path(train_cfg["data_dir"]).resolve()
     data_dir.mkdir(parents=True, exist_ok=True)
 
-    model = WrappedFNO(info=info,
-                       phys=phys,
-                       m=train_cfg["z_width"],
-                       fno = nop.models.FNO(**train_cfg["fno"])
-                       ).to(info.device)
-    
     optimizer = torch.optim.Adam(model.parameters(),
                              lr=train_cfg["lr"],
                              betas= (0.7, 0.95),
@@ -187,17 +212,22 @@ def init_experinment(train_cfg):
                                                   step_size_down=900,
                                                   mode="triangular2",
                                                   cycle_momentum=False)
+    condition = torch.nn.MSELoss()
+    history = HistoryBuffer(data_dir / "history.json")
 
     return (model,
-            *make_dataloaders(info=info, train_config=train_cfg),
-            torch.nn.MSELoss(),
+            train_loader,
+            val_loader,
+            test_loader,
+            condition,
             optimizer,
             scheduler,
-            HistoryBuffer(data_dir / "history.json"),
+            history,
             phys,
             info
             )
 
+# Printer kun cunk info
 def chunk_info(train_loader, train_config):
     sample_batch = next(iter(train_loader))
     u = sample_batch[0]  # samme som i iterator(...)
@@ -207,6 +237,7 @@ def chunk_info(train_loader, train_config):
     print(f"Requested num_eq_chunk: {train_config['num_eq_chunk']}")
     print(f"Actual number of chunks: {len(u_chunks)}")
     print(f"Chunk sizes along dim=2: {chunk_sizes}")
+
 
 def iterator(loader,
              start_batch_idx,
@@ -240,6 +271,8 @@ def iterator(loader,
     status_loss_batches = 0
     try:
         for batch_idx, batch in enumerate(loader, start=start_batch_idx):
+
+            if batch_idx == 50: break
 
             if state["batch_idx"] % train_config["flush_frequency"] == 0:
                 history.flush()

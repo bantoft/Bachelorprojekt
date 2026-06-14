@@ -1,14 +1,15 @@
 .venv
 
-# Data foldere
+# Simuleret data foldere
 # Ignorer alle filer i Alexander_* mapper
 sim_data/Alexander_*/*
 sim_data/logs/Output_*
 
+# Experiment data foldere
+Experimenter/
+
 # Track input-filen
 !sim_data/Alexander_*/BOUT.inp
-
-
 
 # Her er bøger der fylder meget, ref til rapport for artikler og bøger...
 teori/bog*

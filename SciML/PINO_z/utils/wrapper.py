@@ -1,11 +1,10 @@
 import torch
-from neuralop.models.base_model import BaseModel
 
 
 FIELDS = ("lnn", "lnpe", "lnpi", "phi")
 
 
-class WrappedFNO(BaseModel):
+class WrappedFNO(torch.nn.Module):
     def __init__(self, fno, info, phys, m: int = 3):
         super().__init__()
         self.info, self.phys, self.fno, self.m = info, phys, fno.to(info.device), m
@@ -15,9 +14,9 @@ class WrappedFNO(BaseModel):
         self.lz = self.info.parameters.Lz
         self.lt = self.info.parameters.Lt
         self.dz = self.info.parameters.dz
-        self.half = m // 2
+        self.z_half = m // 2
         self.x_line = torch.linspace(0, self.lx, self.nx, device=self.device, dtype=self.dtype)
-        self.z_offset = torch.arange(-self.half, self.half + 1, device=self.device, dtype=self.dtype) * self.dz
+        self.z_offset = torch.arange(-self.z_half, self.z_half + 1, device=self.device, dtype=self.dtype) * self.dz
 
         # Register buffers
         _buffer_dict = {"x_base": torch.linspace(0, self.lx, self.nx, device=self.device, dtype=self.dtype)[None, :, None].expand(1, self.nx, self.m).clone(),
