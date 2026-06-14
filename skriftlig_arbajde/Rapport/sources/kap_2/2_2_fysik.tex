@@ -71,13 +71,13 @@ undytte definationer for $n$, $V$ og $T$ fås Braginskii's ligninger.
 Selve integrationen og udledningen af ligningerne er ikke udført i denne rapport.
 
 \begin{align}
-    &\frac{\partial n}{\partial t} + \nabla \cdot (n \mathbf{V}) = 0 \label{eq:Braginsiis kontinuitetsligning}\\
+    &\frac{\partial n}{\partial t} + \nabla \cdot (n \mathbf{V}) = 0 \label{eq:Braginsiis kontinuitetsligning_}\\
     &\frac{\partial}{\partial t}\left(m n \mathbf{V}\right) + \frac{\partial}{\partial x_\beta} \left(m n \langle v v_b \rangle \right) 
     - en\left(E + \frac{1}{c} \left[\mathbf{VB}\right]\right) = \int mv C d\mathbf{v} \label{eq:impulsligning_ikke_simplificeret}\\
     &\frac{\partial}{\partial t} \left(\frac{mn}{2} \langle v^2 \rangle\right)  + \nabla \left(\frac{m n}{2} \langle v^2\mathbf{v} \rangle \right)
     -en\mathbf{EV} = \int \frac{mv^2}{2}Cd\mathbf{v} \label{eq:energiligning_ikke_simplificeret_ikke_simplificeret}
 \end{align}
-Ligning \eqref{eq:Braginsiis kontinuitetsligning} kaldes kontinuitetsligningen og beskriver bevarelsen af partikler.
+Ligning \eqref{eq:Braginsiis kontinuitetsligning_} kaldes kontinuitetsligningen og beskriver bevarelsen af partikler.
 Ligningerne \eqref{eq:impulsligning_ikke_simplificeret} og \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret}
 kaldes henholdsvis impuls og energiligningen og beskriver bevarelsen af henholdsvis impuls og energi i plasmaet.
 \eqref{eq:impulsligning_ikke_simplificeret} og \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret} blvier yderligere 
@@ -122,12 +122,14 @@ Ligning \eqref{eq:preasure} definerer det isotrope tryk,
 Braginskii's impuls ligning kan skrives på formen:
 \begin{equation}
     mn\frac{\mathrm{d}V_a}{\mathrm{d}t} = - \frac{\partial p}{\partial x_a} - \frac{\partial \pi_{a\beta}}{\partial x_\beta}
-    + en\left(E_a + \frac{1}{c} \left[\mathbf{VB}\right]_a\right) + R_a \label{eq:Braginskii's momentum ligning}
+    + en\left(E_a + \frac{1}{c} \left[\mathbf{VB}\right]_a\right) + R_a \label{eq:Braginskii's momentum ligning_}
 \end{equation}
+Venstresiden, af Braginskii's momentum ligning\eqref{eq:Braginskii's momentum ligning_}, repræsenterer ændringen i plasmaets momentum.
+Højresiden består af kræfter fra trykgradienter, viskøse spændinger, elektromagnetiske felter og kollisioner med andre partikler.
+Disse processer styrer transporten og udviklingen af plasmaets makroskopiske bevægelse.
 
 Braginskii's energi transport ligning \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret} er også 
 ønsket at skrive på en mere kompakt form. Til dette udledes følgende størrelser:
-
 \begin{align*}
     \langle \frac{v^2}{2} v_\beta \rangle &= \frac{1}{2} V^2 V_\beta + V_\alpha 
     \langle v_\alpha' v_\beta' \rangle + \frac{1}{2} \langle v'^2 \rangle V_\beta +
@@ -146,14 +148,107 @@ Herfra kan Braginskii's energi ligning skrives på følgende form og endelige fo
 \begin{align}
     \frac{\partial}{\partial t}\left(\frac{nm}{2}  V^2 + \frac{3}{2} n T\right) +
     \frac{\partial}{\partial x_\beta} \left( \left(\frac{mn}{2}V^2  +\frac{5}{2} nT\right)V_\beta +
-    \left(\pi_{\alpha \beta} V_\alpha \right) + q_\beta \right) = en\mathbf{EV} + \mathbf{RV} + Q \label{eq:Braginskii's energitransport ligning}
+    \left(\pi_{\alpha \beta} V_\alpha \right) + q_\beta \right) = en\mathbf{EV} + \mathbf{RV} + Q \label{eq:Braginskii's energitransport ligning_}
 \end{align}
-Braginskii's energi transport ligning\eqref{eq:Braginskii's energitransport ligning} beskriver bevarelsen af 
+Braginskii's energi transport ligning\eqref{eq:Braginskii's energitransport ligning_} beskriver bevarelsen af 
 energi for en plasmaart. Det første led repræsenterer ændringen i den totale energi, som består af summen af
 den kinetiske energi og den interne termiske energi. 
 Det andet led beskriver energifluxen og indeholder bidrag fra konvektiv energitransport, viskøse spændinger og varmeledning.
 Højresiden repræsenterer arbejdet udført af ydre kræfter samt varmeproduktion og energiudveksling forårsaget af kollisioner.
 
+Herved udlede Braginskii sine tre ligninger for tæthed, impuls og energi udvikling for plasma \cite{braginskii1965}. 
+\begin{gather}
+    \text{Braginskii's kontinuitetsligning}\notag \\
+    \frac{\partial n}{\partial t} + \nabla \cdot (n \mathbf{V}) = 0 \label{eq:Braginskii's kontinuitetsligning}\\
+    %
+    \text{Braginskii's momentumligning}\notag \\
+    mn\frac{\mathrm{d}V_a}{\mathrm{d}t} = - \frac{\partial p}{\partial x_a} - \frac{\partial \pi_{a\beta}}{\partial x_\beta}
+    + en\left(E_a + \frac{1}{c} \left[\mathbf{VB}\right]_a\right) + R_a \label{eq:Braginskii's momentum ligning}\\
+    %
+    \text{Braginskii's energitransport ligning}\notag \\
+    \frac{\partial}{\partial t}\left(\frac{nm}{2}  V^2 + \frac{3}{2} n T\right) +
+    \frac{\partial}{\partial x_\beta} \left( \left(\frac{mn}{2}V^2  +\frac{5}{2} nT\right)V_\beta +
+    \left(\pi_{\alpha \beta} V_\alpha \right) + q_\beta \right) = en\mathbf{EV} + \mathbf{RV} + Q \label{eq:Braginskii's energitransport ligning}
+\end{gather}
+
+Ved modellering af turbulens i randplasmaer er Braginskii's ligninger imidlertid ofte for komplekse til direkte numerisk anvendelse.
+Derfor introduceres den reducerede drift fluid HESEL modeller, hvor en række fysiske antagelser anvendes til at forenkle beskrivelsen af plasmaets dynamik.
+
+I dette projekt anvendes HESEL modellen, som er en to dimensionel drift fluid model udviklet til at beskrive turbulens
+og transport i tokamak plasmaers rand og SOL regioner. Modellen bygger på Braginskii's fluidbeskrivelse og fremkommer
+gennem en række approksimationer og reduktioner af de oprindelige ligninger.
+En detaljeret udledning ligger uden for dette projekts omfang og kan findes i litteraturen \cite{udledning_af_hesel}.
+Fokus i dette projekt er derfor ikke på den fulde udledning af HESEL-modellen, men på anvendelsen af modellen
+som fysisk grundlag for de efterfølgende numeriske og maskinlæringsbaserede metoder.
+
+
+HESEL ligningerne er givet på følgende form\cite{udledning_af_hesel}:
+
+\begin{gather}
+    \mathrm{d} _t n + n\mathcal{K}(\phi) - \mathcal{K}(p_e) = \Lambda_n  \label{EQ_n} \\ 
+    \mathrm{d}_t^0 \omega^* + \left\{\phi, p_i \right\} - \mathcal{K}(p_e+p_i)=\Lambda_{\omega^*} \label{EQ_w} \\
+    \frac{3}{2}\mathrm{d} _t p_e + \frac{5}{2}p_e \mathcal{K}(\phi) -\frac{5}{2}\mathcal{K}\left(\frac{p_e^2}{n}\right)= \Lambda_{p_e}\label{EQ_p_e} \\
+    \frac{3}{2}\mathrm{d} _t p_i + \frac{5}{2}p_i \mathcal{K}(\phi) +\frac{5}{2}\mathcal{K}\left(\frac{p_i^2}{n}\right) - p_i\mathcal{K}(p_e+p_i) = \Lambda_{p_i} \label{EQ_p_i}
+\end{gather}
+
+
+\section{Lambda termer}
+Lambda termerne er givet ved:
+\begin{align}
+\Lambda_n =& D_e\nabla_\perp^2 n -\frac{n}{\tau} -\frac{n-n_p}{\tau_p} \notag\\ 
+            &-\alpha\left(\tilde T_e+ \frac{\bar T_e}{\bar n}\tilde n-\tilde\phi\right) \label{L_n}\\ 
+\Lambda_\omega^{*}=& D_i\nabla_\perp^2\omega^{*}-\frac{\omega^{*}}{\tau}+\frac{\rho_s}{L_c}\left[1-\exp\left(\phi_m-\frac{\phi_s}{T_{e,s}}\right)\right] \notag\\
+            &-\alpha\left( \tilde T_e+ \frac{\bar T_e}{\bar n}\tilde n -\tilde\phi \right) \label{L_w}\\
+\Lambda_{p_e} =& \frac{5}{2}D_e\nabla_\perp^2 p_e  + \left(\frac{16}{6} - \frac{5}{2}\right)\nabla\cdot\left(n\nabla_\perp T_e\right) - \frac{9p_e}{2\tau} - \frac{T_e}{\tau^{SH}}-\Theta -\frac{p_e-p_{e,p}}{\tau_p} \notag\\
+            &-\bar T_e \alpha\left( \tilde T_e + \frac{\bar T_e}{\bar n}\tilde n -\tilde\phi \right)\label{L_p_e}\\
+\Lambda_{p_i} =& D_i\nabla_\perp^2 p_i - D_iT_i\nabla_\perp^2n - \frac{9p_i}{2\tau} +\Theta -\frac{p_i-p_{i,p}}{\tau_p} +p_i\Lambda_{\omega^*} \label{L_p_i}
+\end{align}
+
+\section{Funktioner}
+Funktionerne er gevet ved:
+\begin{align*}
+    &n: n(x,y,t): &\text{Tæthed} \\
+    &p_{e,i}: p_{e,i}(x,y,t): &\text{Elektron- og iontryk}  \\
+    &T_{e,i}: T_{e,i}(x,y,t) = p_{e,i}/n: \quad &\text{Elektron- og iontemperatur} \\
+    &\phi: \phi(x,y,t): \quad &\text{Elektrisk potentiale} \\
+    &\omega^*: \omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i: \quad &\text{Vorticitet} \\
+\end{align*}
+
+
+\section{Operatorer}
+Herved er operatorerne defineret med:
+\begin{gather}
+    \mathcal{K}(f)= - \frac{\rho_s}{R}\partial_y f \label{curvature}\\
+    \left\{ f, g\right\} = \partial_x f \partial_y g - \partial_y f \partial_x g \label{poission}\\
+    \nabla = \left(\partial_x, \partial_y, \partial_z \right)^T \label{nabla}\\
+    \nabla_\perp = \left(\partial_x, \partial_y, 0 \right)^T \label{nable_perp}\\
+    \nabla^2 = \left(\partial^2_x, \partial^2_y, \partial^2_z \right)^T\label{nabla2}\\
+    \nabla_\perp^2 = \left(\partial^2_x, \partial^2_y, 0 \right)^T\label{nabla2_perp}\\
+    \mathrm{d}_t^0 f = \partial_t f + \left\{\phi, f \right\} \label{dt0}\\
+    \mathrm{d}_t f = \partial_t f  + \frac{1}{B}  \left\{ \phi , f \right\} \label{dt} \\    
+    \bar f = \frac{1}{L_y}\int_0^{L_y} f \mathrm{d}y \label{bar}\\
+    \tilde f = f - \bar f\label{tilde}\\
+\end{gather}
+
+
+\section{Koeffecienter}
+Samling af koeffecienter:
+\begin{gather}
+    \Theta = \frac{3m_e}{m_i}v_{ei}\left(p_e - p_i\right)\label{Theta}\\
+    \alpha = \frac{2T_{e0}}{v_{ei}m_eL^2_\parallel\omega_{i0}}\label{alpha}\\
+    \phi_m = \ln(\sqrt{m_i/2\pi m_e})\label{phi_m}\\
+\end{gather}
+
+
+\section{Profile region}
+Hvor er profile regionen defineret ved:
+\begin{gather}
+    \frac{n-n_p}{\tau_p}\sigma_{lcfs} \label{profile_n}\\
+    \frac{p_e-p_{e,p}}{\tau_p}\sigma_{lcfs} \label{profile_p_e}\\
+    \frac{p_i-p_{i,p}}{\tau_p}\sigma_{lcfs} \label{profile_p_i}\\
+    \frac{\phi_s}{T_{e,s}} = \frac{\phi(x,y,t)}{T_e(x,y,t)}*\sigma_{connected} \label{phi_s_connected}\\
+    \frac{\phi_s}{T_{e,s}} = \frac{\bar\phi(x,y,t)}{\bar{T_e}(x,y,t)}*\sigma_{disconnected} \label{phi_s_disconnected}\\
+\end{gather}
 
 
 \newpage

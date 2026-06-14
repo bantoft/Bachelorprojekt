@@ -3,9 +3,14 @@
 \contentsline {section}{\numberline {2}Teori}{2}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Det matematiske grundlag}{2}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Fysikken bag Hesel modellen}{3}{subsection.2.2}%
-\contentsline {section}{List of Figures}{I}{equation.10}%
-\contentsline {section}{List of Tables}{II}{equation.10}%
-\contentsline {section}{Nomenclature}{III}{equation.10}%
-\contentsline {section}{References}{IV}{equation.10}%
-\contentsline {section}{\numberline {3}Appendix A}{V}{section.3}%
-\contentsline {section}{\numberline {4}Appendix B}{VI}{section.4}%
+\contentsline {section}{\numberline {3}Lambda termer}{7}{section.3}%
+\contentsline {section}{\numberline {4}Funktioner}{8}{section.4}%
+\contentsline {section}{\numberline {5}Operatorer}{8}{section.5}%
+\contentsline {section}{\numberline {6}Koeffecienter}{9}{section.6}%
+\contentsline {section}{\numberline {7}Profile region}{9}{section.7}%
+\contentsline {section}{List of Figures}{I}{equation.42}%
+\contentsline {section}{List of Tables}{II}{equation.42}%
+\contentsline {section}{Nomenclature}{III}{equation.42}%
+\contentsline {section}{References}{IV}{equation.42}%
+\contentsline {section}{\numberline {8}Appendix A}{V}{section.8}%
+\contentsline {section}{\numberline {9}Appendix B}{VI}{section.9}%

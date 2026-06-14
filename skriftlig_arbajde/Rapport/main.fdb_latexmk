@@ -1,18 +1,18 @@
 # Fdb version 4
-["bibtex main"] 1781309956.72866 "main.aux" "main.bbl" "main" 1781310030.1032 0
-  "./document.bib" 1781304474.34421 2462 6c3019890b57e1ad694bf1c9802ccf02 ""
+["bibtex main"] 1781338128.77782 "main.aux" "main.bbl" "main" 1781338131.33231 0
+  "./document.bib" 1781334876.90721 4232 79bc4cf289ea136bbce4cc33e6dff386 ""
   "/usr/local/texlive/2026/texmf-dist/bibtex/bst/base/ieeetr.bst" 1292289607 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
-  "main.aux" 1781310029.38881 3116 0bda373f0434911f8a2ab0c1fb592903 "pdflatex"
+  "main.aux" 1781338130.58193 5598 595da93b618951f719ff58fb6e7d3662 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["cusdep nlo nls main"] 1781309956.49215 "main.nlo" "main.nls" "main" 1781310030.10285 0
-  "main.nlo" 1781310029.39067 297 16c3cbfadba8cf02c899a358f3580f52 "pdflatex"
+["cusdep nlo nls main"] 1781338128.5605 "main.nlo" "main.nls" "main" 1781338131.3321 0
+  "main.nlo" 1781338130.58417 297 7fd8e74c4c6c5aaaeb73bcc6a5141608 "pdflatex"
   (generated)
   "main.nls"
   (rewritten before read)
-["pdflatex"] 1781310027.84856 "/Users/andreasantoft/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" "main.pdf" "main" 1781310030.10341 0
+["pdflatex"] 1781338129.0463 "/Users/andreasantoft/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" "main.pdf" "main" 1781338131.33249 0
   "/Users/andreasantoft/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" 1781304474.35294 3433 4dc61a625e8b807249b83a6b2670ecc5 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
@@ -61,6 +61,7 @@
   "/usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb" 1248133631 32734 69e00a6b65cedb993666e42eedb3d48f ""
   "/usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1248133631 32726 0a1aea6fcd6468ee2cf64d891f5c43c8 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "/usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb" 1248133631 32587 1788b0c1c5b39540c96f5e42ccd6dae8 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb" 1248133631 32626 4f5c1b83753b1dd3a97d1b399a005b4b ""
   "/usr/local/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb" 1248133631 34694 ad62b13721ee8eda1dcc8993c8bd7041 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb" 1215737283 140176 d4962f948b4cc0adf4d3dde77a128c95 ""
@@ -171,14 +172,14 @@
   "/usr/local/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1772790226 5541377 04880c840ca220163a28f1a3af0ee662 ""
   "/usr/local/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1772790074 3636766 3864ffbb78b63e75e73688f5245d5aac ""
   "/usr/local/texlive/2026/texmf.cnf" 1772409725 577 648cd9f92f9c0eac486f4c71c85cfbbe ""
-  "main.aux" 1781310029.38881 3116 0bda373f0434911f8a2ab0c1fb592903 "pdflatex"
-  "main.bbl" 1781309956.95811 520 f07a7663a44a2de2cfee26152389a3d3 "bibtex main"
-  "main.lof" 1781310029.39079 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
-  "main.lot" 1781310029.39084 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
-  "main.nls" 1781309956.72618 306 0726ddfc06e606cbd8dc4600e98ccb79 "cusdep nlo nls main"
-  "main.out" 1781310029.39025 1195 2352c2480664186145546e3eb46e7486 "pdflatex"
+  "main.aux" 1781338130.58193 5598 595da93b618951f719ff58fb6e7d3662 "pdflatex"
+  "main.bbl" 1781338129.0375 639 039e9104bd4113b5d9250718c676f134 "bibtex main"
+  "main.lof" 1781338130.58431 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
+  "main.lot" 1781338130.58436 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
+  "main.nls" 1781338128.77501 306 a7e8f5697e281ae6781ac6722de50020 "cusdep nlo nls main"
+  "main.out" 1781338130.58364 1721 c3af622192ac453da79701ca8ec0ea7f "pdflatex"
   "main.tex" 1781304474.35294 3433 4dc61a625e8b807249b83a6b2670ecc5 ""
-  "main.toc" 1781310029.39074 702 3106b6c747db5d92c305cf03a1a8f68c "pdflatex"
+  "main.toc" 1781338130.58424 1042 b8dcf78ef6b41380a859640481db843f "pdflatex"
   "root/dtu.png" 1780341472.33727 11174 a65a81e57f21122f8e631908e43c73a0 ""
   "root/logo.pdf" 1780341472.33758 9933 041ba2d771540e48f0dd40b3e54edcc3 ""
   "sources/0_frontpage.tex" 1780344450.7765 545 d6affc01df24316e3ccfbb0ecea0c57b ""
@@ -187,7 +188,7 @@
   "sources/appendix_a.tex" 1781304474.3548 47 fe628a2370b59b838762b32939d98f22 ""
   "sources/appendix_b.tex" 1781304474.3555 1356 f7919865fe2bf00bf71a3f1b31d2a751 ""
   "sources/kap_2/2_1_det_matematiske_grundlag.tex" 1781034759.3881 1820 11fc7f3c7e1cd8d983f9bf0a2e9dfb75 ""
-  "sources/kap_2/2_2_fysik.tex" 1781310027.4695 10323 e8cf0fd86111037039bb68908e30eb82 ""
+  "sources/kap_2/2_2_fysik.tex" 1781338125.76837 16364 aee7ea543e1a903b05b31822673cbae6 ""
   "sources/nomenclat.tex" 1781304474.35686 176 cc5446cbbbe1eb93d85c09216dd0be49 ""
   (generated)
   "main.aux"
