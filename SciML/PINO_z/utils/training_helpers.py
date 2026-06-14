@@ -110,14 +110,10 @@ def load_checkpoint(training_config):
 
 data_loader_setup1 = {
     "TSSplit": True,
-    "train_split": 0.8,
-    "val_split": 0.1,
 }
 
 data_loader_setup2 = {
     "TSSplit": False,
-    "train_split": 0.8,
-    "val_split": 0.1,
 }
 
 def init_experinment(train_cfg):
@@ -139,14 +135,15 @@ def init_experinment(train_cfg):
                            ).to(info.device)
 
 
-        data_loader_dict = {
-            "z_width": train_cfg["z_width"],
-            "batch_size": train_cfg["batch_size"],
-            "val_split": train_cfg["val_split"],
-            "shuffle": train_cfg["shuffle"],
-            "num_workers": train_cfg["num_workers"],
-            "prefetch_factor": train_cfg["prefetch_factor"],
-            "pin_memory": train_cfg["pin_memory"]}
+        data_loader_dict = {"z_width": train_cfg["z_width"],
+                            "batch_size": train_cfg["batch_size"],
+                            "val_split": train_cfg["val_split"],
+                            "train_split": train_cfg["train_split"],
+                            "shuffle": train_cfg["shuffle"],
+                            "num_workers": train_cfg["num_workers"],
+                            "prefetch_factor": train_cfg["prefetch_factor"],
+                            "pin_memory": train_cfg["pin_memory"]
+                            }
         
         for key, value in data_loader_dict.items():
             data_loader_setup1[key] = value

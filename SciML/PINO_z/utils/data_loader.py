@@ -12,6 +12,10 @@ class HESEL_z_Dataset(Dataset):
         self.info = info
         self.dtype = info.dtype
 
+        if self.m % 2 == 0:
+            raise ValueError(f"z_width must be odd, got {self.m}")
+
+        self.nx = info.parameters.num_x - 2
         self.nz = info.parameters.num_z
         self.nt = info.parameters.num_t
         self.dz = info.parameters.dz
@@ -19,10 +23,10 @@ class HESEL_z_Dataset(Dataset):
 
         half_width = self.m // 2
         self.z_offsets = torch.arange(-half_width, half_width + 1, dtype=torch.long)
-        self.x_idx = torch.arange(info.parameters.num_x, dtype=torch.long).view(1, info.parameters.num_x, 1)
-
-        self.data = torch.stack([getattr(info.data, name) for name in FIELDS], dim=1)
-        self.avg_z = torch.stack([info.avg_in_z[name].squeeze(-1) for name in AVG_FIELDS], dim=1)
+        # Ekskludere ghost cells i x retningen
+        self.data = torch.stack([(getattr(info.data, name))[:,1:-1] for name in FIELDS], dim=1)
+        self.x_idx = torch.arange(self.nx, dtype=torch.long).view(1, self.nx, 1)
+        self.avg_z = torch.stack([info.avg_in_z[name].squeeze(-1)[:, 1:-1] for name in AVG_FIELDS], dim=1)
         self.nt = self.data.shape[0]
 
     def __len__(self):
@@ -34,7 +38,7 @@ class HESEL_z_Dataset(Dataset):
     def __getitem__(self, idx):
         t_idx, z_idx = divmod(idx, self.nz)
         z_idx_window = (z_idx + self.z_offsets) % self.nz
-        shape = (1, self.info.parameters.num_x, self.m)
+        shape = (1, self.nx, self.m)
 
 
         u = torch.cat([self._window(t_idx, z_idx), self._window(t_idx + 1, z_idx)], dim=0)

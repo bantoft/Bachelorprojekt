@@ -9,7 +9,7 @@ class WrappedFNO(torch.nn.Module):
         super().__init__()
         self.info, self.phys, self.fno, self.m = info, phys, fno.to(info.device), m
         self.device, self.dtype = info.device, info.dtype
-        self.nx = self.info.parameters.num_x
+        self.nx = self.info.parameters.num_x - 2
         self.lx = self.info.parameters.Lx
         self.lz = self.info.parameters.Lz
         self.lt = self.info.parameters.Lt
@@ -20,7 +20,7 @@ class WrappedFNO(torch.nn.Module):
 
         # Register buffers
         _buffer_dict = {"x_base": torch.linspace(0, self.lx, self.nx, device=self.device, dtype=self.dtype)[None, :, None].expand(1, self.nx, self.m).clone(),
-                            "g_x": self._expand(torch.stack([phys.ic[f"init_{field}"] for field in FIELDS])),
+                            "g_x": self._expand(torch.stack([phys.ic[f"init_{field}"][1:-1] for field in FIELDS])),
                             "mean": self.info.standardized.mean.to(self.device, self.dtype).view(1, -1, 1, 1),
                             "std": self.info.standardized.std.to(self.device, self.dtype).view(1, -1, 1, 1)}
             

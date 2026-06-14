@@ -22,14 +22,14 @@ from SciML.PINO_z.utils.training_helpers import (
 
 # Til endelige test
 train_config = {
-    "resume": True,
+    "resume": False,
     # root er folder med output fra simulering
     "root" : [ROOT_DIR / r"sim_data/Alexander_e", ROOT_DIR / r"sim_data/Alexander_phi_0"],
     # data_dir er folder hvor experiment data og modeller gemmes/læses alt efter resume
     "data_dir": ROOT_DIR / r"Experimenter/PINO/test_run",
     "seed": np.random.randint(0, 2**32 - 1),
     "status_frequency": 1,
-    "flush_frequency": 2,
+    "flush_frequency": 100,
     "z_width": 3,
     "num_eq_chunk": 14,
     "batch_size": 128,
