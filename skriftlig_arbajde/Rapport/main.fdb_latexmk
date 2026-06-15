@@ -1,18 +1,19 @@
 # Fdb version 4
-["bibtex main"] 1781484375.83953 "main.aux" "main.bbl" "main" 1781484378.74865 0
+["bibtex main"] 1781516050.65887 "main.aux" "main.bbl" "main" 1781516053.17087 0
   "./document.bib" 1781474845.68354 5893 e5deec8da8e3e8e5b865d36acf2a92f6 ""
   "/usr/local/texlive/2026/texmf-dist/bibtex/bst/base/ieeetr.bst" 1292289607 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
-  "main.aux" 1781484377.97747 7721 23388ba056fa5efb5aed5eff33548aae "pdflatex"
+  "main.aux" 1781516052.39417 7603 b5517979b48cc9f5c06b9431f7010f9b "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["cusdep nlo nls main"] 1781484316.72547 "main.nlo" "main.nls" "main" 1781484378.74834 0
-  "main.nlo" 1781484377.98012 297 05fb9c825436c0becde08f90d4169875 "pdflatex"
+["cusdep nlo nls main"] 1781516040.69061 "main.nlo" "main.nls" "main" 1781516053.17059 0
+  "main.nlo" 1781516052.39676 297 05fb9c825436c0becde08f90d4169875 "pdflatex"
   (generated)
   "main.nls"
   (rewritten before read)
-["pdflatex"] 1781484376.24156 "main.tex" "main.pdf" "main" 1781484378.74887 0
+["pdflatex"] 1781516050.90545 "/Users/andreasantoft/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" "main.pdf" "main" 1781516053.1711 0
+  "/Users/andreasantoft/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" 1781516048.11379 3681 3628bb49d75fe92ea8d2cb95fa64dce5 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -176,24 +177,23 @@
   "/usr/local/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1772790226 5541377 04880c840ca220163a28f1a3af0ee662 ""
   "/usr/local/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1772790074 3636766 3864ffbb78b63e75e73688f5245d5aac ""
   "/usr/local/texlive/2026/texmf.cnf" 1772409725 577 648cd9f92f9c0eac486f4c71c85cfbbe ""
-  "main.aux" 1781484377.97747 7721 23388ba056fa5efb5aed5eff33548aae "pdflatex"
-  "main.bbl" 1781484376.23204 1339 d3e8e65c904c227af4c2ec3ddba226a3 "bibtex main"
-  "main.lof" 1781484377.98027 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
-  "main.lot" 1781484377.98032 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
-  "main.nls" 1781484316.94859 306 d2f418a752a131c25bfa4cab5dc5e768 "cusdep nlo nls main"
-  "main.out" 1781484377.97953 3880 44ca01226da1187d644bb80c609a28a9 "pdflatex"
-  "main.tex" 1781482343.01524 3397 a5d08faba5d4f35a9de40478f1ee0f67 ""
-  "main.toc" 1781484377.98021 2208 01a39f563c40cf59f52a789c75659b37 "pdflatex"
+  "main.aux" 1781516052.39417 7603 b5517979b48cc9f5c06b9431f7010f9b "pdflatex"
+  "main.bbl" 1781516050.89658 1317 c83775f9b10e751e91451884832784c7 "bibtex main"
+  "main.lof" 1781516052.39689 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
+  "main.lot" 1781516052.39695 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
+  "main.nls" 1781516040.9888 306 d2f418a752a131c25bfa4cab5dc5e768 "cusdep nlo nls main"
+  "main.out" 1781516052.39628 3917 b4ba1d543bd356e8e8e2e1d2348b12ed "pdflatex"
+  "main.tex" 1781516048.11379 3681 3628bb49d75fe92ea8d2cb95fa64dce5 ""
+  "main.toc" 1781516052.39684 2163 2a8deeebc4892638fd62f0533591b690 "pdflatex"
   "root/dtu.png" 1780341472.33727 11174 a65a81e57f21122f8e631908e43c73a0 ""
   "root/logo.pdf" 1780341472.33758 9933 041ba2d771540e48f0dd40b3e54edcc3 ""
   "sources/0_frontpage.tex" 1780344450.7765 545 d6affc01df24316e3ccfbb0ecea0c57b ""
   "sources/1_introduction.tex" 1781034759.38603 1595 4fc85044aee21354abf6e1e71d06d540 ""
-  "sources/2_theory.tex" 1781483911.78167 1379 93eec0e4d47b1f359febacb2a830692f ""
-  "sources/3_method.tex" 1781034759.38662 1621 68348f2b69f1c6a39b4fb322415a7913 ""
-  "sources/4_implimentering_og_repruse.tex" 1781034759.38686 99 50a0dcaaafb3a5488853e1c3dd149573 ""
+  "sources/2_metode.tex" 1781483911.78167 1379 93eec0e4d47b1f359febacb2a830692f ""
+  "sources/3_implimentering_og_repruse.tex" 1781034759.38686 99 50a0dcaaafb3a5488853e1c3dd149573 ""
+  "sources/4_data_og_analyse.tex" 1781515761.45006 1661 323b5712a188cab31eb598d1346eb1e1 ""
   "sources/5_resultater.tex" 1781034759.38709 52 10c606315b290f26c654a6b210f698bb ""
-  "sources/6_disussion.tex" 1781034759.38738 100 6731df5923adc06197d337db6f9c7076 ""
-  "sources/7_konklusion.tex" 1781034759.38764 67 f6ba754eecfd66a6a44ef110a60bd9e8 ""
+  "sources/6_konklusion_og_disussion.tex" 1781034759.38738 100 6731df5923adc06197d337db6f9c7076 ""
   "sources/8_fremtidig_arbejde.tex" 1781034759.38773 0 d41d8cd98f00b204e9800998ecf8427e ""
   "sources/appendix_a.tex" 1781304474.3548 47 fe628a2370b59b838762b32939d98f22 ""
   "sources/appendix_b.tex" 1781304474.3555 1356 f7919865fe2bf00bf71a3f1b31d2a751 ""
