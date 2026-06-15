@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from functools import lru_cache
 from pathlib import Path
 
 import neuralop as nop
@@ -205,8 +206,8 @@ def init_experinment(train_cfg):
     scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer,
                                                   max_lr=5e-4,
                                                   base_lr=train_cfg["lr"],
-                                                  step_size_up=900,
-                                                  step_size_down=900,
+                                                  step_size_up=2000,
+                                                  step_size_down=2000,
                                                   mode="triangular2",
                                                   cycle_momentum=False)
     condition = torch.nn.MSELoss()
@@ -228,12 +229,30 @@ def init_experinment(train_cfg):
 def chunk_info(train_loader, train_config):
     sample_batch = next(iter(train_loader))
     u = sample_batch[0]  # samme som i iterator(...)
-    u_chunks = u.chunk(train_config["num_eq_chunk"], dim=2)
-    chunk_sizes = [chunk.shape[2] for chunk in u_chunks]
+    chunk_sizes = [chunk_size for _, chunk_size in _chunk_slices(u.shape[2], train_config["num_eq_chunk"])]
 
     print(f"Requested num_eq_chunk: {train_config['num_eq_chunk']}")
-    print(f"Actual number of chunks: {len(u_chunks)}")
+    print(f"Actual number of chunks: {len(chunk_sizes)}")
     print(f"Chunk sizes along dim=2: {chunk_sizes}")
+
+
+@lru_cache(maxsize=None)
+def _chunk_slices(num_rows: int, requested_chunks: int) -> tuple[tuple[int, int], ...]:
+    if num_rows <= 0:
+        return ()
+    if requested_chunks <= 0:
+        raise ValueError("num_eq_chunk must be a positive integer.")
+
+    actual_chunks = min(num_rows, requested_chunks)
+    base_size, remainder = divmod(num_rows, actual_chunks)
+
+    start = 0
+    slices = []
+    for chunk_idx in range(actual_chunks):
+        chunk_size = base_size + int(chunk_idx < remainder)
+        slices.append((start, chunk_size))
+        start += chunk_size
+    return tuple(slices)
 
 
 def iterator(loader,
@@ -269,7 +288,7 @@ def iterator(loader,
     try:
         for batch_idx, batch in enumerate(loader, start=start_batch_idx):
 
-            if batch_idx == 50: break
+            # if batch_idx == 50: break
 
             if state["batch_idx"] % train_config["flush_frequency"] == 0:
                 history.flush()
@@ -325,13 +344,14 @@ def iterator(loader,
             skip_eq_step = False
 
             u, _, avg_z, coords_fys, coords_num = batch
-            u_chunks = u.chunk(train_config["num_eq_chunk"], dim=2)
-            num_chunks = len(u_chunks)
-            avg_chunks = avg_z.chunk(num_chunks, dim=2)
-            num_coord_chunks = coords_num.chunk(num_chunks, dim=2)
+            chunk_slices = _chunk_slices(u.shape[2], train_config["num_eq_chunk"])
+            num_chunks = len(chunk_slices)
             loss_total_value_eq_chunk = 0.0
 
-            for chunk_idx, (u_chunk, avg_chunk, num_chunk) in enumerate(zip(u_chunks, avg_chunks, num_coord_chunks)):
+            for chunk_idx, (chunk_start, chunk_size) in enumerate(chunk_slices):
+                u_chunk = u.narrow(2, chunk_start, chunk_size)
+                avg_chunk = avg_z.narrow(2, chunk_start, chunk_size)
+                num_chunk = coords_num.narrow(2, chunk_start, chunk_size)
                 chunk_batch = (u_chunk, None, avg_chunk, coords_fys, num_chunk)
                 f_chunk, coord_chunk = model(
                     chunk_batch,
@@ -343,25 +363,32 @@ def iterator(loader,
                 loss_eq = condition(eq_res_chunk, torch.zeros_like(eq_res_chunk)) / num_chunks
 
                 if not torch.isfinite(loss_eq):
-                    print(f"Skipping batch {batch_idx + 1}: non-finite eq loss at chunk {chunk_idx + 1}.")
+                    print(
+                        f"Skipping batch {batch_idx + 1}: non-finite eq loss "
+                        f"at chunk {chunk_idx + 1} (start {chunk_start}, size {chunk_size})."
+                    )
                     save_checkpoint(train_config,
                                 skipped_batch_info={
                                     "reason": "non-finite eq loss",
                                     "batch_idx": batch_idx,
                                     "data_loss": data_loss_value,
                                     "chunk_idx": chunk_idx,
+                                    "chunk_start": chunk_start,
+                                    "chunk_size": chunk_size,
                                 })
                     
                     skip_eq_step = True
                     optimizer.zero_grad(set_to_none=True)
+                    del u_chunk, avg_chunk, num_chunk
                     del f_chunk, coord_chunk, eq_res_chunk, loss_eq
                     break
 
                 loss_total_value_eq_chunk += loss_eq.item()
 
                 if is_training:
-                    loss_eq.backward(retain_graph=chunk_idx < num_chunks - 1)
+                    loss_eq.backward()
 
+                del u_chunk, avg_chunk, num_chunk
                 del f_chunk, coord_chunk, eq_res_chunk, loss_eq
 
             if not skip_eq_step and is_training:
@@ -395,7 +422,7 @@ def iterator(loader,
                     )
 
             del u, avg_z, coords_fys, coords_num
-            del u_chunks, avg_chunks, num_coord_chunks, batch
+            del chunk_slices, batch
 
             processed_batches += 1
             state["batch_idx"] = batch_idx + 1

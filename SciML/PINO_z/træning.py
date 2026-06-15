@@ -22,33 +22,35 @@ from SciML.PINO_z.utils.training_helpers import (
 
 # Til endelige test
 train_config = {
-    "resume": False,
+    "resume": True,
     # root er folder med output fra simulering
     "root" : [ROOT_DIR / r"sim_data/Alexander_e", ROOT_DIR / r"sim_data/Alexander_phi_0"],
     # data_dir er folder hvor experiment data og modeller gemmes/læses alt efter resume
-    "data_dir": ROOT_DIR / r"Experimenter/PINO/test_run",
+    "data_dir": ROOT_DIR / r"Experimenter/PINO/hail_mary",
     "seed": np.random.randint(0, 2**32 - 1),
-    "status_frequency": 1,
-    "flush_frequency": 100,
+    "status_frequency": 200,
+    "flush_frequency": 301, # <- Flush på server er relativt langsom i forhold til lokalt
     "z_width": 3,
-    "num_eq_chunk": 14,
-    "batch_size": 128,
-    "train_split": 0.8,
-    "val_split": 0.1,
+    # Min hurtigeste træningstid num_eq_chunk: 16, batch_size=226
+    # os: Archlinux, GPU: NVIDIA GeForce RTX 5060 
+    "num_eq_chunk": 4, # <- Større chunk hurtgigere træning, længere fra sande eq-loss
+    "batch_size": 56,
+    "train_split": 0.7,
+    "val_split": 0.15,
     "shuffle": True,
     "num_workers": 4,
-    "prefetch_factor": 1,
+    "prefetch_factor": 2,
     "pin_memory": True,
     "lr": 1e-7, # <- Min lr, max er sat til 5e-4 i CyclicLR
     "epochs": 10,
     "early_stopping_patience": 2,
     "early_stopping_min_delta": 0.0,
     "fno": {
-        "n_modes": (150, 150),
-        "in_channels": 12,
+        "n_modes": (64, 64), # <- Øgning af denne koster tid
+        "in_channels": 12, # 8 felter + 4 koordinater (x, z1, z2, t)
         "out_channels": 4,
-        "hidden_channels": 25,
-        "positional_embedding": None,
+        "hidden_channels": 24, # <- Øgning af denne koster plads
+        "positional_embedding": None, # Embedder selv koordinater
     }
 }
 
