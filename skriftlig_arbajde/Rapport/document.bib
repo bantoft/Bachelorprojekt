@@ -16,7 +16,7 @@
 }
 
 
-@misc{udledning_af_hesel,
+@article{udledning_af_hesel,
 title = "Plasma particle sources due to interactions with neutrals in a turbulent scrape-off layer of a toroidally confined plasma",
 abstract = "The conditions in the edge and scrape-off layer (SOL) of magnetically confined plasmas determine the overall performance of the device, and it is of great importance to study and understand the mechanics that drive transport in those regions. If a significant amount of neutral molecules and atoms is present in the edge and SOL regions, those will influence the plasma parameters and thus the plasma confinement. In this paper, it is displayed how neutrals, described by a fluid model, introduce source terms in a plasma drift-fluid model due to inelastic collisions. The resulting source terms are included in a four-field drift fluid model, and it is shown how an increasing neutral particle density in the edge and SOL regions influences the plasma particle transport across the lastclosed-flux-surface. It is found that an appropriate gas puffing rate allows for the edge density in the simulation to be self-consistently maintained due to ionization of neutrals in the confined region.",
 author = "Thrys{\o}e, \{Alexander Simon\} and M. L{\o}iten and J. Madsen and Volker Naulin and Nielsen, \{A. H.\} and Rasmussen, \{J. Juul\}",
@@ -30,10 +30,10 @@ publisher = "American Institute of Physics",
 number = "3",
 }
 
-@misc{braginskii1965,
+@article{braginskii1965,
   author    = {S. I. Braginskii},
   title     = {Transport Processes in a Plasma},
-  booktitle = {Reviews of Plasma Physics},
+  journal   = {Reviews of Plasma Physics, 1, 205.},
   editor    = {M. A. Leontovich},
   volume     = {1},
   pages      = {205--311},
@@ -44,18 +44,34 @@ number = "3",
   note       = {Accessed: 2026-06-11}
 }
 
-@article{audledning_af_hesel,
-    author = {Madsen, J. and Naulin, V. and Nielsen, A. H. and Rasmussen, J. Juul},
-    title = {Collisional transport across the magnetic field in drift-fluid models},
+@article{plasma_particle_sources,
+    author = {Thrysøe, A. S. and Løiten, M. and Madsen, J. and Naulin, V. and Nielsen, A. H. and Rasmussen, J. Juul},
+    title = {Plasma particle sources due to interactions with neutrals in a turbulent scrape-off layer of a toroidally confined plasma},
     journal = {Physics of Plasmas},
-    volume = {23},
+    volume = {25},
     number = {3},
-    pages = {032306},
-    year = {2016},
+    pages = {032307},
+    year = {2018},
     month = {03},
-    abstract = {Drift ordered fluid models are widely applied in studies of low-frequency turbulence in the edge and scrape-off layer regions of magnetically confined plasmas. Here, we show how collisional transport across the magnetic field is self-consistently incorporated into drift-fluid models without altering the drift-fluid energy integral. We demonstrate that the inclusion of collisional transport in drift-fluid models gives rise to diffusion of particle density, momentum, and pressures in drift-fluid turbulence models and, thereby, obviates the customary use of artificial diffusion in turbulence simulations. We further derive a computationally efficient, two-dimensional model, which can be time integrated for several turbulence de-correlation times using only limited computational resources. The model describes interchange turbulence in a two-dimensional plane perpendicular to the magnetic field located at the outboard midplane of a tokamak. The model domain has two regions modeling open and closed field lines. The model employs a computational expedient model for collisional transport. Numerical simulations show good agreement between the full and the simplified model for collisional transport.},
+    abstract = {The conditions in the edge and scrape-off layer (SOL) of magnetically confined plasmas determine the overall performance of the device, and it is of great importance to study and understand the mechanics that drive transport in those regions. If a significant amount of neutral molecules and atoms is present in the edge and SOL regions, those will influence the plasma parameters and thus the plasma confinement. In this paper, it is displayed how neutrals, described by a fluid model, introduce source terms in a plasma drift-fluid model due to inelastic collisions. The resulting source terms are included in a four-field drift-fluid model, and it is shown how an increasing neutral particle density in the edge and SOL regions influences the plasma particle transport across the last-closed-flux-surface. It is found that an appropriate gas puffing rate allows for the edge density in the simulation to be self-consistently maintained due to ionization of neutrals in the confined region.},
     issn = {1070-664X},
-    doi = {10.1063/1.4943199},
-    url = {https://doi.org/10.1063/1.4943199},
-    eprint = {https://pubs.aip.org/aip/pop/article-pdf/doi/10.1063/1.4943199/14896643/032306_1_online.pdf},
+    doi = {10.1063/1.5019662},
+    url = {https://doi.org/10.1063/1.5019662},
+    eprint = {https://pubs.aip.org/aip/pop/article-pdf/doi/10.1063/1.5019662/16154515/032307_1_online.pdf},
+}
+
+
+@article{num_sim_blobs,
+title = "Numerical simulations of blobs with ion dynamics",
+abstract = "The transport of particles and energy into the scrape-off layer (SOL) region at the outboard midplane of medium-sized tokamaks, operating in low confinement mode, is investigated by applying the first-principle HESEL (hot edge-sol-electrostatic) model. HESEL is a four-field drift-fluid model including finite electron and ion temperature effects, drift wave dynamics on closed field lines, and sheath dynamics on open field lines. Particles and energy are mainly transported by intermittent blobs. Therefore, blobs have a significant influence on the corresponding profiles. The formation of a 'shoulder' in the SOL density profile can be obtained by increasing the collisionality or connection length, thus decreasing the efficiency of the SOL's ability to remove plasma. As the ion pressure has a larger perpendicular but smaller parallel dissipation rate compared to the electron pressure, ion energy is transported far into the SOL. This implies that the ion temperature in the SOL exceeds the electron temperature by. a factor of 2-4 and significantly broadens the power deposition profile.",
+keywords = "Blob dynamics, Scrape-off layer transport, Turbulence and flows, Simulations",
+author = "Nielsen, \{Anders Henry\} and Rasmussen, \{Jens Juul\} and Jens Madsen and Xu, \{G. S.\} and Volker Naulin and Olsen, \{Jeppe Miki Busk\} and Magnussen, \{Michael L{\o}iten\} and S.K. Hansen and Ning Yan and Toph{\o}j, \{Laust Emil Hjerrild\} and Wan, \{B. N.\}",
+year = "2017",
+doi = "10.1088/1361-6587/59/2/025012",
+language = "English",
+volume = "59",
+journal = "Plasma Physics and Controlled Fusion",
+issn = "0741-3335",
+publisher = "IOP Publishing",
+number = "2",
 }

@@ -3,14 +3,26 @@
 \contentsline {section}{\numberline {2}Teori}{2}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Det matematiske grundlag}{2}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Fysikken bag Hesel modellen}{3}{subsection.2.2}%
-\contentsline {section}{\numberline {3}Lambda termer}{7}{section.3}%
-\contentsline {section}{\numberline {4}Funktioner}{8}{section.4}%
-\contentsline {section}{\numberline {5}Operatorer}{8}{section.5}%
-\contentsline {section}{\numberline {6}Koeffecienter}{9}{section.6}%
-\contentsline {section}{\numberline {7}Profile region}{9}{section.7}%
-\contentsline {section}{List of Figures}{I}{equation.42}%
-\contentsline {section}{List of Tables}{II}{equation.42}%
-\contentsline {section}{Nomenclature}{III}{equation.42}%
-\contentsline {section}{References}{IV}{equation.42}%
-\contentsline {section}{\numberline {8}Appendix A}{V}{section.8}%
-\contentsline {section}{\numberline {9}Appendix B}{VI}{section.9}%
+\contentsline {subsection}{\numberline {2.3}Numeriske metoder, BOUT-HESEL simuleringer}{10}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Formål med simulationsmotoren}{10}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Diskretisering af domænet}{10}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Repræsentation af tilstanden}{10}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {2.3.4}Randbetingelser}{10}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {2.3.5}Numeriske differentialoperatorer}{10}{subsubsection.2.3.5}%
+\contentsline {subsubsection}{\numberline {2.3.6}Tidsintegration}{11}{subsubsection.2.3.6}%
+\contentsline {subsubsection}{\numberline {2.3.7}Adaptiv tidsstyring}{11}{subsubsection.2.3.7}%
+\contentsline {subsubsection}{\numberline {2.3.8}Simulationsloop}{11}{subsubsection.2.3.8}%
+\contentsline {subsubsection}{\numberline {2.3.9}Datalagring}{11}{subsubsection.2.3.9}%
+\contentsline {subsubsection}{\numberline {2.3.10}Stabilitet og fejlhåndtering}{11}{subsubsection.2.3.10}%
+\contentsline {section}{\numberline {3}Metode}{12}{section.3}%
+\contentsline {section}{\numberline {4}Implementering}{13}{section.4}%
+\contentsline {section}{\numberline {5}Resultater}{14}{section.5}%
+\contentsline {section}{\numberline {6}Diskussion}{15}{section.6}%
+\contentsline {section}{\numberline {7}Konklusion}{16}{section.7}%
+\contentsline {section}{\numberline {8}Fremtidigt arbejde}{17}{section.8}%
+\contentsline {section}{List of Figures}{I}{section.8}%
+\contentsline {section}{List of Tables}{II}{section.8}%
+\contentsline {section}{Nomenclature}{III}{section.8}%
+\contentsline {section}{References}{IV}{section.8}%
+\contentsline {section}{\numberline {9}Appendix A}{V}{section.9}%
+\contentsline {section}{\numberline {10}Appendix B}{VI}{section.10}%

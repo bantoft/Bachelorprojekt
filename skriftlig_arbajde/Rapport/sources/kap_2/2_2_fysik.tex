@@ -174,15 +174,14 @@ Herved udlede Braginskii sine tre ligninger for tæthed, impuls og energi udvikl
 Ved modellering af turbulens i randplasmaer er Braginskii's ligninger imidlertid ofte for komplekse til direkte numerisk anvendelse.
 Derfor introduceres den reducerede drift fluid HESEL modeller, hvor en række fysiske antagelser anvendes til at forenkle beskrivelsen af plasmaets dynamik.
 
-I dette projekt anvendes HESEL modellen, som er en to dimensionel drift fluid model udviklet til at beskrive turbulens
-og transport i tokamak plasmaers rand og SOL regioner. Modellen bygger på Braginskii's fluidbeskrivelse og fremkommer
-gennem en række approksimationer og reduktioner af de oprindelige ligninger.
+I dette projekt anvendes HESEL modellen, som er en $n$ dimensionel drift fluid model udviklet til at beskrive turbulens
+og transport i tokamak plasmaers rand og SOL regioner. I dette projekt simuleres den i 2 dimensioner.
+Modellen bygger på Braginskii's fluidbeskrivelse og fremkommer gennem en række approksimationer og reduktioner af de oprindelige ligninger.
 En detaljeret udledning ligger uden for dette projekts omfang og kan findes i litteraturen \cite{udledning_af_hesel}.
-Fokus i dette projekt er derfor ikke på den fulde udledning af HESEL-modellen, men på anvendelsen af modellen
+Fokus i dette projekt er derfor ikke på den fulde udledning af HESEL modellen, men på anvendelsen af modellen
 som fysisk grundlag for de efterfølgende numeriske og maskinlæringsbaserede metoder.
 
-
-HESEL ligningerne er givet på følgende form\cite{udledning_af_hesel}:
+Notationen i Hesel modellen kommer til at følge tæt notationen i \cite{num_sim_blobs} og \cite{plasma_particle_sources}:
 
 \begin{gather}
     \mathrm{d} _t n + n\mathcal{K}(\phi) - \mathcal{K}(p_e) = \Lambda_n  \label{EQ_n} \\ 
@@ -190,65 +189,88 @@ HESEL ligningerne er givet på følgende form\cite{udledning_af_hesel}:
     \frac{3}{2}\mathrm{d} _t p_e + \frac{5}{2}p_e \mathcal{K}(\phi) -\frac{5}{2}\mathcal{K}\left(\frac{p_e^2}{n}\right)= \Lambda_{p_e}\label{EQ_p_e} \\
     \frac{3}{2}\mathrm{d} _t p_i + \frac{5}{2}p_i \mathcal{K}(\phi) +\frac{5}{2}\mathcal{K}\left(\frac{p_i^2}{n}\right) - p_i\mathcal{K}(p_e+p_i) = \Lambda_{p_i} \label{EQ_p_i}
 \end{gather}
+Den første ligning \eqref{EQ_n} beskriver bevarelsen af plasmaets partikeltæthed. Ligningen stammer fra Braginskiis kontinuitetsligning,
+hvor udviklingen af tætheden bestemmes af advektion med plasmaets $E \times B$ retning samt kompressibilitet forårsaget af magnetfeltets 
+krumning og gradienter. Ledet $n\mathcal{K}(\phi)$ 
+repræsenterer transport som følge af elektriske felter i et krumt magnetfelt, mens $\mathcal{K}(p_e)$ beskriver drivningen fra elektronstryksgradienter.
+Højresiden $\Lambda_n$ samler kollisionsprocesser, diffusion og parallelle tab. 
+Ligningen udgør dermed grundlaget for beskrivelsen af partikeltransport og dannelsen af tæthedsfluktuationer i HESEL modellen. 
 
+Vorticitetsligningen\eqref{EQ_w} beskriver udviklingen af plasmaets tværgående rotationsbevægelse og kan opfattes som en omskrevet
+form af den tværgående impulsbevarelse i Braginskiis momentumligning. Den modificerede vorticitet $\omega^*$ indeholder både $E\times B$ vorticitet og bidrag fra iontrykket.
+Poisson klammen  $\{\phi,p_i\}$ beskriver vekselvirkningen mellem det elektrostatiske potentiale og iontrykket, mens krumningsleddet $\mathcal{K}(p_e+p_i)$ 
+repræsenterer drivningen af turbulens gennem trykgradienter i det krumme magnetfelt.
+Højresiden indeholder viskøse og kollisionsbestemte dissipative mekanismer. Ligningen er central for beskrivelsen af turbulens og filamentdynamik i HESEL. 
 
-\section{Lambda termer}
-Lambda termerne er givet ved:
+Elektron \eqref{EQ_p_e} og iontryk \eqref{EQ_p_i} ligningerne beskriver udviklingen af plasmaets termiske energi gennem henholdsvis elektrontrykket $p_e$ og iontrykket $p_i$.
+Ligningerne er afledt fra Braginskiis energitransportligninger og indeholder transport med plasmaflowet, kompression i det krumme magnetfelt samt energitransport drevet af trykgradienter.
+Samtidig beskriver de energiudveksling mellem plasmaets termiske energi og kollektive bevægelse.
+
+Lambda termerne er fra \cite{num_sim_blobs} og her er de givet ved.
 \begin{align}
-\Lambda_n =& D_e\nabla_\perp^2 n -\frac{n}{\tau} -\frac{n-n_p}{\tau_p} \notag\\ 
-            &-\alpha\left(\tilde T_e+ \frac{\bar T_e}{\bar n}\tilde n-\tilde\phi\right) \label{L_n}\\ 
-\Lambda_\omega^{*}=& D_i\nabla_\perp^2\omega^{*}-\frac{\omega^{*}}{\tau}+\frac{\rho_s}{L_c}\left[1-\exp\left(\phi_m-\frac{\phi_s}{T_{e,s}}\right)\right] \notag\\
-            &-\alpha\left( \tilde T_e+ \frac{\bar T_e}{\bar n}\tilde n -\tilde\phi \right) \label{L_w}\\
-\Lambda_{p_e} =& \frac{5}{2}D_e\nabla_\perp^2 p_e  + \left(\frac{16}{6} - \frac{5}{2}\right)\nabla\cdot\left(n\nabla_\perp T_e\right) - \frac{9p_e}{2\tau} - \frac{T_e}{\tau^{SH}}-\Theta -\frac{p_e-p_{e,p}}{\tau_p} \notag\\
-            &-\bar T_e \alpha\left( \tilde T_e + \frac{\bar T_e}{\bar n}\tilde n -\tilde\phi \right)\label{L_p_e}\\
+    \Lambda_n =& D_e\nabla_\perp^2 n -\alpha\left(\tilde T_e+ \frac{\bar T_e}{\bar n}\tilde n-\tilde\phi\right)
+              -\frac{n}{\tau} -\frac{n-n_p}{\tau_p} \label{L_n}\\ 
+    \Lambda_\omega^{*}=& D_i\nabla_\perp^2\omega^{*} -\alpha\left( \tilde T_e+ \frac{\bar T_e}{\bar n}\tilde n -\tilde\phi \right)
+            -  \frac{\omega^{*}}{\tau}+\frac{\rho_s}{L_c}\left[1-\exp\left(\phi_m-\frac{\phi_s}{T_{e,s}}\right)\right] \label{L_w}\\
+    \Lambda_{p_e} =& \frac{5}{2}D_e\nabla_\perp^2 p_e - \alpha \bar T_e\left(\tilde T_e + \frac{\bar T_e}{\bar n}\tilde n -\tilde\phi \right) - \frac{9p_e}{2\tau} -\frac{p_e-p_{e,p}}{\tau_p} \notag \\
+                &+ \left(\frac{16}{6} - \frac{5}{2}\right)\nabla\cdot\left(n\nabla_\perp T_e\right) - \frac{T_e}{\tau^{SH}}-\Theta  \label{L_p_e}\\
 \Lambda_{p_i} =& D_i\nabla_\perp^2 p_i - D_iT_i\nabla_\perp^2n - \frac{9p_i}{2\tau} +\Theta -\frac{p_i-p_{i,p}}{\tau_p} +p_i\Lambda_{\omega^*} \label{L_p_i}
 \end{align}
+$\Lambda$ koefficienterne står for at beskrive kollisionsprocesserne, varmeledning, viskøse effekter og parallelle tab og virker dissipativt på systemet.
+Her repræsenterer $D_e$ og $D_i$ de neoklassiske tværgående transportkoefficienter, som beskriver diffusiv udjævning af henholdsvis partikel, ion, elektron og vorticitetsprofiler.
+Koefficienten $\alpha$ parametriserer koblingen til parallel driftbølge dynamik på lukkede feltlinjer og driver transport gennem forskelle mellem tæthed, temperatur og potentiale.
+Tiderne $\tau$ og $\tau_p$ beskriver parallelle tab: $\tau$ er den karakteristiske tidsskala for tab til (SOL) og sheath, mens $\tau_p$ angiver den tidsskala,
+hvormed plasmaet relakseres mod de påtvungne kildeprofiler i randregionen.
 
-\section{Funktioner}
-Funktionerne er gevet ved:
+Funktionerne i HESEL modellen er givet ved:
 \begin{align*}
-    &n: n(x,y,t): &\text{Tæthed} \\
-    &p_{e,i}: p_{e,i}(x,y,t): &\text{Elektron- og iontryk}  \\
-    &T_{e,i}: T_{e,i}(x,y,t) = p_{e,i}/n: \quad &\text{Elektron- og iontemperatur} \\
-    &\phi: \phi(x,y,t): \quad &\text{Elektrisk potentiale} \\
-    &\omega^*: \omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i: \quad &\text{Vorticitet} \\
+    &n: n(x,z,t)\\
+    &p_{e,i}: p_{e,i}(x,z,t)\\
+    &T_{e,i}: T_{e,i}(x,z,t) = \frac{p_{e,i}(x,z,t)}{n(x,z,t)}\\
+    &\phi: \phi(x,z,t)\\
+    &\omega^*: \omega^*(x,z,t) = \nabla^2\phi + \nabla^2 p_i\\
+\end{align*}
+Her beskriver $n$ plasmaets partikel tæthed, $p_{e,i}$ er henholdsvis elektron og iontryk, $T_{e,i}$ er elektron og ion temperatur, $\phi$ er det elektriske potentiale og $\omega^*$ er den modificerede vorticitet.
+Den opmærksomme læser vil bemærke sammenhængen mellem tæthed, tryk og temperatur, $p_{e,i} = nT_{e,i},$ hvilket
+følger direkte af den Bohm normalisering, der anvendes i HESEL modellen.
+
+\begin{align*}
+    t \rightarrow \omega_{ci,0} t,\quad
+    x \rightarrow \frac{x}{\rho_s}, \quad
+    n \rightarrow \frac{n}{n_0}, \quad
+    T_{e,i} \rightarrow \frac{T_{e,i}}{T_{e0}}, \quad
+    p_{e,i} \rightarrow \frac{p_{e,i}}{n_0T_{e0}},
 \end{align*}
 
+Det skal lige bemærkes at fælterne eksistere i koordinaterne $x$ og $z$, hvor $x$ er den tværgående retning og $z$ er den parallelle retning. Dette forsøges at 
+holdes konsekvent i hele rapporten, dog bliver $y$ og $z$ ofte byttet rundt når data gemmes fra simulering og bearbejdet videre.
 
-\section{Operatorer}
-Herved er operatorerne defineret med:
+Operatorerne i HESEL modellen er givet ved:
 \begin{gather}
     \mathcal{K}(f)= - \frac{\rho_s}{R}\partial_y f \label{curvature}\\
     \left\{ f, g\right\} = \partial_x f \partial_y g - \partial_y f \partial_x g \label{poission}\\
-    \nabla = \left(\partial_x, \partial_y, \partial_z \right)^T \label{nabla}\\
-    \nabla_\perp = \left(\partial_x, \partial_y, 0 \right)^T \label{nable_perp}\\
-    \nabla^2 = \left(\partial^2_x, \partial^2_y, \partial^2_z \right)^T\label{nabla2}\\
-    \nabla_\perp^2 = \left(\partial^2_x, \partial^2_y, 0 \right)^T\label{nabla2_perp}\\
     \mathrm{d}_t^0 f = \partial_t f + \left\{\phi, f \right\} \label{dt0}\\
     \mathrm{d}_t f = \partial_t f  + \frac{1}{B}  \left\{ \phi , f \right\} \label{dt} \\    
     \bar f = \frac{1}{L_y}\int_0^{L_y} f \mathrm{d}y \label{bar}\\
     \tilde f = f - \bar f\label{tilde}\\
+    \nabla = \begin{pmatrix} \partial_x \\ \partial_y \\ \partial_z \end{pmatrix} \label{nabla} \\
+    \nabla^2 = \partial_x^2 + \partial_y^2 + \partial_z^2 \label{nabla2}\\
+    \nabla_\perp = \begin{pmatrix} \partial_x \\ \partial_y \end{pmatrix} \label{nable_perp}\\
+    \nabla_\perp^2 = \partial_x^2 + \partial_y^2 \label{nabla2_perp}\\
 \end{gather}
 
-
-\section{Koeffecienter}
+De sidste parametre i HESEL modellen er de geometriske og fysiske parametre, som er givet ved:
 Samling af koeffecienter:
 \begin{gather}
     \Theta = \frac{3m_e}{m_i}v_{ei}\left(p_e - p_i\right)\label{Theta}\\
     \alpha = \frac{2T_{e0}}{v_{ei}m_eL^2_\parallel\omega_{i0}}\label{alpha}\\
     \phi_m = \ln(\sqrt{m_i/2\pi m_e})\label{phi_m}\\
 \end{gather}
-
-
-\section{Profile region}
-Hvor er profile regionen defineret ved:
-\begin{gather}
-    \frac{n-n_p}{\tau_p}\sigma_{lcfs} \label{profile_n}\\
-    \frac{p_e-p_{e,p}}{\tau_p}\sigma_{lcfs} \label{profile_p_e}\\
-    \frac{p_i-p_{i,p}}{\tau_p}\sigma_{lcfs} \label{profile_p_i}\\
-    \frac{\phi_s}{T_{e,s}} = \frac{\phi(x,y,t)}{T_e(x,y,t)}*\sigma_{connected} \label{phi_s_connected}\\
-    \frac{\phi_s}{T_{e,s}} = \frac{\bar\phi(x,y,t)}{\bar{T_e}(x,y,t)}*\sigma_{disconnected} \label{phi_s_disconnected}\\
-\end{gather}
+hvor $\Theta$ beskriver energiudvekslingen mellem elektroner og ioner gennem kollisioner,
+$\alpha$ er en parameter for parallel elektrondynamik og driftbølgekobling, 
+og $\phi_m$ er Bohm-potentialet, der indgår i skedebetingelserne.
+Her er $v_{ei}$ elektron-ion kollisionsfrekvensen, $L_\parallel$ den parallelle forbindelseslængde,
+og $m_e$, $m_i$ henholdsvis elektron og ionmassen.
 
 
 \newpage
