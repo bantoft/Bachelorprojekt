@@ -1,8 +1,9 @@
 
 \begin{thenomenclature} 
 \nomgroup{A}
-  \item [{BTE}]\begingroup Boltzman transport ligning\nomeqref {36}\nompageref{III}
-  \item [{HESEL}]\begingroup Hot Edge SOL Electrostatic\nomeqref {36}\nompageref{III}
-  \item [{SOL}]\begingroup Scrape off layer\nomeqref {36}\nompageref{III}
+  \item [{BTE}]\begingroup Boltzman transport ligning\nomeqref {37}\nompageref{III}
+  \item [{HESEL}]\begingroup Hot Edge SOL Electrostatic\nomeqref {37}\nompageref{III}
+  \item [{SciML}]\begingroup Scientific Machine Learning\nomeqref {37}\nompageref{III}
+  \item [{SOL}]\begingroup Scrape off layer\nomeqref {37}\nompageref{III}
 
 \end{thenomenclature}

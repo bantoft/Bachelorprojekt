@@ -1,27 +1,22 @@
 \babel@toc {english}{}\relax 
 \contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
-\contentsline {section}{\numberline {2}Metode}{2}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Det matematiske grundlag}{2}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Fysikken bag Hesel modellen}{3}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Numeriske metoder, BOUT-HESEL simuleringer}{10}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Formål med simulationsmotoren}{10}{subsubsection.2.3.1}%
-\contentsline {subsubsection}{\numberline {2.3.2}Diskretisering af domænet}{10}{subsubsection.2.3.2}%
-\contentsline {subsubsection}{\numberline {2.3.3}Repræsentation af tilstanden}{10}{subsubsection.2.3.3}%
-\contentsline {subsubsection}{\numberline {2.3.4}Randbetingelser}{10}{subsubsection.2.3.4}%
-\contentsline {subsubsection}{\numberline {2.3.5}Numeriske differentialoperatorer}{10}{subsubsection.2.3.5}%
-\contentsline {subsubsection}{\numberline {2.3.6}Tidsintegration}{11}{subsubsection.2.3.6}%
-\contentsline {subsubsection}{\numberline {2.3.7}Adaptiv tidsstyring}{11}{subsubsection.2.3.7}%
-\contentsline {subsubsection}{\numberline {2.3.8}Simulationsloop}{11}{subsubsection.2.3.8}%
-\contentsline {subsubsection}{\numberline {2.3.9}Datalagring}{11}{subsubsection.2.3.9}%
-\contentsline {subsubsection}{\numberline {2.3.10}Stabilitet og fejlhåndtering}{11}{subsubsection.2.3.10}%
-\contentsline {section}{\numberline {3}Implementering}{12}{section.3}%
-\contentsline {section}{\numberline {4}Data og analyse}{13}{section.4}%
-\contentsline {section}{\numberline {5}Resultater}{14}{section.5}%
-\contentsline {section}{\numberline {6}Konklusion og diskussion}{15}{section.6}%
-\contentsline {section}{\numberline {7}Fremtidigt arbejde}{16}{section.7}%
+\contentsline {section}{\numberline {2}Metode}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Fysikken bag Hesel modellen}{4}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Braginskii's fluidligninger}{4}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Hesel modellen}{8}{subsubsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.2}Numeriske metoder}{12}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Rumlig diskretisering}{12}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Numeriske differentialoperatorer}{12}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Tidsintegration}{13}{subsubsection.2.2.3}%
+\contentsline {section}{\numberline {3}Implementering}{14}{section.3}%
+\contentsline {section}{\numberline {4}Data og analyse}{15}{section.4}%
+\contentsline {section}{\numberline {5}Resultater}{16}{section.5}%
+\contentsline {section}{\numberline {6}Konklusion og diskussion}{17}{section.6}%
+\contentsline {section}{\numberline {7}Fremtidigt arbejde}{18}{section.7}%
 \contentsline {section}{List of Figures}{I}{section.7}%
 \contentsline {section}{List of Tables}{II}{section.7}%
 \contentsline {section}{Nomenclature}{III}{section.7}%
 \contentsline {section}{References}{IV}{section.7}%
 \contentsline {section}{\numberline {8}Appendix A}{V}{section.8}%
 \contentsline {section}{\numberline {9}Appendix B}{VI}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Anvendelse af Boltzmann ligning}{VI}{subsection.9.1}%

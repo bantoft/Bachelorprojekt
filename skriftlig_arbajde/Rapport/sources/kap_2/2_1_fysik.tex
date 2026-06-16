@@ -1,17 +1,21 @@
+% skriv ikke mere fysik ind
 
 HESEL modellen (Hot Edge SOL Electrostatic) er en reduceret plasma model udviklet til at beskrive turbulens og transportfænomener i plasmaets rand i en tokamak.
 Særligt fokuserer modellen på overgangsområdet mellem det indelukkede plasma og scrape off layer (SOL), hvor magnetfeltlinjerne ikke længere er lukkede.
 I dette område transporteres partikler og energi på tværs af magnetfeltlinjerne gennem turbulente strukturer, kaldet blobs. 
 HESEL modellen er baseret på drift fluid approksimationen af Braginskii's plasma fluidligninger\cite{udledning_af_hesel}. 
 
-HESEL modellen er reduceret ved at udnytte de karakteristiske tids og længdeskalaer i plasmaets rand, hvilket vedligeholder simulering fysisk realitet og numerisk stabilitet.
+% Skriv dette korrekt
+HESEL bliver reduceret, fra Braginskii's ligninger, 
+% Rættes forkert det er fordi vi kender drift hastigheder
+ved at udnytte de karakteristiske tids og længdeskalaer i plasmaets rand, hvilket vedligeholder simulering fysisk realitet og numerisk stabilitet.
 
 I dette afsnit gennemgås de grundlæggende trin i Braginskii's udledning, hvorefter den endelige HESEL model præsenteres.
 Formålet er ikke at give en fuldstændig fysisk redegørelse for HESEL modellen, men derimod at introducere de centrale idéer og ligninger, som modellen bygger på.
 
-
-Udgangspunktet er energi bevarelses sætningen i fase rummet. Denne siger at ændring af energi i faserummet er nul. Da energi og masse er 
-raleteret gennem Einsteins berømte ligning $E=mc^2$, kan denne sætning også udtrykkes som ændring af masse $f_a$.
+\subsubsection{Braginskii's fluidligninger}
+Braginskii's plasma fluid ligninger er et sæt makroskopiske ligninger, der beskriver bevarelsen af partikler, impuls og energi for en plasmaart.
+Som udgangspunkt andvendes Boltzmann ligningen, som beskriver udviklingen af plasmaets fordelingsfunktion i fase rummet.
 Faserummet består af både partiklernes position $\mathbf{r}$ og hastighed $\mathbf{v}$. For et kollisionsfrit system gælder
 
 \begin{equation*}
@@ -40,7 +44,7 @@ Her er $\beta$ indeks for koordinater i det fysiske rum. Det første led, $\part
 Det andet led, $\partial_{x_\beta}(v_\beta f_a)$, beskriver transport i det fysiske rum.
 Det tredje led, $\partial_{v_\beta}\left( \frac{F_{a\beta}}{m_a} f_a \right)$, beskriver transport i hastighedsrummet.
 Højresiden $C_a$ beskriver ændringen i fordelingsfunktionen som følge af kollisioner mellem partikler.
-Et lille eksempel på anvendelse af \eqref{eq:boltzmann_plasma} kan ses i \eqref{Braginskii example} i appendix B.
+Et lille eksempel på anvendelse af \eqref{eq:boltzmann_plasma} kan ses i appendix B \ref{Braginskii example}.
 
 
 I ligningen indgår følgende størrelser:
@@ -51,9 +55,9 @@ I ligningen indgår følgende størrelser:
     e_a &&&\text{ladningen af partikelart $a$}, \\
     C_a &&&\text{kollisionsleddet for partikelart $a$}.
 \end{align*}
-Her beskriver $f_a(t,\mathbf{r},\mathbf{v})\mathrm{d}\mathbf{v}\mathrm{d}\mathbf{r}$ antal partikler af art $a$ i det fysiske rum $\mathrm{d}\mathbf{r}$ omkring punktet $\mathbf{r}$.
-I resten af udledningen undlades det at specificere hvilken partikelart der er tale om på samme måde Braginskii gør. 
-Da kollisioener over alle hasitgheder ikke ændre det totale antal partilkler gælder for kollisions termet.
+Her beskriver $f_a(t,\mathbf{r},\mathbf{v})\mathrm{d}\mathbf{v}\mathrm{d}\mathbf{r}$ tætheden af partikler af art $a$ i det fysiske rum $\mathrm{d}\mathbf{r}$ omkring punktet $\mathbf{r}$.
+I resten af udledningen undlades det at specificere hvilken partikelart, der er tale om på samme måde som Braginskii gør. 
+Da kollisioner over alle hastigheder ikke ændrer det totale antal partikler gælder for kollisions termet.
 
 \begin{equation*}
     \int C\,d\mathbf{v} = 0, 
@@ -64,11 +68,10 @@ Herefter defineres følgende makroskopiske størrelser:
     V_{a}(\mathbf{r},t) &= \frac{1}{n} \int \mathbf{v} f(\mathbf{r},\mathbf{v},t)\,d\mathbf{v} = \langle v \rangle\\
     T(\mathbf{r},t) &= \frac{m}{3}\langle (v - V)^2 \rangle
 \end{align*}
-Her er $n$, $V$ og $T$ makroskopiske størrelser for tætheden, middelhastigheden og temperaturen for partikler i punktet $\mathbf{r}$ til tid $t$.
-For at komme frem til Braginskii's 3 ligninger der beskriver tætheds, impuls og energi ligningerne ganges
-\eqref{eq:boltzmann_plasma} med $1$, $m v$ og $\frac{1}{2} m v^2$, integrere over hele hastighedsrummet og
-undytte definationer for $n$, $V$ og $T$ fås Braginskii's ligninger.
-Selve integrationen og udledningen af ligningerne er ikke udført i denne rapport.
+Her er $n$, $V$ og $T$ makroskopiske størrelser for tætheden, middelhastigheden og temperaturen, for partikler i punktet $\mathbf{r}$ til tiden $t$.
+For at komme frem til Braginskii's 3 ligninger, der beskriver tæthed, impuls og energi, ganges \eqref{eq:boltzmann_plasma} med $1$, $m v$ og $\frac{1}{2} m v^2$.
+Herefter integreres ligningerne over hele hastighedsrummet, hvorefter $n$, $V$ og $T$ indsættes i ligningerne. Herved fremkommer Braginskii's ligninger:
+% gennemgå korrkthed
 
 \begin{align}
     &\frac{\partial n}{\partial t} + \nabla \cdot (n \mathbf{V}) = 0 \label{eq:Braginsiis kontinuitetsligning_}\\
@@ -77,14 +80,16 @@ Selve integrationen og udledningen af ligningerne er ikke udført i denne rappor
     &\frac{\partial}{\partial t} \left(\frac{mn}{2} \langle v^2 \rangle\right)  + \nabla \left(\frac{m n}{2} \langle v^2\mathbf{v} \rangle \right)
     -en\mathbf{EV} = \int \frac{mv^2}{2}Cd\mathbf{v} \label{eq:energiligning_ikke_simplificeret_ikke_simplificeret}
 \end{align}
+
+(Selve integrationen og udledningen af ligningerne er ikke udført i denne rapport.)
 Ligning \eqref{eq:Braginsiis kontinuitetsligning_} kaldes kontinuitetsligningen og beskriver bevarelsen af partikler.
 Ligningerne \eqref{eq:impulsligning_ikke_simplificeret} og \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret}
 kaldes henholdsvis impuls og energiligningen og beskriver bevarelsen af henholdsvis impuls og energi i plasmaet.
-\eqref{eq:impulsligning_ikke_simplificeret} og \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret} blvier yderligere 
+\eqref{eq:impulsligning_ikke_simplificeret} og \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret} bliver yderligere 
 reduceret. 
 
-For hasitgheden af partikeltyper defineres middel hastighed $\mathbf{V}$ og tilfældig hastighed, $\mathbf{v'} =  \mathbf{v - V}$.
-Herfra bruger Braginskii idenditetsætningen for to tilfældige variabler, som siger:
+For hastigheden af partikeltyper defineres middel hastighed $\mathbf{V}$ og tilfældig hastighed, $\mathbf{v'} =  \mathbf{v - V}$.
+Herfra bruger Braginskii identitetssætningen for to tilfældige variabler, som siger:
 \begin{gather*}
     \mathbb{E}\left[XY\right] = \mathbb{E}\left[X\right]\mathbb{E}\left[Y\right] + \mathrm{Cov}(X,Y) \\
     \mathrm{Cov}(X,Y) = \mathbb{E}\left[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])\right] 
@@ -105,7 +110,7 @@ Dermed fås
 \begin{equation*} 
     \left\langle v_\alpha v_\beta \right\rangle = V_\alpha V_\beta + \left\langle v_\alpha'v_\beta' \right\rangle
 \end{equation*}
-For at simplificere Braginskii's impuls ligning \eqref{eq:impulsligning_ikke_simplificeret} defineres følgene:
+For at simplificere Braginskii's impuls ligning \eqref{eq:impulsligning_ikke_simplificeret} defineres følgende:
 \begin{align}
     &\frac{\mathrm{d}f}{\mathrm{d}t}
     = \frac{\partial f}{\partial t} + V_\beta \frac{\partial f}{\partial x_\beta}
@@ -114,7 +119,7 @@ For at simplificere Braginskii's impuls ligning \eqref{eq:impulsligning_ikke_sim
     &\pi_{\alpha\beta} = nm\langle v_\alpha ' v_\beta ' - \frac{1}{3}v'^2\delta_{\alpha\beta} \rangle \label{eq:stress tensor}\\
     &\mathbf{R} = \int m\mathbf{v}'C \mathrm{d}\mathbf{v} \label{eq:mean change in momentum}
 \end{align}
-Her er\eqref{op:substantive derivative} operatoren substative afledte anvendt på funktionen $f$,
+Operatoren \eqref{op:substantive derivative} kaldes substative afledte og er anvendt på funktionen $f$.
 Ligning \eqref{eq:preasure} definerer det isotrope tryk,
 \eqref{eq:stress tensor} den viskøse spændingstensor der  beskriver afvigelser fra isotropt tryk,
 \eqref{eq:mean change in momentum} beskriver netto momentumoverførsel som følge af kollisioner mellem partikler.
@@ -128,7 +133,7 @@ Venstresiden, af Braginskii's momentum ligning\eqref{eq:Braginskii's momentum li
 Højresiden består af kræfter fra trykgradienter, viskøse spændinger, elektromagnetiske felter og kollisioner med andre partikler.
 Disse processer styrer transporten og udviklingen af plasmaets makroskopiske bevægelse.
 
-Braginskii's energi transport ligning \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret} er også 
+Braginskii's energi ligning \eqref{eq:energiligning_ikke_simplificeret_ikke_simplificeret} er også 
 ønsket at skrive på en mere kompakt form. Til dette udledes følgende størrelser:
 \begin{align*}
     \langle \frac{v^2}{2} v_\beta \rangle &= \frac{1}{2} V^2 V_\beta + V_\alpha 
@@ -142,17 +147,14 @@ Ved at introducere følgende definitioner:
     &Q = \int \frac{m}{2} v'^2 C \mathrm{d}\mathbf{v}\\
     &\mathbf{q} = \int \frac{m}{2} v'^2 \mathbf{v}' f \mathrm{d}\mathbf{v} = \langle \frac{1}{2} m v'^2 \mathbf{v}' \rangle \\
 \end{align*}
-Hvor $Q$ beskriver varme genereret af kollisioner mellem partikler.
-$\mathbf{q}$ er flux tætheden for tilfældig transport.
-Herfra kan Braginskii's energi ligning skrives på følgende form og endelige form::
+Hvor $Q$ beskriver varme genereret af kollisioner mellem partikler. $\mathbf{q}$ er flux tætheden for tilfældig transport.
+Herfra kan Braginskii's energi ligning komme på den kompakte form:
 \begin{align}
     \frac{\partial}{\partial t}\left(\frac{nm}{2}  V^2 + \frac{3}{2} n T\right) +
     \frac{\partial}{\partial x_\beta} \left( \left(\frac{mn}{2}V^2  +\frac{5}{2} nT\right)V_\beta +
-    \left(\pi_{\alpha \beta} V_\alpha \right) + q_\beta \right) = en\mathbf{EV} + \mathbf{RV} + Q \label{eq:Braginskii's energitransport ligning_}
+    \left(\pi_{\alpha \beta} V_\alpha \right) + q_\beta \right) = en\mathbf{EV} + \mathbf{RV} + Q  \label{eq:Braginskii's energi ligning_}
 \end{align}
-Braginskii's energi transport ligning\eqref{eq:Braginskii's energitransport ligning_} beskriver bevarelsen af 
-energi for en plasmaart. Det første led repræsenterer ændringen i den totale energi, som består af summen af
-den kinetiske energi og den interne termiske energi. 
+Det første led repræsenterer ændringen i den totale energi, som består af summen af den kinetiske energi og den interne termiske energi. 
 Det andet led beskriver energifluxen og indeholder bidrag fra konvektiv energitransport, viskøse spændinger og varmeledning.
 Højresiden repræsenterer arbejdet udført af ydre kræfter samt varmeproduktion og energiudveksling forårsaget af kollisioner.
 
@@ -174,6 +176,7 @@ Herved udlede Braginskii sine tre ligninger for tæthed, impuls og energi udvikl
 Ved modellering af turbulens i randplasmaer er Braginskii's ligninger imidlertid ofte for komplekse til direkte numerisk anvendelse.
 Derfor introduceres den reducerede drift fluid HESEL modeller, hvor en række fysiske antagelser anvendes til at forenkle beskrivelsen af plasmaets dynamik.
 
+\subsubsection{Hesel modellen}
 I dette projekt anvendes HESEL modellen, som er en $n$ dimensionel drift fluid model udviklet til at beskrive turbulens
 og transport i tokamak plasmaers rand og SOL regioner. I dette projekt simuleres den i 2 dimensioner.
 Modellen bygger på Braginskii's fluidbeskrivelse og fremkommer gennem en række approksimationer og reduktioner af de oprindelige ligninger.
@@ -189,18 +192,21 @@ Notationen i Hesel modellen kommer til at følge tæt notationen i \cite{num_sim
     \frac{3}{2}\mathrm{d} _t p_e + \frac{5}{2}p_e \mathcal{K}(\phi) -\frac{5}{2}\mathcal{K}\left(\frac{p_e^2}{n}\right)= \Lambda_{p_e}\label{EQ_p_e} \\
     \frac{3}{2}\mathrm{d} _t p_i + \frac{5}{2}p_i \mathcal{K}(\phi) +\frac{5}{2}\mathcal{K}\left(\frac{p_i^2}{n}\right) - p_i\mathcal{K}(p_e+p_i) = \Lambda_{p_i} \label{EQ_p_i}
 \end{gather}
-Den første ligning \eqref{EQ_n} beskriver bevarelsen af plasmaets partikeltæthed. Ligningen stammer fra Braginskiis kontinuitetsligning,
-hvor udviklingen af tætheden bestemmes af advektion med plasmaets $E \times B$ retning samt kompressibilitet forårsaget af magnetfeltets 
-krumning og gradienter. Ledet $n\mathcal{K}(\phi)$ 
+Det der gør HESEL modellen numerisk effektiv og samtidig fysisk realistisk er, at de tværgående komponenter af momentumligningen reduceres til velkendte plasma drifter.
+Særligt beskrives plasmaets bevægelse i det tværgående plan ved $E\times B$ driften, mens inertielle effekter indgår gennem den modificerede vorticitet.
+Derved undgås en direkte løsning af den fulde momentumligning, hvilket reducerer den beregningsmæssige kompleksitet betydeligt. 
+
+Den første ligning \eqref{EQ_n} beskriver bevarelsen af plasmaets partikeltæthed. Ledet $n\mathcal{K}(\phi)$ 
 repræsenterer transport som følge af elektriske felter i et krumt magnetfelt, mens $\mathcal{K}(p_e)$ beskriver drivningen fra elektronstryksgradienter.
-Højresiden $\Lambda_n$ samler kollisionsprocesser, diffusion og parallelle tab. 
 Ligningen udgør dermed grundlaget for beskrivelsen af partikeltransport og dannelsen af tæthedsfluktuationer i HESEL modellen. 
 
-Vorticitetsligningen\eqref{EQ_w} beskriver udviklingen af plasmaets tværgående rotationsbevægelse og kan opfattes som en omskrevet
-form af den tværgående impulsbevarelse i Braginskiis momentumligning. Den modificerede vorticitet $\omega^*$ indeholder både $E\times B$ vorticitet og bidrag fra iontrykket.
-Poisson klammen  $\{\phi,p_i\}$ beskriver vekselvirkningen mellem det elektrostatiske potentiale og iontrykket, mens krumningsleddet $\mathcal{K}(p_e+p_i)$ 
-repræsenterer drivningen af turbulens gennem trykgradienter i det krumme magnetfelt.
-Højresiden indeholder viskøse og kollisionsbestemte dissipative mekanismer. Ligningen er central for beskrivelsen af turbulens og filamentdynamik i HESEL. 
+Vorticitetsligningen \eqref{EQ_w} beskriver udviklingen af plasmaets tværgående rotationsbevægelse.
+Ligningen fremkommer i drift fluid formuleringen ved at kombinere ion og elektronkontinuitetsligningerne under antagelsen om kvasi neutralitet.
+Den modificerede vorticitet $\omega^*$ indeholder både $E\times B$ vorticitet og bidrag fra iontrykket.
+
+Poisson klammen $\{\phi,p_i\}$ beskriver vekselvirkningen mellem det elektrostatiske potentiale og iontrykket, mens krumningsleddet $\mathcal{K}(p_e+p_i)$ repræsenterer drivningen af turbulens gennem trykgradienter i det krumme magnetfelt.
+Højresiden indeholder viskøse og kollisionsbestemte dissipative mekanismer.
+Ligningen er central for beskrivelsen af turbulens og filamentdynamik i HESEL.
 
 Elektron \eqref{EQ_p_e} og iontryk \eqref{EQ_p_i} ligningerne beskriver udviklingen af plasmaets termiske energi gennem henholdsvis elektrontrykket $p_e$ og iontrykket $p_i$.
 Ligningerne er afledt fra Braginskiis energitransportligninger og indeholder transport med plasmaflowet, kompression i det krumme magnetfelt samt energitransport drevet af trykgradienter.
@@ -219,21 +225,39 @@ Lambda termerne er fra \cite{num_sim_blobs} og her er de givet ved.
 $\Lambda$ koefficienterne står for at beskrive kollisionsprocesserne, varmeledning, viskøse effekter og parallelle tab og virker dissipativt på systemet.
 Her repræsenterer $D_e$ og $D_i$ de neoklassiske tværgående transportkoefficienter, som beskriver diffusiv udjævning af henholdsvis partikel, ion, elektron og vorticitetsprofiler.
 Koefficienten $\alpha$ parametriserer koblingen til parallel driftbølge dynamik på lukkede feltlinjer og driver transport gennem forskelle mellem tæthed, temperatur og potentiale.
-Tiderne $\tau$ og $\tau_p$ beskriver parallelle tab: $\tau$ er den karakteristiske tidsskala for tab til (SOL) og sheath, mens $\tau_p$ angiver den tidsskala,
+$\tau$ og $\tau_p$ beskriver hvor hurtgit feltet tvinges mod profilen, funktionerne med subskript $p$, 
+beskriver parallelle tab: $\tau$ er den karakteristiske tidsskala for tab til (SOL) og sheath, mens $\tau_p$ angiver den tidsskala,
 hvormed plasmaet relakseres mod de påtvungne kildeprofiler i randregionen.
+For dette eksperiment er profilerne givet ved:
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{figures/Hesel_profiles.png}
+    \caption{Påtvungne profiler i numerisk domæne, med ghost cells,"init" er $n_p$, $p_{e,p}$ og $p_{i,p}$, med sigma profiler der bestemmer hvor $\Lambda$ termerne håndhæves.
+    x-aksen har Bohm normaliseret længde: $x = 140/\rho_s$}
+    \label{fig:hesel_profiles}
+\end{figure}
 
 Funktionerne i HESEL modellen er givet ved:
 \begin{align*}
-    &n: n(x,z,t)\\
-    &p_{e,i}: p_{e,i}(x,z,t)\\
-    &T_{e,i}: T_{e,i}(x,z,t) = \frac{p_{e,i}(x,z,t)}{n(x,z,t)}\\
-    &\phi: \phi(x,z,t)\\
-    &\omega^*: \omega^*(x,z,t) = \nabla^2\phi + \nabla^2 p_i\\
+    &n: n(x,y,t)\\
+    &p_{e,i}: p_{e,i}(x,y,t)\\
+    &T_{e,i}: T_{e,i}(x,y,t)\\
+    &\phi: \phi(x,y,t)\\
+    &\omega^*: \omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i\\
 \end{align*}
 Her beskriver $n$ plasmaets partikel tæthed, $p_{e,i}$ er henholdsvis elektron og iontryk, $T_{e,i}$ er elektron og ion temperatur, $\phi$ er det elektriske potentiale og $\omega^*$ er den modificerede vorticitet.
-Den opmærksomme læser vil bemærke sammenhængen mellem tæthed, tryk og temperatur, $p_{e,i} = nT_{e,i},$ hvilket
-følger direkte af den Bohm normalisering, der anvendes i HESEL modellen.
+Sammenhængen mellem tæthed, tryk og temperatur, er givet ved $p_{e,i} = nT_{e,i},$ hvilket er følge af Boltzmanns konstanten og temperatur samles til et led 
+\begin{equation*}
+    pV =N \kappa_b T,\quad pV = NT
+\end{equation*}
+da $N$ er antallet af partikler kan tætheden $n$ udtrykkes på følgene form:
+\begin{equation*}
+    p = \frac{N}{V}T,\quad p = nT
+\end{equation*}
 
+Når HESEL modellen simuleres, omskrives ligningerne til Bohm normaliserede enheder, hvilket reducerer antallet af fysiske parametre,
+forbedrer den numeriske stabilitet og gør det muligt at beskrive plasmaets dynamik i en dimensionsløs form uafhængigt af de valgte referenceværdier.
+Bohm normalisering betyder at visse variabler ganges med konstanter for at gøre dem dimensionsløse.
 \begin{align*}
     t \rightarrow \omega_{ci,0} t,\quad
     x \rightarrow \frac{x}{\rho_s}, \quad
@@ -241,11 +265,10 @@ følger direkte af den Bohm normalisering, der anvendes i HESEL modellen.
     T_{e,i} \rightarrow \frac{T_{e,i}}{T_{e0}}, \quad
     p_{e,i} \rightarrow \frac{p_{e,i}}{n_0T_{e0}},
 \end{align*}
+Det bemærkes at i literaturen bruges $(x,y,z)$ koordinate indeksering, men når Hesel simuleres bruges $(x,z,y)$ indeksering.
+I denne rapport vil $(x,y,z)$ koordinat indeksering bruges. Dette ændre ikke på noget fysisk eller matematisk men blot notationen.
 
-Det skal lige bemærkes at fælterne eksistere i koordinaterne $x$ og $z$, hvor $x$ er den tværgående retning og $z$ er den parallelle retning. Dette forsøges at 
-holdes konsekvent i hele rapporten, dog bliver $y$ og $z$ ofte byttet rundt når data gemmes fra simulering og bearbejdet videre.
-
-Operatorerne i HESEL modellen er givet ved:
+Til sidst er det nyttigt at introducere den række operatorer, som anvendes i HESEL modellen for at gøre ligningerne mere kompakte og læsbare.
 \begin{gather}
     \mathcal{K}(f)= - \frac{\rho_s}{R}\partial_y f \label{curvature}\\
     \left\{ f, g\right\} = \partial_x f \partial_y g - \partial_y f \partial_x g \label{poission}\\
@@ -258,19 +281,7 @@ Operatorerne i HESEL modellen er givet ved:
     \nabla_\perp = \begin{pmatrix} \partial_x \\ \partial_y \end{pmatrix} \label{nable_perp}\\
     \nabla_\perp^2 = \partial_x^2 + \partial_y^2 \label{nabla2_perp}\\
 \end{gather}
-
-De sidste parametre i HESEL modellen er de geometriske og fysiske parametre, som er givet ved:
-Samling af koeffecienter:
-\begin{gather}
-    \Theta = \frac{3m_e}{m_i}v_{ei}\left(p_e - p_i\right)\label{Theta}\\
-    \alpha = \frac{2T_{e0}}{v_{ei}m_eL^2_\parallel\omega_{i0}}\label{alpha}\\
-    \phi_m = \ln(\sqrt{m_i/2\pi m_e})\label{phi_m}\\
-\end{gather}
-hvor $\Theta$ beskriver energiudvekslingen mellem elektroner og ioner gennem kollisioner,
-$\alpha$ er en parameter for parallel elektrondynamik og driftbølgekobling, 
-og $\phi_m$ er Bohm-potentialet, der indgår i skedebetingelserne.
-Her er $v_{ei}$ elektron-ion kollisionsfrekvensen, $L_\parallel$ den parallelle forbindelseslængde,
-og $m_e$, $m_i$ henholdsvis elektron og ionmassen.
+De sidste parametre er alle skalarer der bestemmer de geometriske, numeriske og fysiske størrelser. Disse kan læses om i \cite{udledning_af_hesel}
 
 
 \newpage

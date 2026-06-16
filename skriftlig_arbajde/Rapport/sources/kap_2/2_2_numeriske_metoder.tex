@@ -1,0 +1,110 @@
+Simuleringsmotoren er bygget til numerisk at løse koblede partielle differentialligninger. 
+I dette projekt anvendes et todimensionalt domæne, så PDE systemet kan skrives som
+\begin{equation}
+    \frac{\partial \mathbf{u}}{\partial t}
+    =
+    \mathcal{F}\!\left(t,x,z,\mathbf{u},\nabla \mathbf{u},\nabla^2 \mathbf{u}\right),
+    \qquad
+    (x,z) \in \Omega ,
+    \label{eq:general_pde_system}
+\end{equation}
+hvor $\mathbf{u}(t,x,z) \in \mathbb{R}^m$ repræsenterer ét felt eller et koblet system af $m$ felter. Grundideen er at diskretisere rummet først og derefter udvikle den diskrete løsning i tid. Denne fremgangsmåde kaldes metode af linjer.
+
+\subsubsection{Rumlig diskretisering}
+Domænet vælges som et rektangel
+\[
+    \Omega = [x_{\min},x_{\max}) \times [z_{\min},z_{\max}),
+\]
+og opdeles i et uniformt gitter med $N_x$ punkter i $x$ retningen og $N_z$ punkter i $z$ retningen. Gitterpunkterne kan skrives som
+\[
+    x_i = x_{\min} + i \Delta x,
+    \qquad
+    z_j = z_{\min} + j \Delta z,
+\]
+hvor
+\[
+    \Delta x = \frac{x_{\max}-x_{\min}}{N_x},
+    \qquad
+    \Delta z = \frac{z_{\max}-z_{\min}}{N_z}.
+\]
+Den diskrete løsning betegnes ved $\mathbf{u}_{i,j}(t)$, som approksimerer den kontinuerte løsning i punktet $(x_i,z_j)$. For koblede systemer er $\mathbf{u}_{i,j}(t)$ en vektor. Når ghost celler indføres, lader man de fysiske gitterpunkter have indeks $i=1,\dots,N_x$ og $j=1,\dots,N_z$, mens de ekstra randceller får indeks $0$ og $N_x+1$ i $x$ retningen samt $0$ og $N_z+1$ i $z$ retningen.
+
+Gitteret udvides med ghost celler omkring randen, så de samme stencilformler kan anvendes i hele det indre domæne. For periodiske randbetingelser kopieres værdierne fra den modsatte side, så der diskret gælder
+\[
+    \mathbf{u}_{0,j} = \mathbf{u}_{N_x,j},
+    \qquad
+    \mathbf{u}_{N_x+1,j} = \mathbf{u}_{1,j},
+\]
+og tilsvarende i $z$ retningen.
+
+\subsubsection{Numeriske differentialoperatorer}
+De rumlige afledte approksimeres med centrale differenser af anden orden. For et skalarfelt $u$ fås
+\begin{equation}
+    \left(\partial_x u\right)_{i,j}
+    \approx
+    \frac{u_{i+1,j}-u_{i-1,j}}{2\Delta x},
+    \qquad
+    \left(\partial_z u\right)_{i,j}
+    \approx
+    \frac{u_{i,j+1}-u_{i,j-1}}{2\Delta z}.
+    \label{eq:central_first_order}
+\end{equation}
+Tilsvarende approksimeres de andenordens afledte ved
+\begin{equation}
+    \left(\partial_{xx} u\right)_{i,j}
+    \approx
+    \frac{u_{i+1,j}-2u_{i,j}+u_{i-1,j}}{\Delta x^2},
+    \qquad
+    \left(\partial_{zz} u\right)_{i,j}
+    \approx
+    \frac{u_{i,j+1}-2u_{i,j}+u_{i,j-1}}{\Delta z^2}.
+    \label{eq:central_second_order}
+\end{equation}
+Heraf følger den diskrete Laplace operator
+\[
+    (\nabla^2 u)_{i,j}
+    \approx
+    \frac{u_{i+1,j}-2u_{i,j}+u_{i-1,j}}{\Delta x^2}
+    +
+    \frac{u_{i,j+1}-2u_{i,j}+u_{i,j-1}}{\Delta z^2}.
+\]
+Hvis PDE systemet indeholder advektionsled, skrives disse diskret som
+\[
+    \mathbf{v}\cdot\nabla u
+    \approx
+    v_x \left(\partial_x u\right)_{i,j}
+    +
+    v_z \left(\partial_z u\right)_{i,j}.
+\]
+Denne diskretisering har truncationsfejl af størrelsesorden $\mathcal{O}(\Delta x^2+\Delta z^2)$ for glatte løsninger.
+
+Når alle rumlige operatorer er diskretiseret, kan PDE systemet omskrives til et stort system af ordinære differentialligninger,
+\begin{equation}
+    \frac{\mathrm{d}\mathbf{U}}{\mathrm{d}t} = \mathbf{F}(t,\mathbf{U}),
+    \label{eq:mol_system}
+\end{equation}
+hvor $\mathbf{U}(t)$ samler alle gitterværdier for alle felter.
+
+\subsubsection{Tidsintegration}
+Til tidsudviklingen anvendes den klassiske Runge--Kutta metode af fjerde orden, RK4. Givet den semidiskrete tilstand $\mathbf{U}^n \approx \mathbf{U}(t_n)$ og et tidsstep $\Delta t_n$ beregnes
+\begin{align}
+    \mathbf{k}_1 &= \mathbf{F}(t_n,\mathbf{U}^n), \notag\\
+    \mathbf{k}_2 &= \mathbf{F}\!\left(t_n+\frac{\Delta t_n}{2}, \mathbf{U}^n+\frac{\Delta t_n}{2}\mathbf{k}_1\right), \notag\\
+    \mathbf{k}_3 &= \mathbf{F}\!\left(t_n+\frac{\Delta t_n}{2}, \mathbf{U}^n+\frac{\Delta t_n}{2}\mathbf{k}_2\right), \notag\\
+    \mathbf{k}_4 &= \mathbf{F}\!\left(t_n+\Delta t_n, \mathbf{U}^n+\Delta t_n\mathbf{k}_3\right), \notag
+\end{align}
+hvorefter løsningen opdateres ved
+\begin{equation}
+    \mathbf{U}^{n+1}
+    =
+    \mathbf{U}^n
+    +
+    \frac{\Delta t_n}{6}
+    \left(
+        \mathbf{k}_1 + 2\mathbf{k}_2 + 2\mathbf{k}_3 + \mathbf{k}_4
+    \right).
+    \label{eq:rk4_update}
+\end{equation}
+RK4 er en eksplicit metode med høj nøjagtighed, men stabiliteten afhænger stadig af de rumlige skalaer og styrken af de fysiske led.
+
+Den samlede numeriske strategi er derfor et uniformt gitter med periodiske randbetingelser, centrale differensoperatorer i rummet, metode af linjer til at danne et stort ODE system og RK4 til tidsudviklingen.

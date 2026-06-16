@@ -1,41 +1,58 @@
+Verdens energiforbrug forventes at stige markant i de kommende årtier, samtidig med at behovet for stabile energikilder med lave CO$_2$ udledninger bliver stadig mere presserende.
+I den sammenhæng fremstår fusionsenergi som en særligt attraktiv mulighed, fordi den i princippet kan levere store mængder energi med et relativt begrænset brændselsforbrug
+og uden de samme langsigtede affaldsproblemer som konventionel fission \cite{iter_new_energy}.
+Potentialet er derfor betydeligt, men vejen fra fysisk mulighed til teknologisk realisering er lang.
+En af de centrale udfordringer er, at plasmaet i en fusionsreaktor er et meget komplekst system, hvor små ændringer i lokale forhold kan føre til
+markante forskelle i transport, stabilitet og energitab.
 
+I denne rapport er fokus rettet mod tokamakken, som er en af de mest undersøgte konfigurationer inden for magnetisk indesluttet fusion.
+I en tokamak holdes et varmt, ioniseret plasma på plads af stærke magnetfelter, så partiklerne ikke kommer i direkte kontakt med reaktorens vægge.
+Særligt interessant er plasmaets randregion, altså overgangen mellem det godt indesluttede plasma og scrape-off layer (SOL), hvor feltlinjerne ikke længere er lukkede.
+Det er netop i denne randzone, at turbulens, filamentstrukturer og tværgående transport i høj grad bestemmer, hvor effektiv indeslutningen er,
+og hvor store belastninger væggene i reaktoren udsættes for.
+Hvis disse processer ikke forstås og beskrives tilstrækkeligt præcist, bliver det vanskeligt at optimere energibalancen i reaktoren \cite{plasma_particle_sources,num_sim_blobs}.
 
-Menneskets energi behovet forvæntes at tre dobles i løbet af dette århunderede. Derfor er det yderst vigtigt at viderudvikle og 
-forbedre de eksisterende energikilder. Fusionenergi er den mest lovende energikilder. Ved sammenspaldning af atomer og 
-partikler udløses der 4 millioner gange mere energi, ved samme masse, som ved forbrænding af kul, olje og gas. 
-Brændstoffet der bruges til fusion, deuterium og Tritium, er nemt tilgængeligt. 
-Deuterium kan distilleres fra havvand, og Tritium kan fremstilles ved at bestråle Lithium med neutroner, Lithium fra
-land baseret resurser er nok til at forsyne fusion reaktorer i tusinder af år.
-Fusion udleder ingeng drivhusgasser ud i atmosfæren, og i modsætning til fission har affaldet fra reaktionen en langt 
-kortere halveringstid, så store depoter for radioaktivt affald er ikke nødvendige. \cite{iter_new_energy}
+Randplasmaets dynamik er imidlertid vanskelig at analysere direkte. Fysikken beskrives gennem koblede, ikke lineære partielle differentialligninger,
+hvor tæthed, tryk, potentiale og strømning påvirker hinanden gensidigt. Selv reducerede modeller rummer derfor et komplekst samspil mellem transport, dissipation og instabiliteter.
+I dette projekt anvendes Hot edge-SOL-elctrostatic (HESEL) modellen, som er en reduceret drift fluid model udviklet til at beskrive turbulens og transport
+i plasmaets rand og i SOL regionen \cite{udledning_af_hesel,num_sim_blobs}.
+Modellen er fysisk konsistent nok til at repræsentere centrale mekanismer i randplasmaet, men samtidig tilstrækkeligt reduceret til at kunne simuleres numerisk i praksis.
+Netop derfor er HESEL modellen et godt udgangspunkt for at undersøge, hvordan moderne datadrevne metoder kan kombineres med klassisk plasmafysisk modellering.
 
-% \lipsum[2-4] \cite{china_too_many}. 
+Den traditionelle tilgang til HESEL og lignende modeller er numerisk simulering, eksempelvis ved finite difference diskretisering i rum og tidsintegration af det resulterende ligningssystem.
+Denne tilgang er veletableret og giver adgang til detaljerede løsninger, men den er også beregningstung og kan være numerisk ustabilt.
+Dertil kommer, at plasmaets randdynamik er stærkt ikke lineær og følsom over for begyndelsesbetingelser og parameterændringer.
+Hvis man ønsker at sammenligne mange scenarier, udforske store parameterrum eller bruge modellen i en lille analyse, bliver fulde simuleringer hurtigt en flaskehals.
+Problemet er derfor ikke alene at kunne simulere systemet korrekt, men også at kunne gøre det effektivt og på en måde, der bevarer den væsentlige fysik.
 
-% \subsection{Subsection}
-% \lipsum[5]
+Her bliver Scientific Machine Learning (SciML) interessant. SciML betegner metoder, hvor maskinlæring kombineres med kendt struktur fra naturvidenskabelige
+modeller, eksempelvis differentialligninger, symmetrier eller bevarelseslove.
+I stedet for at betragte data og fysik som to adskilte kilder til viden forsøger SciML at udnytte begge dele samtidig.
+For plasmafysik er det særligt lovende, fordi mange problemer netop er kendetegnet ved dyre simuleringer, begrænsede datamængder og stærke fysiske begrænsninger,
+som modellerne bør respektere.
+En vellykket SciML model kan derfor potentielt fungere som en hurtigere surrogatmodel, der enten helt eller delvist kan erstatte tunge simuleringer i udvalgte arbejdsgange.
 
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width = 0.8\textwidth ]{figures/tex.png}
-%     \caption{Increase of battery capacity. \cite{china_too_many}}
-%     \label{fig:batteryIncreas}
-% \end{figure}
+Projektets motivation er den en metodisk motivation: hvis SciML kan anvendes meningsfuldt på HESEL modellen,
+peger det mod en mere fleksibel måde at arbejde med komplekse plasma modeller på.
 
-% \lipsum[6-7]
+Projektet placerer sig derfor i krydsfeltet mellem anvendt matematik, numerisk analyse, plasmafysik og maskinlæring,
+og netop dette tværfaglige spændingsfelt gør undersøgelsen fagligt relevant.
 
-% In \autoref{tab:table1}
+Formålet med rapporten er at undersøge, hvordan SciML kan anvendes til modellering af randdynamik i plasma med udgangspunkt i HESEL modellen,
+og i hvilken grad sådanne modeller kan supplere eller effektivisere klassiske numeriske simuleringer.
+Udgangspunktet er ikke, at maskinlæring ukritisk skal erstatte fysikbaserede metoder, men snarere at afklare, hvornår og hvordan en fysikinformeret læringsmodel
+kan være et nyttigt redskab. Derfor lægges der vægt på både fysisk fortolkning, numerisk sammenlignelighed og metodiske begrænsninger.
 
-% \begin{table}[H]
-%     \centering
-%     \caption{That is a table.}
-%     \begin{tabular}{|c|c|c|}
-%     \centering
-%     \textbf{Lorem} & \textbf{Ipsum} & \textbf{Lorem [\$]} \\ \hline \hline
-% 1   & lipsum    & lorem     \\ \hline   
-% 2   & lipsum    & lorem   \\ \hline
-% 3   & lipsum    & lorem  
-%     \end{tabular}
-%     \label{tab:table1}
-% \end{table}
+På baggrund af projektplanen undersøges følgende spørgsmål:
+\begin{enumerate}
+    \item Hvordan kan SciML, særligt fysikinformerede neurale netværk, anvendes til modellering af HESEL-ligningssystemet, og hvordan sammenlignes løsningerne med klassiske numeriske simuleringer?
+    \item Hvilken betydning har det for modellens kvalitet, om man træner på de enkelte ligninger hver for sig eller på det fulde koblede ligningssystem, og hvordan påvirker dataopløsningen resultaterne?
+    \item I hvor høj grad kan modellen generalisere til ukendte punkter, tidsskridt og begyndelsesbetingelser, og hvordan hænger denne generalisering sammen med valg af hyperparametre og træningsopsætning?
+    \item Hvor meget kan modellen effektiviseres, før tabet i præcision bliver væsentligt, og hvordan bør beregningstid, hukommelsesforbrug og nøjagtighed afvejes i praksis?
+\end{enumerate}
 
-% \lipsum[8]
+Disse spørgsmål er valgt, fordi de tilsammen dækker både den fysiske og den beregningsmæssige side af problemet. Det er ikke tilstrækkeligt, at en model blot kan reproducere enkelte løsninger; den skal også være robust, fortolkbar og anvendelig i situationer, hvor man ønsker mere end ren interpolation. Derfor er fokus ikke alene på fejlmål, men også på modellens anvendelighed som repræsentation af dynamikken i et ikke-lineært system. I den forstand handler projektet både om modelleringsevne og om videnskabelig troværdighed.
+
+Rapporten har samtidig et tydeligt læringsperspektiv, selv om dette ikke er hovedformålet i selve analysen. Arbejdet forudsætter en praktisk forståelse af numerisk løsning af PDE-systemer, grundlæggende plasmafysik i randregionen og udvikling samt evaluering af SciML-modeller på dynamiske systemer. Desuden indgår sammenligningen mellem simuleringer og lærte modeller som et centralt metodisk element. Læringsmålene fungerer derfor som en bagvedliggende ramme for projektet: de angiver, hvilke kompetencer der skal bringes i spil for at kunne besvare forskningsspørgsmålene på en fagligt meningsfuld måde.
+
+Resten af rapporten er struktureret som følger. Først præsenteres den fysiske baggrund for HESEL-modellen og de numeriske metoder, der anvendes til simulering af ligningssystemet. Herefter beskrives implementeringen af eksperimenterne og den måde, data genereres og behandles på. Dernæst analyseres resultaterne fra både de klassiske simuleringer og de anvendte SciML-metoder med henblik på at vurdere nøjagtighed, generalisering og effektivitet. Afslutningsvis diskuteres projektets væsentligste resultater, begrænsninger og perspektiver for fremtidigt arbejde.
