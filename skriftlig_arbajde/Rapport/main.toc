@@ -13,11 +13,15 @@
 \contentsline {subsubsection}{\numberline {2.3.3}Tidsintegration}{16}{subsubsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.4}Tilgang til eksperiment}{17}{subsection.2.4}%
 \contentsline {subsubsection}{\numberline {2.4.1}Opstilling af eksperimenter}{17}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Valg af model arkitektur}{18}{subsubsection.2.4.2}%
 \contentsline {section}{\numberline {3}Implementering}{19}{section.3}%
-\contentsline {section}{\numberline {4}Data og analyse}{20}{section.4}%
-\contentsline {section}{\numberline {5}Resultater}{21}{section.5}%
-\contentsline {section}{\numberline {6}Konklusion og diskussion}{22}{section.6}%
-\contentsline {section}{\numberline {7}Fremtidigt arbejde}{23}{section.7}%
+\contentsline {subsection}{\numberline {3.1}Overordnet struktur}{19}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Pipeline for modellen}{19}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Sammenhæng mellem simulation, data og model}{20}{subsubsection.3.1.2}%
+\contentsline {section}{\numberline {4}Data og analyse}{23}{section.4}%
+\contentsline {section}{\numberline {5}Resultater}{24}{section.5}%
+\contentsline {section}{\numberline {6}Konklusion og diskussion}{25}{section.6}%
+\contentsline {section}{\numberline {7}Fremtidigt arbejde}{26}{section.7}%
 \contentsline {section}{List of Figures}{I}{section.7}%
 \contentsline {section}{List of Tables}{II}{section.7}%
 \contentsline {section}{Nomenclature}{III}{section.7}%

@@ -1,0 +1,112 @@
+\subsubsection{Pipeline for modellen}
+Projektets eksperimentelle del er bygget op som en sammenhængende pipeline fra numerisk plasmasimulation til træning af SciML modeller.
+
+Udgangspunktet er output fra BOUT++/Hesel  simuleringer. Hver simulering består dels af en konfigurationsfil, \texttt{BOUT.settings}, dels af et sæt filer af typen \texttt{BOUT.dmp.*.nc}
+med de beregnede felter. Disse data bliver først behandlet i mappen \texttt{hesel\_scraper}, som fungerer som bindeled mellem råsimulation og de efterfølgende SciML modeller.
+
+De to centrale filer i denne del er \texttt{bout\_dump.py} og \texttt{bout\_phys.py}. Rollen af de vigtigste moduler kan opsummeres som:
+\begin{itemize}
+    \item \texttt{hesel\_scraper/bout\_dump.py}: indlæser dump-filerne, fortolker \texttt{BOUT.settings}, samler felter på et fælles gitter og udleder normaliserede fysiske parametre.
+    \item \texttt{hesel\_scraper/bout\_phys.py}: konstruerer de fysiske restriktioner, dvs. initialbetingelser, randbetingelser og residualer for de evolutionære ligninger.
+    \item \texttt{hesel\_scraper/api/operators.py}: indeholder differentiationsoperatorer baseret påa utograd, som bruges til at beregne gradienter og Laplace operatorer direkte på model outputet.
+    \item \texttt{hesel\_scraper/api/dump\_helper.py}: hjælper med sikker parsing af udtryk og funktionsdefinitioner fra \texttt{BOUT.settings}, så simulations opsætningen kan genbruges direkte i modellen.
+\end{itemize}
+
+Når simulationen er oversat til en intern repræsentation, overtager mapperne i \texttt{SciML} selve læringsproblemet. Strukturen er her bevidst delt i to principielt forskellige modelklasser:
+\begin{itemize}
+    \item \texttt{SciML/PINN}: den punktvise fysik informerede model, hvor netværket forudsiger feltværdier i et enkelt punkt ud fra lokale historiske data og koordinater. Denne model er formuleret som en \emph{soft constraint} model.
+    \item \texttt{SciML/PINN\_z} og \texttt{SciML/PINO\_z}: to linjebaserede modeller, som arbejder på hele snit i \(x\) retningen og lokale vinduer i \(z\) retningen. Begge er formuleret som \emph{hard constraint} modeller.
+\end{itemize}
+
+Inden for den anden klasse adskiller \texttt{PINN\_z} og \texttt{PINO\_z} sig derefter primært ved selve netværkstypen: \texttt{PINN\_z} bruger et MLP baseret netværk, mens \texttt{PINO\_z} bruger en operatorbaseret FNO lignende arkitektur. Den vigtigste strukturelle forskel i dette afsnit er derfor ikke mellem \texttt{PINN\_z} og \texttt{PINO\_z}, men mellem den punktvise soft constraint model og de to linjebaserede hard constraint modeller.
+
+Selvom modelretningerne er implementeret forskelligt, bygger de alle på samme grundlæggende objekt fra \texttt{hesel\_scraper}: en konsistent beskrivelse af data, koordinater, normalisering og fysisk residual. Det er derfor naturligt at se \texttt{hesel\_scraper} som det fysiske og datamæssige fundament, mens \texttt{SciML} mapperne specificerer selve læringsarkitekturen.
+
+\subsubsection{Sammenhæng mellem simulation, data og model}
+Matematisk kan Hesel  simuleringen betragtes som en diskret approksimation af et kontinuert dynamisk system på domænet
+\[
+\Omega = [0,L_x]\times[0,L_z]\times[0,T].
+\]
+På dette domæne beskrives plasmaets tilstand ved de fire primære felter
+\[
+\mathbf{u}(x,z,t)
+=
+\begin{bmatrix}
+\ln n(x,z,t)\\
+\ln p_e(x,z,t)\\
+\ln p_i(x,z,t)\\
+\phi(x,z,t)
+\end{bmatrix},
+\]
+hvor \(n\) er densitet, \(p_e\) og \(p_i\) er elektron og iontryk, og \(\phi\) er det elektrostatiske potentiale. Logaritmerne bruges for at gøre simuleringen numerisk stabil og undgå negative værdier for \(n\), \(p_e\) og \(p_i\).
+
+Ud fra disse felter dannes også afledte størrelser. I implementeringen beregnes blandt andet vorticiteten som $\omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i$, som var givet i \ref{ch2_2}.
+Da vorticiteten kan udledes direkte fra $\phi$ og $p_i$, er den ikke inkluderet som et separat felt i modellen, men udregnes i \texttt{hesel\_scraper/bout\_phys.py}.
+
+Fra simulationen fås et diskret gitter \((x_i,z_j,t_n)\), og i \texttt{bout\_dump.py} organiseres data derfor som tensorfelter af typen
+\[
+\mathbf{u}_{n,i,j} = \mathbf{u}(t_n, x_i, z_j).
+\]
+Samtidig udledes de normaliserede parametre, der indgår i Hesel ligningerne, eksempelvis transportkoefficienter, karakteristiske tider og længdeskalaer. Dermed bliver simulationens numeriske opsætning oversat til et model klart objekt, som både indeholder rådata og den fysik, der skal bruges til træning.
+
+Den punktvise \texttt{PINN} behandles som sin egen modeltype. Her konstrueres hvert træningseksempel som en lokal afbildning
+\[
+(\mathbf{s}_k,\mathbf{c}_k)\mapsto \mathbf{y}_k,
+\]
+hvor \(\mathbf{c}_k=(t_n,x_i,z_j)\) er den fysiske koordinat, \(\mathbf{y}_k=\mathbf{u}_{n,i,j}\) er mål vektoren, og \(\mathbf{s}_k\) er et lokalt state vindue bestående 
+af de to foregående tidsskridt og det \(3\times 3\) vindue omkring disse punkter. Modellen kan derfor ideelt skrives som
+\[
+\hat{\mathbf{u}}_\theta(t_n, x_i,z_j)
+=
+F_\theta\!\left(t_n, x_i,z_j,\mathbf{s}_k\right),
+\]
+hvor \(\theta\) er netværkets parametre.
+
+Den punktvise PINN er en soft constraint formulering, fordi de fysiske krav ikke bygges direkte ind i selve modelansatsen, men i stedet håndhæves gennem tabsfunktionen. Hvis modellen skrives som \(\hat{\mathbf{u}}_\theta\), bliver initialbetingelser, randbetingelser og ligninger derfor kun opfyldt approksimativt gennem residualled som straffes under træningen.
+Det betyder også, at denne model naturligt beskrives som en punktvis regressionsmodel med fysisk regularisering.
+
+De to modeller \texttt{PINN\_z} og \texttt{PINO\_z} behandles derimod samlet som en anden modeltype. Her generaliseres ideen fra enkeltpunkter til hele snit i \(x\) aksen. Input er derfor ikke kun lokale punkter, men linjer, der bevarer mere af den rumlige struktur. Det betyder, at modellerne i højere grad lærer en operator mellem felter frem for blot en lokal regressionsregel. Den præcise repræsentation af input og output beskrives senere i kapitlet, men overordnet er formålet det samme: at approksimere tidsudviklingen af Hesel felterne.
+
+For \texttt{PINN\_z} og \texttt{PINO\_z} bruges der en hard constraint konstruktion. Her skrives modeloutputtet ikke blot som et frit netværksoutput, men indlejres i en ansats af formen
+\[
+\hat{\mathbf{u}}_\theta = \mathbf{g} + \sigma(t)\bigl(\mathbf{H} - \mathbf{g} + \mathbf{D}\odot(\mathbf{N}_\theta - \mathbf{H})\bigr),
+\]
+hvor \(\mathbf{g}\) repræsenterer initialtilstanden, \(\mathbf{H}\) er en hjælpefunktion der opfylder randbetingelserne, \(\mathbf{D}\) er en dæmpningsfunktion som går mod nul ved randen, og \(\sigma(t)\) sørger for korrekt kobling til begyndelsestiden. Dermed bliver dele af initial og randbetingelserne opfyldt konstruktivt for alle \(\theta\), i stedet for kun at blive presset ned via ekstra tabsled.
+
+Den centrale sondring i projektet er derfor:
+\begin{itemize}
+    \item \texttt{PINN}: punktvis, soft constraint og styret af en tabsfunktion med eksplicitte data, initial, rand og ligningsled.
+    \item \texttt{PINN\_z} og \texttt{PINO\_z}: linjebaserede, hard constraint og bygget op omkring en ansats, hvor dele af initial og randbetingelserne håndhæves direkte i modeloutputtet.
+\end{itemize}
+
+Det væsentlige SciML element er, at modellerne ikke kun trænes mod data, men også med de underliggende ligninger. I \texttt{bout\_phys.py} defineres derfor tre typer residualer:
+\begin{itemize}
+    \item data residualer, som måler forskellen mellem modelens forudsigelse og simulationsdata,
+    \item rand og initial residualer, som tvinger modellen til at respektere start tilstanden og de fysiske grænser,
+    \item ligningsresidualer, som håndhæver Hesel dynamik.
+\end{itemize}
+
+For de fysiske ligninger bruges en generel struktur af typen
+\[
+\partial_t q = \mathcal{R}(q) + \Lambda(q),
+\]
+hvor \(q\in\{\ln n,\ln p_e,\ln p_i,\omega\}\). Her samler \(\mathcal{R}(q)\) de egentlige dynamiske transportled, mens \(\Lambda(q)\) samler de øvrige bidrag såsom diffusiv transport, parallel dynamik, profilforcering og gulvled. I koden omsættes dette til residualer påformen
+\[
+r_q = \partial_t q - \mathcal{R}(q) - \Lambda(q),
+\]
+og målet er, at \(r_q\approx 0\) i hele det relevante træningsdomæne.
+
+Den samlede træning kan derfor beskrives som minimering af en vægtet tabsfunktion
+\[
+\mathcal{L}
+=
+\lambda_{\mathrm{da}}\mathcal{L}_{\mathrm{data}}
++ \lambda_{\mathrm{eq}}\mathcal{L}_{\mathrm{eq}}
++ \lambda_{\mathrm{ic}}\mathcal{L}_{\mathrm{ic}}
++ \lambda_{\mathrm{bc}}\mathcal{L}_{\mathrm{bc}},
+\]
+hvor de fire led svarer til henholdsvis datafit, ligningsresidual, initialbetingelser og randbetingelser. Hele eksperimentet kan dermed forstås som en søgen efter modelparametre \(\theta\), så den lærte løsning både ligner simulationsdata og opfører sig som en fysisk konsistent løsning til Hesel systemet.
+
+Forskellen mellem modeltyperne ligger i, hvordan disse residualer bruges. For den punktvise \texttt{PINN} indgår data, initial, rand og ligningsresidualer alle direkte i tabsfunktionen. For \texttt{PINN\_z} og \texttt{PINO\_z} er initial og randbetingelser i høj grad bygget ind i ansatsen, og derfor trænes disse modeller primært med dataresidual og ligningsresidual.
+
+For den punktvise soft constraint model er denne tabsfunktion den direkte træningsmålsætning. For de to hard constraint modeller reduceres træningsmålsætningen i praksis til de led, som ikke allerede er håndhævet konstruktivt, hvilket i implementeringen svarer til en kombination af datafit og ligningsresidual.

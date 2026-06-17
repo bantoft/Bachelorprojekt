@@ -1,19 +1,19 @@
 # Fdb version 4
-["bibtex main"] 1781659015.74335 "main.aux" "main.bbl" "main" 1781659016.35917 0
-  "./document.bib" 1781653748.4221 6879 9031d9d98246add4ee6fb0663208a5d9 ""
+["bibtex main"] 1781670673.66746 "main.aux" "main.bbl" "main" 1781670673.7014 0
+  "./document.bib" 1781670673.51834 7601 183d14cf0e42a7958a591953b7074abe ""
   "/usr/share/texmf-dist/bibtex/bst/base/ieeetr.bst" 1775415801 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
-  "main.aux" 1781659016.25143 9849 446206636877df18c92248d1222e5167 "pdflatex"
+  "main.aux" 1781670666.69329 10596 ddb704548c6e0935c6a77bba014ceb9d "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["cusdep nlo nls main"] 1781659015.71756 "main.nlo" "main.nls" "main" 1781659016.35908 0
-  "main.nlo" 1781659016.25243 403 4d65d40bcebff009b0f22ed08078fc93 "pdflatex"
+["cusdep nlo nls main"] 1781670665.44632 "main.nlo" "main.nls" "main" 1781670673.70137 0
+  "main.nlo" 1781670666.69528 403 4d65d40bcebff009b0f22ed08078fc93 "pdflatex"
   (generated)
   "main.nls"
   (rewritten before read)
-["pdflatex"] 1781659015.77599 "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" "main.pdf" "main" 1781659016.35924 0
-  "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" 1781659014.9869 3681 3628bb49d75fe92ea8d2cb95fa64dce5 ""
+["pdflatex"] 1781670666.17919 "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" "main.pdf" "main" 1781670673.70143 0
+  "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" 1781667261.36519 3667 34f813befa5e5d28dd0355c027bc52ff ""
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1775415801 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1775415801 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1775415801 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -29,6 +29,7 @@
   "/usr/share/texmf-dist/fonts/tfm/jknappen/ec/ecrm1728.tfm" 1775415801 3584 3c76ccb63eda935a68ba65ba9da29f1a ""
   "/usr/share/texmf-dist/fonts/tfm/jknappen/ec/ecrm2488.tfm" 1775415801 3584 406ad7b70d9a41f7833f92b6313150c8 ""
   "/usr/share/texmf-dist/fonts/tfm/jknappen/ec/ecti1200.tfm" 1775415801 3072 8b5a64dc91775463bc95e2d818524028 ""
+  "/usr/share/texmf-dist/fonts/tfm/jknappen/ec/ectt1200.tfm" 1775415801 1536 487c9b46984a816c7ed238d0674595c7 ""
   "/usr/share/texmf-dist/fonts/tfm/jknappen/ec/ecxc1200.tfm" 1775415801 3072 7297cd85ca68cda594939a8b966f71bb ""
   "/usr/share/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm" 1775415801 1536 74b7293ec3713bb7fdca8dd1bd1f469c ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1775415801 1004 54797486969f23fa377b128694d548df ""
@@ -71,6 +72,7 @@
   "/usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx2488.pfb" 1775415801 135938 299ac3a69892db3b7674a8b2543b0a77 ""
   "/usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb" 1775415801 136101 f533469f523533d38317ab5729d00c8a ""
   "/usr/share/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb" 1775415801 198221 ca5aa71411090ef358a6cc78b7458365 ""
+  "/usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb" 1775415801 167085 68de377d2744a68a88fa40a1f610615a ""
   "/usr/share/texmf-dist/fonts/type1/public/cm-super/sfxc1200.pfb" 1775415801 114082 d23b7179894d32b33f02777491c898e5 ""
   "/usr/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1775415801 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/share/texmf-dist/tex/generic/babel-english/english.ldf" 1775415801 7008 9ff5fdcc865b01beca2b0fe4a46231d4 ""
@@ -174,20 +176,20 @@
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1780319365 5384140 9ef23e7d5d9c96d2806f8b40e57f5eef ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1780319352 2968238 fe83977913d1044507cfd531132cad9a ""
   "figures/Hesel_profiles.png" 1781557056.47649 124252 9a7ae0dba6d264d4f02b270713cc1835 ""
-  "main.aux" 1781659016.25143 9849 446206636877df18c92248d1222e5167 "pdflatex"
-  "main.bbl" 1781659015.77242 1685 7278dc6998df4e48b102db2a3f7ba2f4 "bibtex main"
-  "main.lof" 1781659016.25243 333 6ddc4e91347199796162b8d663cd2912 "pdflatex"
-  "main.lot" 1781659016.25243 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
-  "main.nls" 1781659015.74234 393 d7e9e590d33feac8faf5f26d1c6ba123 "cusdep nlo nls main"
-  "main.out" 1781659016.25243 4166 8cc91647bbfdc83ba94d056e6707ce35 "pdflatex"
-  "main.tex" 1781659014.9869 3681 3628bb49d75fe92ea8d2cb95fa64dce5 ""
-  "main.toc" 1781659016.25243 2185 74f09055dbd3baf9d4a22f0d6168431e "pdflatex"
+  "main.aux" 1781670666.69329 10596 ddb704548c6e0935c6a77bba014ceb9d "pdflatex"
+  "main.bbl" 1781670673.69734 1867 87d53beff2b7f7a87b5cc29c7cde730a "bibtex main"
+  "main.lof" 1781670666.69528 333 6ddc4e91347199796162b8d663cd2912 "pdflatex"
+  "main.lot" 1781670666.69528 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
+  "main.nls" 1781670665.4723 393 d7e9e590d33feac8faf5f26d1c6ba123 "cusdep nlo nls main"
+  "main.out" 1781670666.69429 4999 1b93ee5efa071febe47e3eabdbd58d13 "pdflatex"
+  "main.tex" 1781667261.36519 3667 34f813befa5e5d28dd0355c027bc52ff ""
+  "main.toc" 1781670666.69528 2591 f3a36b63eca31b6d21b1573cbaa63d47 "pdflatex"
   "root/dtu.png" 1778653563.93497 11174 a65a81e57f21122f8e631908e43c73a0 ""
   "root/logo.pdf" 1778653563.9352 9933 041ba2d771540e48f0dd40b3e54edcc3 ""
   "sources/0_frontpage.tex" 1780914572.21901 545 d6affc01df24316e3ccfbb0ecea0c57b ""
   "sources/1_introduction.tex" 1781562668.70226 7618 1e54391ad368c321f5925bf9d36bc280 ""
-  "sources/2_metode.tex" 1781653213.60821 648 c687ddc21c6b44b616498e9a1ef47514 ""
-  "sources/3_implimentering_og_repruse.tex" 1781522715.41367 99 50a0dcaaafb3a5488853e1c3dd149573 ""
+  "sources/2_metode.tex" 1781665758.35871 648 c687ddc21c6b44b616498e9a1ef47514 ""
+  "sources/3_implimentering.tex" 1781670655.77822 488 54f807173296b4c09e148ceeda27a925 ""
   "sources/4_data_og_analyse.tex" 1781522715.4137 1661 323b5712a188cab31eb598d1346eb1e1 ""
   "sources/5_resultater.tex" 1780926728.91224 52 10c606315b290f26c654a6b210f698bb ""
   "sources/6_konklusion_og_disussion.tex" 1781522715.4137 100 6731df5923adc06197d337db6f9c7076 ""
@@ -195,9 +197,10 @@
   "sources/appendix_a.tex" 1781180361.65348 47 fe628a2370b59b838762b32939d98f22 ""
   "sources/appendix_b.tex" 1781560432.41898 1355 82458be8a5a7e66daaf01851772cf41d ""
   "sources/kap_2/2_1_PINN.tex" 1781653938.77865 6580 41bbb9b86b08babd2d983c68030f399a ""
-  "sources/kap_2/2_2_fysik.tex" 1781652676.82604 20740 190c9bd50fb1a32f1e0eabf1f4cca4e0 ""
+  "sources/kap_2/2_2_fysik.tex" 1781667289.02407 20443 d0a7c5ed743940a587b61e264511743d ""
   "sources/kap_2/2_3_numeriske_metoder.tex" 1781653183.57655 4751 3b0ce34d5269c664200112549364d0de ""
-  "sources/kap_2/2_4_tilgang_til_eksperiment.tex" 1781658947.44992 3858 1c2bd2c26a7c3d1233abd38819e0988c ""
+  "sources/kap_2/2_4_tilgang_til_eksperiment.tex" 1781665724.0155 5966 63694718798c5614076dc17461ec4232 ""
+  "sources/kap_3/3_1_Overordnet_struktu.tex" 1781670079.05341 9630 31bcff390f34e7a06c4c28bf6e999bfb ""
   "sources/nomenclat.tex" 1781559041.4952 226 e96acb557fdc0899ec16f66e3d4a854e ""
   (generated)
   "main.aux"

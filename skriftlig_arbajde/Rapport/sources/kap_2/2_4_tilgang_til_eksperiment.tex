@@ -28,7 +28,6 @@ En sådan skalerbarhed er særligt interessant i plasmafysiske anvendelser, hvor
 Hvis modellen kan overføre information mellem forskellige opløsninger, kan dette potentielt reducere den samlede beregningstid og gøre det muligt at generere tilnærmede højopløselige løsninger betydeligt hurtigere end ved traditionelle numeriske metoder.
 
 
-
 \subsubsection{Opstilling af eksperimenter}
 Til at undersøge disse spørgsmål anvendes et sæt af numeriske simuleringer genereret med BOUT++ og BOUT HESEL. 
 Det blev valgt at simulere nogle begyndelsesbetingelser, der var hurtigt blev kaotiske og svære at simulere. Dette blev valgt for at udfordre modellen og undersøge, 
@@ -38,4 +37,27 @@ hvor godt den kunne lære og generalisere i et komplekst dynamisk regime. Disse 
 Der blev genereret 6 forskellige simuleringer. Tre af disse simuleringer var standarden, hvor det kun var det seed der blev ændret.
 De resterende tre simuleringer var også standard hvor kun en parameter blev ændret. Disse var tidssteg afstanden, gitteropløsningen og den fysiske parameter.
 
+\subsubsection{Valg af model arkitektur}
+
 Herefter blev der udført design af eksperimenter på to af standard simuleringerne for at bestemme netværksarkitektur.
+Som udgangspunkt vælges et almindeligt fuldt forbundet neuralt netværk. 
+Dette er i tråd med både den klassiske formulering for neurale netværk til differentialligninger i \cite{lagaris1997ann_pde}
+og den senere PINN formulering i \cite{raissi2017pinn_part1}, hvor løsningen repræsenteres med simple feedforward netværk.
+Raissi et al.\ viser desuden, at glatte aktiveringsfunktioner som $\tanh$ og en vis netværksdybde giver en mærkbar forbedring
+i approksimationskvaliteten.
+På den baggrund vælges her et simpelt, men forholdsvis bredt søgeområde bestående af 3 eller 4 skjulte lag og hidden dimensioner fra cirka 256 til 4096.
+For aktiveringsfunktionerne undersøges både $\tanh$, og SiLU som er velafprøvet i PINN litteraturen.
+Der undersøges 
+
+Her efter udføres der design of eksperimenter for forskellige netværksarkitekturer før den endelige arkitektur vælges. 
+
+Der bliver undersøgt 2 forskellige input og output formater størrelser. Begge får de to forrige tidssteg som input, samt deres koordinater de skal forudsige.
+Den første model får blot ét punkt og de omkringliggende punkter som input, og skal forudsige det næste tidssteg for det samme punkt.
+Den næste model får hele $x$ aksen og de to nabocellerne som input, og skal forudsige det næste tidssteg for hele $x$ aksen.
+Den første model der kun skal forudsige ét punkt ad gangen, blvier softconstrained i mens modellen der skal forudsige hele $x$ aksen bliver hardconstrained.
+Dette valg er baseret på, at den første model kan fokusere på at lære de lokale detaljer i løsningen, mens den anden model kan lære de globale strukturer i løsningen.
+Grunden til ikke at modellen skal have hele billedet som input og skal forudsige hele billedet som output er grundet at neurale netværk forudsiger gennemsnitlige værdier,
+og derfor ikke er i stand til at forudsige de små detaljer i løsningen, som er vigtige for at opnå en god løsning.
+Derfor skal modellen have et mindre input og output format, så den kan fokusere på de vigtigste detaljer i løsningen.
+
+

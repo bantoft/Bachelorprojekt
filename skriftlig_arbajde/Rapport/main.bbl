@@ -5,22 +5,41 @@
 \newblock Accessed: 2026-05-11.
 
 \bibitem{plasma_particle_sources}
-A.~S. Thrysøe, M.~Løiten, J.~Madsen, V.~Naulin, A.~H. Nielsen, and J.~J. Rasmussen, ``Plasma particle sources due to interactions with neutrals in a turbulent scrape-off layer of a toroidally confined plasma,'' {\em Physics of Plasmas}, vol.~25, p.~032307, 03 2018.
+A.~S. Thrysøe, M.~Løiten, J.~Madsen, V.~Naulin, A.~H. Nielsen, and J.~J.
+  Rasmussen, ``Plasma particle sources due to interactions with neutrals in a
+  turbulent scrape-off layer of a toroidally confined plasma,'' {\em Physics of
+  Plasmas}, vol.~25, p.~032307, 03 2018.
 
 \bibitem{num_sim_blobs}
-A.~Nielsen, J.~Rasmussen, J.~Madsen, G.~Xu, V.~Naulin, J.~Olsen, M.~Magnussen, S.~Hansen, N.~Yan, L.~Toph{\o}j, and B.~Wan, ``Numerical simulations of blobs with ion dynamics,'' {\em Plasma Physics and Controlled Fusion}, vol.~59, no.~2, 2017.
+A.~Nielsen, J.~Rasmussen, J.~Madsen, G.~Xu, V.~Naulin, J.~Olsen, M.~Magnussen,
+  S.~Hansen, N.~Yan, L.~Toph{\o}j, and B.~Wan, ``Numerical simulations of blobs
+  with ion dynamics,'' {\em Plasma Physics and Controlled Fusion}, vol.~59,
+  no.~2, 2017.
 
 \bibitem{udledning_af_hesel}
-A.~Thrys{\o}e, M.~L{\o}iten, J.~Madsen, V.~Naulin, A.~Nielsen, and J.~Rasmussen, ``Plasma particle sources due to interactions with neutrals in a turbulent scrape-off layer of a toroidally confined plasma,'' {\em Physics of Plasmas}, vol.~25, no.~3, 2018.
+A.~Thrys{\o}e, M.~L{\o}iten, J.~Madsen, V.~Naulin, A.~Nielsen, and
+  J.~Rasmussen, ``Plasma particle sources due to interactions with neutrals in
+  a turbulent scrape-off layer of a toroidally confined plasma,'' {\em Physics
+  of Plasmas}, vol.~25, no.~3, 2018.
 
 \bibitem{lagaris1997ann_pde}
-I.~E. Lagaris, A.~Likas, and D.~I. Fotiadis, ``Artificial neural networks for solving ordinary and partial differential equations,'' {\em IEEE Transactions on Neural Networks}, vol.~9, no.~5, pp.~987--1000, 1998.
+I.~E. Lagaris, A.~Likas, and D.~I. Fotiadis, ``Artificial neural networks for
+  solving ordinary and partial differential equations,'' {\em IEEE Transactions
+  on Neural Networks}, vol.~9, no.~5, pp.~987--1000, 1998.
 
 \bibitem{raissi2017pinn_part1}
-M.~Raissi, P.~Perdikaris, and G.~E. Karniadakis, ``Physics informed deep learning (part i): Data-driven solutions of nonlinear partial differential equations,'' {\em arXiv preprint arXiv:1711.10561}, 2017.
+M.~Raissi, P.~Perdikaris, and G.~E. Karniadakis, ``Physics informed deep
+  learning (part i): Data-driven solutions of nonlinear partial differential
+  equations,'' {\em arXiv preprint arXiv:1711.10561}, 2017.
 
 \bibitem{braginskii1965}
-S.~I. Braginskii, ``Transport processes in a plasma,'' {\em Reviews of Plasma Physics, 1, 205.}, vol.~1, pp.~205--311, 1965.
+S.~I. Braginskii, ``Transport processes in a plasma,'' {\em Reviews of Plasma
+  Physics, 1, 205.}, vol.~1, pp.~205--311, 1965.
 \newblock Accessed: 2026-06-11.
+
+\bibitem{bsc_projekt}
+A.~Antoft, ``Bachelorprojekt: Physics informed neural networks and operators
+  for hesel simulations,'' 2026.
+\newblock GitHub repository, accessed: 2026-06-17.
 
 \end{thebibliography}
