@@ -1,0 +1,41 @@
+Formålet med eksperimenterne er at undersøge, i hvilken grad fysikinformerede neurale netværk kan lære og reproducere dynamikken i plasmaets randregion, som beskrevet af HESEL modellen.
+Mere specifikt ønskes det at undersøge, hvor præcist en model kan approksimere udviklingen af systemets tilstand fra ét tidssteg til det næste.
+Givet en tilstand $u(t)$ er målet således at lære en approksimation af tidsudviklingsoperatoren
+\begin{equation*}
+    u(t+\Delta t) \approx \mathcal{F}_\theta(u(t)),
+\end{equation*}
+hvor $\mathcal{F}_\theta$ repræsenterer den lærte model med parametre $\theta$. Hvis en sådan approksimation kan opnås med høj nøjagtighed, vil modellen potentielt kunne fungere som en
+surrogatmodel for dele af den numeriske løsning og dermed reducere behovet for kostbare beregninger.
+
+HESEL modellen beskriver et stærkt ikke lineært og turbulent system, hvor små variationer i begyndelsesbetingelserne kan føre til markant forskellige udviklingsforløb.
+Som følge heraf er det relevant først at undersøge modellens evne til at rekonstruere simuleringer genereret fra kendte begyndelsesbetingelser.
+Dette giver et mål for, hvor godt modellen er i stand til at lære den underliggende dynamik i de data, den er trænet på.
+
+Et centralt spørgsmål er ligeledes modellens evne til at generalisere til tidligere usete begyndelsesbetingelser. Hvis modellen kan forudsige udviklingen af simuleringer, som ikke indgår i træningsdatasættet,
+indikerer det, at den har lært generelle strukturer i dynamikken frem for blot at memorisere specifikke løsninger.
+En sådan egenskab vil være særligt værdifuld i forbindelse med hurtig udforskning af nye parameterrum og scenarier, hvor numeriske simuleringer endnu ikke er udført.
+
+Derudover undersøges modellens langsigtede stabilitet gennem autoregressiv tidsintegration. Her anvendes modellens egen prædiktion som input til næste tidssteg,
+\begin{equation*}
+    u_{n+1} = \mathcal{F}_\theta(u_n),
+\end{equation*}
+således at fejl kan akkumulere over tid. Formålet er at undersøge, hvor langt frem i tiden modellen kan forudsige systemets udvikling, før løsningen afviger væsentligt fra den numeriske reference.
+Dette giver et mål for modellens evne til at opretholde fysisk meningsfulde løsninger uden løbende korrektion fra simuleringsdata.
+
+
+Endelig undersøges modellens evne til at generalisere på tværs af rumlige opløsninger. Målet er at afklare, om en model trænet på et grovere gitter kan anvendes til at approksimere løsninger på finere gitre.
+En sådan skalerbarhed er særligt interessant i plasmafysiske anvendelser, hvor højopløselige simuleringer ofte udgør en væsentlig beregningsmæssig omkostning.
+Hvis modellen kan overføre information mellem forskellige opløsninger, kan dette potentielt reducere den samlede beregningstid og gøre det muligt at generere tilnærmede højopløselige løsninger betydeligt hurtigere end ved traditionelle numeriske metoder.
+
+
+
+\subsubsection{Opstilling af eksperimenter}
+Til at undersøge disse spørgsmål anvendes et sæt af numeriske simuleringer genereret med BOUT++ og BOUT HESEL. 
+Det blev valgt at simulere nogle begyndelsesbetingelser, der var hurtigt blev kaotiske og svære at simulere. Dette blev valgt for at udfordre modellen og undersøge, 
+hvor godt den kunne lære og generalisere i et komplekst dynamisk regime. Disse begyndelsesbetingelser kaldes standarden.
+
+
+Der blev genereret 6 forskellige simuleringer. Tre af disse simuleringer var standarden, hvor det kun var det seed der blev ændret.
+De resterende tre simuleringer var også standard hvor kun en parameter blev ændret. Disse var tidssteg afstanden, gitteropløsningen og den fysiske parameter.
+
+Herefter blev der udført design af eksperimenter på to af standard simuleringerne for at bestemme netværksarkitektur.

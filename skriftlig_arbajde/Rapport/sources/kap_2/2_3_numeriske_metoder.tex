@@ -3,31 +3,31 @@ I dette projekt anvendes et todimensionalt domæne, så PDE systemet kan skrives
 \begin{equation}
     \frac{\partial \mathbf{u}}{\partial t}
     =
-    \mathcal{F}\!\left(t,x,z,\mathbf{u},\nabla \mathbf{u},\nabla^2 \mathbf{u}\right),
+    \mathcal{F}\!\left(t,x,y,\mathbf{u},\nabla \mathbf{u},\nabla^2 \mathbf{u}\right),
     \qquad
-    (x,z) \in \Omega ,
+    (x,y) \in \Omega ,
     \label{eq:general_pde_system}
 \end{equation}
-hvor $\mathbf{u}(t,x,z) \in \mathbb{R}^m$ repræsenterer ét felt eller et koblet system af $m$ felter. Grundideen er at diskretisere rummet først og derefter udvikle den diskrete løsning i tid. Denne fremgangsmåde kaldes metode af linjer.
+hvor $\mathbf{u}(t,x,y) \in \mathbb{R}^m$ repræsenterer ét felt eller et koblet system af $m$ felter. Grundideen er at diskretisere rummet først og derefter udvikle den diskrete løsning i tid. Denne fremgangsmåde kaldes metode af linjer.
 
 \subsubsection{Rumlig diskretisering}
 Domænet vælges som et rektangel
 \[
-    \Omega = [x_{\min},x_{\max}) \times [z_{\min},z_{\max}),
+    \Omega = [x_{\min},x_{\max}) \times [y_{\min},y_{\max}),
 \]
-og opdeles i et uniformt gitter med $N_x$ punkter i $x$ retningen og $N_z$ punkter i $z$ retningen. Gitterpunkterne kan skrives som
+og opdeles i et uniformt gitter med $N_x$ punkter i $x$ retningen og $N_y$ punkter i $y$ retningen. Gitterpunkterne kan skrives som
 \[
     x_i = x_{\min} + i \Delta x,
     \qquad
-    z_j = z_{\min} + j \Delta z,
+    y_j = y_{\min} + j \Delta y,
 \]
 hvor
 \[
     \Delta x = \frac{x_{\max}-x_{\min}}{N_x},
     \qquad
-    \Delta z = \frac{z_{\max}-z_{\min}}{N_z}.
+    \Delta y = \frac{y_{\max}-y_{\min}}{N_y}.
 \]
-Den diskrete løsning betegnes ved $\mathbf{u}_{i,j}(t)$, som approksimerer den kontinuerte løsning i punktet $(x_i,z_j)$. For koblede systemer er $\mathbf{u}_{i,j}(t)$ en vektor. Når ghost celler indføres, lader man de fysiske gitterpunkter have indeks $i=1,\dots,N_x$ og $j=1,\dots,N_z$, mens de ekstra randceller får indeks $0$ og $N_x+1$ i $x$ retningen samt $0$ og $N_z+1$ i $z$ retningen.
+Den diskrete løsning betegnes ved $\mathbf{u}_{i,j}(t)$, som approksimerer den kontinuerte løsning i punktet $(x_i,y_j)$. For koblede systemer er $\mathbf{u}_{i,j}(t)$ en vektor. Når ghost celler indføres, lader man de fysiske gitterpunkter have indeks $i=1,\dots,N_x$ og $j=1,\dots,N_y$, mens de ekstra randceller får indeks $0$ og $N_x+1$ i $x$ retningen samt $0$ og $N_y+1$ i $y$ retningen.
 
 Gitteret udvides med ghost celler omkring randen, så de samme stencilformler kan anvendes i hele det indre domæne. For periodiske randbetingelser kopieres værdierne fra den modsatte side, så der diskret gælder
 \[
@@ -35,7 +35,7 @@ Gitteret udvides med ghost celler omkring randen, så de samme stencilformler ka
     \qquad
     \mathbf{u}_{N_x+1,j} = \mathbf{u}_{1,j},
 \]
-og tilsvarende i $z$ retningen.
+og tilsvarende i $y$ retningen.
 
 \subsubsection{Numeriske differentialoperatorer}
 De rumlige afledte approksimeres med centrale differenser af anden orden. For et skalarfelt $u$ fås
@@ -44,9 +44,9 @@ De rumlige afledte approksimeres med centrale differenser af anden orden. For et
     \approx
     \frac{u_{i+1,j}-u_{i-1,j}}{2\Delta x},
     \qquad
-    \left(\partial_z u\right)_{i,j}
+    \left(\partial_y u\right)_{i,j}
     \approx
-    \frac{u_{i,j+1}-u_{i,j-1}}{2\Delta z}.
+    \frac{u_{i,j+1}-u_{i,j-1}}{2\Delta y}.
     \label{eq:central_first_order}
 \end{equation}
 Tilsvarende approksimeres de andenordens afledte ved
@@ -55,9 +55,9 @@ Tilsvarende approksimeres de andenordens afledte ved
     \approx
     \frac{u_{i+1,j}-2u_{i,j}+u_{i-1,j}}{\Delta x^2},
     \qquad
-    \left(\partial_{zz} u\right)_{i,j}
+    \left(\partial_{yy} u\right)_{i,j}
     \approx
-    \frac{u_{i,j+1}-2u_{i,j}+u_{i,j-1}}{\Delta z^2}.
+    \frac{u_{i,j+1}-2u_{i,j}+u_{i,j-1}}{\Delta y^2}.
     \label{eq:central_second_order}
 \end{equation}
 Heraf følger den diskrete Laplace operator
@@ -66,7 +66,7 @@ Heraf følger den diskrete Laplace operator
     \approx
     \frac{u_{i+1,j}-2u_{i,j}+u_{i-1,j}}{\Delta x^2}
     +
-    \frac{u_{i,j+1}-2u_{i,j}+u_{i,j-1}}{\Delta z^2}.
+    \frac{u_{i,j+1}-2u_{i,j}+u_{i,j-1}}{\Delta y^2}.
 \]
 Hvis PDE systemet indeholder advektionsled, skrives disse diskret som
 \[
@@ -74,9 +74,9 @@ Hvis PDE systemet indeholder advektionsled, skrives disse diskret som
     \approx
     v_x \left(\partial_x u\right)_{i,j}
     +
-    v_z \left(\partial_z u\right)_{i,j}.
+    v_y \left(\partial_y u\right)_{i,j}.
 \]
-Denne diskretisering har truncationsfejl af størrelsesorden $\mathcal{O}(\Delta x^2+\Delta z^2)$ for glatte løsninger.
+Denne diskretisering har truncationsfejl af størrelsesorden $\mathcal{O}(\Delta x^2+\Delta y^2)$ for glatte løsninger.
 
 Når alle rumlige operatorer er diskretiseret, kan PDE systemet omskrives til et stort system af ordinære differentialligninger,
 \begin{equation}

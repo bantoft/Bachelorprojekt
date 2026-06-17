@@ -117,40 +117,45 @@ def make_dataloader(info, training_config: dict):
 
     dataset = BOUTDataset(info, data)
 
-    # Opdel i train/val/test baseret paa tidsdimensionen
-    train_end = int(training_config["train_ratio"] * (info.parameters.num_t - 2))
-    val_end = train_end + int(training_config["val_ratio"] * (info.parameters.num_t - 2))
+    n_total = len(dataset)
+    n_train = int(training_config["train_ratio"] * n_total)
+    n_val = int(training_config["val_ratio"] * n_total)
+    n_test = n_total - n_train - n_val
 
-    # Sampler med bias og sørger for train kun indeholder [t_0, train_end]
-    train_sampler = WeightedTrainSampler(dataset, train_end, min_t=50, x_weight=3.0)
+    loader_kwargs = {
+        "batch_size": training_config["batch_size"],
+        "num_workers": training_config["num_workers"],
+        "pin_memory": training_config["pin_memory"],
+        "persistent_workers": training_config["persistent_workers"],
+        "prefetch_factor": training_config["prefetch_factor"],
+        "collate_fn": collate_stack,
+    }
 
+    if training_config.get("TSSplit", True):
+        train_dataset = Subset(dataset, range(0, n_train))
+        val_dataset = Subset(dataset, range(n_train, n_train + n_val))
+        test_dataset = Subset(dataset, range(n_train + n_val, n_total))
 
-    train_loader = DataLoader(dataset,
-                              batch_size=training_config["batch_size"],
-                              sampler=train_sampler,
-                              shuffle=False,
-                              num_workers=training_config["num_workers"],
-                              pin_memory=training_config["pin_memory"],
-                              persistent_workers=training_config["persistent_workers"],
-                              prefetch_factor=training_config["prefetch_factor"],
-                              collate_fn=collate_stack)
+        train_steps = len(train_dataset) // (dataset.num_x * dataset.num_z)
+        train_sampler = WeightedTrainSampler(dataset, train_steps, min_t=50, x_weight=3.0)
 
-    val_loader = DataLoader(Subset(dataset, range( train_end * dataset.num_x * dataset.num_z, val_end * dataset.num_x * dataset.num_z, )),
-                            batch_size=training_config["batch_size"],
+        train_loader = DataLoader(train_dataset,
+                                  sampler=train_sampler,
+                                  shuffle=False,
+                                  **loader_kwargs)
+    else:
+        train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset, [n_train, n_val, n_test])
+        
+        train_loader = DataLoader(train_dataset,
+                                  shuffle=training_config["shuffle"],
+                                  **loader_kwargs)
+
+    val_loader = DataLoader(val_dataset,
                             shuffle=training_config["shuffle"],
-                            num_workers=training_config["num_workers"],
-                            pin_memory=training_config["pin_memory"],
-                            persistent_workers=training_config["persistent_workers"],
-                            prefetch_factor=training_config["prefetch_factor"],
-                            collate_fn=collate_stack)
+                            **loader_kwargs)
 
-    test_loader = DataLoader(Subset(dataset, range(val_end * dataset.num_x * dataset.num_z, len(dataset))),
-                             batch_size=training_config["batch_size"],
+    test_loader = DataLoader(test_dataset,
                              shuffle=training_config["shuffle"],
-                             num_workers=training_config["num_workers"],
-                             pin_memory=training_config["pin_memory"],
-                             persistent_workers=training_config["persistent_workers"],
-                             prefetch_factor=training_config["prefetch_factor"],
-                             collate_fn=collate_stack)
+                             **loader_kwargs)
 
     return train_loader, val_loader, test_loader

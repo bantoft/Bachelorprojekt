@@ -13,11 +13,10 @@ import torch.nn as nn
 from SciML.PINN.util.model import PINN
 from SciML.PINN.util.structure import NN_STRUCTURE
 from SciML.PINN.util.data_loader import make_dataloader, move_batch_to_device
+from torch.utils.data import ConcatDataset, DataLoader
 
 import json
 
-
-from pathlib import Path
 from dataclasses import dataclass, field, asdict
 
 
@@ -106,15 +105,60 @@ def init_trainer(training_config: dict):
     from hesel_scraper.bout_dump import BOUTHESELInfo
     from hesel_scraper.bout_phys import BOUTHESELPhys
 
-    root = Path(__file__).parents[3] / training_config["root"]
-    info = BOUTHESELInfo(root)
+    roots = training_config["root"]
+    if not isinstance(roots, (list, tuple)):
+        roots = [roots]
+
+    split_modes = training_config.get("TSSplit", True)
+    if isinstance(split_modes, bool):
+        split_modes = [split_modes] * len(roots)
+    elif len(split_modes) != len(roots):
+        raise ValueError("TSSplit must be a bool or have the same length as root.")
+
+    def _resolve_root(root):
+        root = Path(root)
+        return root if root.is_absolute() else ROOT_DIR / root
+
+    infos = [BOUTHESELInfo(_resolve_root(root)) for root in roots]
+    info = infos[0]
     phys = BOUTHESELPhys(info)
 
     condition = nn.MSELoss().to(info.device)
     model = PINN(NN_STRUCTURE)
     model.to(info.device)
     optimizer = torch.optim.Adam(model.parameters(), lr=training_config["lr"])
-    train_loader, val_loader, test_loader = make_dataloader(info, training_config)
+
+    if len(infos) == 1:
+        loader_config = dict(training_config, TSSplit=split_modes[0])
+        train_loader, val_loader, test_loader = make_dataloader(info, loader_config)
+    else:
+        loaders = [
+            make_dataloader(dataset_info, dict(training_config, TSSplit=split_mode))
+            for dataset_info, split_mode in zip(infos, split_modes)
+        ]
+
+        loader_kwargs = {
+            "batch_size": training_config["batch_size"],
+            "shuffle": training_config["shuffle"],
+            "num_workers": training_config["num_workers"],
+            "pin_memory": training_config["pin_memory"],
+            "persistent_workers": training_config["persistent_workers"],
+            "prefetch_factor": training_config["prefetch_factor"],
+            "collate_fn": loaders[0][0].collate_fn,
+        }
+
+        train_loader = DataLoader(
+            ConcatDataset([train_loader.dataset for train_loader, _, _ in loaders]),
+            **loader_kwargs,
+        )
+        val_loader = DataLoader(
+            ConcatDataset([val_loader.dataset for _, val_loader, _ in loaders]),
+            **loader_kwargs,
+        )
+        test_loader = DataLoader(
+            ConcatDataset([test_loader.dataset for _, _, test_loader in loaders]),
+            **loader_kwargs,
+        )
 
     return (info,
             phys,

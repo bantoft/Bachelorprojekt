@@ -1,19 +1,19 @@
 # Fdb version 4
-["bibtex main"] 1781562392.41802 "main.aux" "main.bbl" "main" 1781562669.42076 0
-  "./document.bib" 1781522715.41179 5893 e5deec8da8e3e8e5b865d36acf2a92f6 ""
+["bibtex main"] 1781659015.74335 "main.aux" "main.bbl" "main" 1781659016.35917 0
+  "./document.bib" 1781653748.4221 6879 9031d9d98246add4ee6fb0663208a5d9 ""
   "/usr/share/texmf-dist/bibtex/bst/base/ieeetr.bst" 1775415801 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
-  "main.aux" 1781562669.31101 7651 5359d5361a4d0b42aa2c13eed224cf0f "pdflatex"
+  "main.aux" 1781659016.25143 9849 446206636877df18c92248d1222e5167 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["cusdep nlo nls main"] 1781562392.39117 "main.nlo" "main.nls" "main" 1781562669.42061 0
-  "main.nlo" 1781562669.31343 403 f24e0157961109ea16d03256241e7ae7 "pdflatex"
+["cusdep nlo nls main"] 1781659015.71756 "main.nlo" "main.nls" "main" 1781659016.35908 0
+  "main.nlo" 1781659016.25243 403 4d65d40bcebff009b0f22ed08078fc93 "pdflatex"
   (generated)
   "main.nls"
   (rewritten before read)
-["pdflatex"] 1781562668.85016 "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" "main.pdf" "main" 1781562669.42083 0
-  "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" 1781522715.41338 3681 3628bb49d75fe92ea8d2cb95fa64dce5 ""
+["pdflatex"] 1781659015.77599 "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" "main.pdf" "main" 1781659016.35924 0
+  "/home/andreas_a/Desktop/Bachelorprojekt/skriftlig_arbajde/Rapport/main.tex" 1781659014.9869 3681 3628bb49d75fe92ea8d2cb95fa64dce5 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1775415801 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1775415801 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1775415801 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -174,19 +174,19 @@
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1780319365 5384140 9ef23e7d5d9c96d2806f8b40e57f5eef ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1780319352 2968238 fe83977913d1044507cfd531132cad9a ""
   "figures/Hesel_profiles.png" 1781557056.47649 124252 9a7ae0dba6d264d4f02b270713cc1835 ""
-  "main.aux" 1781562669.31101 7651 5359d5361a4d0b42aa2c13eed224cf0f "pdflatex"
-  "main.bbl" 1781562392.44605 1204 6f205bfe5cf5394904730358434a71b4 "bibtex main"
-  "main.lof" 1781562669.31343 333 bdb9eb875693d8d34dcdf7be5027e316 "pdflatex"
-  "main.lot" 1781562669.31343 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
-  "main.nls" 1781562392.41605 393 597f23d4fddd4fdb819a13d98e04147f "cusdep nlo nls main"
-  "main.out" 1781562669.31258 2913 84ac5936c3720bd09b862f4390745182 "pdflatex"
-  "main.tex" 1781522715.41338 3681 3628bb49d75fe92ea8d2cb95fa64dce5 ""
-  "main.toc" 1781562669.31343 1645 b36dee7df609a13ddea2737f8b1092e7 "pdflatex"
+  "main.aux" 1781659016.25143 9849 446206636877df18c92248d1222e5167 "pdflatex"
+  "main.bbl" 1781659015.77242 1685 7278dc6998df4e48b102db2a3f7ba2f4 "bibtex main"
+  "main.lof" 1781659016.25243 333 6ddc4e91347199796162b8d663cd2912 "pdflatex"
+  "main.lot" 1781659016.25243 30 283c90c47f0e16887e96cec4ba110f76 "pdflatex"
+  "main.nls" 1781659015.74234 393 d7e9e590d33feac8faf5f26d1c6ba123 "cusdep nlo nls main"
+  "main.out" 1781659016.25243 4166 8cc91647bbfdc83ba94d056e6707ce35 "pdflatex"
+  "main.tex" 1781659014.9869 3681 3628bb49d75fe92ea8d2cb95fa64dce5 ""
+  "main.toc" 1781659016.25243 2185 74f09055dbd3baf9d4a22f0d6168431e "pdflatex"
   "root/dtu.png" 1778653563.93497 11174 a65a81e57f21122f8e631908e43c73a0 ""
   "root/logo.pdf" 1778653563.9352 9933 041ba2d771540e48f0dd40b3e54edcc3 ""
   "sources/0_frontpage.tex" 1780914572.21901 545 d6affc01df24316e3ccfbb0ecea0c57b ""
   "sources/1_introduction.tex" 1781562668.70226 7618 1e54391ad368c321f5925bf9d36bc280 ""
-  "sources/2_metode.tex" 1781524854.39761 602 d36540385db310f8984202771651e333 ""
+  "sources/2_metode.tex" 1781653213.60821 648 c687ddc21c6b44b616498e9a1ef47514 ""
   "sources/3_implimentering_og_repruse.tex" 1781522715.41367 99 50a0dcaaafb3a5488853e1c3dd149573 ""
   "sources/4_data_og_analyse.tex" 1781522715.4137 1661 323b5712a188cab31eb598d1346eb1e1 ""
   "sources/5_resultater.tex" 1780926728.91224 52 10c606315b290f26c654a6b210f698bb ""
@@ -194,8 +194,10 @@
   "sources/8_fremtidig_arbejde.tex" 1780926841.17603 0 d41d8cd98f00b204e9800998ecf8427e ""
   "sources/appendix_a.tex" 1781180361.65348 47 fe628a2370b59b838762b32939d98f22 ""
   "sources/appendix_b.tex" 1781560432.41898 1355 82458be8a5a7e66daaf01851772cf41d ""
-  "sources/kap_2/2_1_fysik.tex" 1781562391.66046 20709 fc570f80176cfbec3e480d124c11b595 ""
-  "sources/kap_2/2_2_numeriske_metoder.tex" 1781525825.65125 4751 5fe946092a88d1943182f9513a49fa22 ""
+  "sources/kap_2/2_1_PINN.tex" 1781653938.77865 6580 41bbb9b86b08babd2d983c68030f399a ""
+  "sources/kap_2/2_2_fysik.tex" 1781652676.82604 20740 190c9bd50fb1a32f1e0eabf1f4cca4e0 ""
+  "sources/kap_2/2_3_numeriske_metoder.tex" 1781653183.57655 4751 3b0ce34d5269c664200112549364d0de ""
+  "sources/kap_2/2_4_tilgang_til_eksperiment.tex" 1781658947.44992 3858 1c2bd2c26a7c3d1233abd38819e0988c ""
   "sources/nomenclat.tex" 1781559041.4952 226 e96acb557fdc0899ec16f66e3d4a854e ""
   (generated)
   "main.aux"

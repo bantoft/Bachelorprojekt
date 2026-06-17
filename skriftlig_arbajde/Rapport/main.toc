@@ -1,18 +1,23 @@
 \babel@toc {english}{}\relax 
 \contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
 \contentsline {section}{\numberline {2}Metode}{4}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Fysikken bag Hesel modellen}{4}{subsection.2.1}%
-\contentsline {subsubsection}{\numberline {2.1.1}Braginskii's fluidligninger}{4}{subsubsection.2.1.1}%
-\contentsline {subsubsection}{\numberline {2.1.2}Hesel modellen}{8}{subsubsection.2.1.2}%
-\contentsline {subsection}{\numberline {2.2}Numeriske metoder}{12}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}Rumlig diskretisering}{12}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}Numeriske differentialoperatorer}{12}{subsubsection.2.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.3}Tidsintegration}{13}{subsubsection.2.2.3}%
-\contentsline {section}{\numberline {3}Implementering}{14}{section.3}%
-\contentsline {section}{\numberline {4}Data og analyse}{15}{section.4}%
-\contentsline {section}{\numberline {5}Resultater}{16}{section.5}%
-\contentsline {section}{\numberline {6}Konklusion og diskussion}{17}{section.6}%
-\contentsline {section}{\numberline {7}Fremtidigt arbejde}{18}{section.7}%
+\contentsline {subsection}{\numberline {2.1}Datadrevne og fysik informerede metoder}{4}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Hard constraints for randbetingelser}{4}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Physics-informed neural networks og soft constraints}{5}{subsubsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.2}Fysikken bag Hesel modellen}{6}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Braginskii's fluidligninger}{6}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Hesel modellen}{10}{subsubsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.3}Numeriske metoder}{15}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Rumlig diskretisering}{15}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Numeriske differentialoperatorer}{15}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Tidsintegration}{16}{subsubsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.4}Tilgang til eksperiment}{17}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Opstilling af eksperimenter}{17}{subsubsection.2.4.1}%
+\contentsline {section}{\numberline {3}Implementering}{19}{section.3}%
+\contentsline {section}{\numberline {4}Data og analyse}{20}{section.4}%
+\contentsline {section}{\numberline {5}Resultater}{21}{section.5}%
+\contentsline {section}{\numberline {6}Konklusion og diskussion}{22}{section.6}%
+\contentsline {section}{\numberline {7}Fremtidigt arbejde}{23}{section.7}%
 \contentsline {section}{List of Figures}{I}{section.7}%
 \contentsline {section}{List of Tables}{II}{section.7}%
 \contentsline {section}{Nomenclature}{III}{section.7}%

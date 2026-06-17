@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.1)  16 JUN 2026 00:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.1)  17 JUN 2026 03:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -630,7 +630,7 @@ Package caption Info: float package is loaded.
 Package caption Info: threeparttable package is loaded.
 Package caption Info: End \AtBeginDocument code.
  (./sources/0_frontpage.tex
-<root/dtu.png, id=84, 123.5817pt x 57.3342pt>
+<root/dtu.png, id=104, 123.5817pt x 57.3342pt>
 File: root/dtu.png Graphic file (type png)
 <use root/dtu.png>
 Package pdftex.def Info: root/dtu.png  used on input line 6.
@@ -649,7 +649,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 \tf@toc=\write6
 \openout6 = `main.toc'.
 
-<root/logo.pdf, id=116, 248.93pt x 58.2175pt>
+<root/logo.pdf, id=141, 248.93pt x 58.2175pt>
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 85.
@@ -683,100 +683,126 @@ File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 93.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [3] (./sources/2_metode.tex (./sources/kap_2/2_1_fysik.tex
+ [3] (./sources/2_metode.tex (./sources/kap_2/2_1_PINN.tex
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 42.
+Package pdftex.def Info: root/logo.pdf  used on input line 45.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
  [4]
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 82.
+Package pdftex.def Info: root/logo.pdf  used on input line 97.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [5]
+ [5]) (./sources/kap_2/2_2_fysik.tex
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 126.
+Package pdftex.def Info: root/logo.pdf  used on input line 20.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
  [6]
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 174.
+Package pdftex.def Info: root/logo.pdf  used on input line 70.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
  [7]
-Overfull \hbox (10.19025pt too wide) in paragraph at lines 194--198
+File: root/logo.pdf Graphic file (type pdf)
+<use root/logo.pdf>
+Package pdftex.def Info: root/logo.pdf  used on input line 122.
+(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
+ [8]
+File: root/logo.pdf Graphic file (type pdf)
+<use root/logo.pdf>
+Package pdftex.def Info: root/logo.pdf  used on input line 157.
+(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
+ [9]
+File: root/logo.pdf Graphic file (type pdf)
+<use root/logo.pdf>
+Package pdftex.def Info: root/logo.pdf  used on input line 195.
+(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
+ [10]
+Overfull \hbox (10.19025pt too wide) in paragraph at lines 195--199
 \T1/cmr/m/n/12 Det der gør HESEL mod-ellen nu-merisk ef-fek-tiv og sam-tidig fy-sisk re-al-is-tisk er, at de tværgående
  []
 
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 202.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
-[8]
-Overfull \hbox (16.46483pt too wide) in paragraph at lines 203--206
+
+Overfull \hbox (16.46483pt too wide) in paragraph at lines 204--207
 []\T1/cmr/m/n/12 Vorticitetsligningen [] beskriver ud-viklin-gen af plas-maets tværgående ro-ta-tions-bevægelse.
  []
 
-<figures/Hesel_profiles.png, id=234, 1817.79124pt x 1014.79124pt>
+File: root/logo.pdf Graphic file (type pdf)
+<use root/logo.pdf>
+Package pdftex.def Info: root/logo.pdf  used on input line 225.
+(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
+[11]
+<figures/Hesel_profiles.png, id=295, 1817.79124pt x 1014.79124pt>
 File: figures/Hesel_profiles.png Graphic file (type png)
 <use figures/Hesel_profiles.png>
-Package pdftex.def Info: figures/Hesel_profiles.png  used on input line 234.
+Package pdftex.def Info: figures/Hesel_profiles.png  used on input line 235.
 (pdftex.def)             Requested size: 469.47049pt x 262.07426pt.
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 247.
+Package pdftex.def Info: root/logo.pdf  used on input line 262.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
-[9]
+ [12]
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 261.
+Package pdftex.def Info: root/logo.pdf  used on input line 284.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [10 <./figures/Hesel_profiles.png (PNG copy)>]
+ [13 <./figures/Hesel_profiles.png (PNG copy)>]
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 287.
+Package pdftex.def Info: root/logo.pdf  used on input line 288.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [11]) (./sources/kap_2/2_2_numeriske_metoder.tex
+ [14]) (./sources/kap_2/2_3_numeriske_metoder.tex
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 62.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [12])
-Overfull \hbox (11.34415pt too wide) in paragraph at lines 110--11
+ [15])
+Overfull \hbox (11.34415pt too wide) in paragraph at lines 110--15
 []\T1/cmr/m/n/12 Den sam-lede nu-meriske strategi er der-for et uni-formt git-ter med pe-ri-odiske rand-betingelser,
  []
 
-)
+(./sources/kap_2/2_4_tilgang_til_eksperiment.tex
+File: root/logo.pdf Graphic file (type pdf)
+<use root/logo.pdf>
+Package pdftex.def Info: root/logo.pdf  used on input line 4.
+(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
+ [16]
+File: root/logo.pdf Graphic file (type pdf)
+<use root/logo.pdf>
+Package pdftex.def Info: root/logo.pdf  used on input line 36.
+(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
+ [17]))
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 98.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [13] (./sources/3_implimentering_og_repruse.tex)
+ [18] (./sources/3_implimentering_og_repruse.tex)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 103.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [14] (./sources/4_data_og_analyse.tex)
+ [19] (./sources/4_data_og_analyse.tex)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 108.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [15] (./sources/5_resultater.tex)
+ [20] (./sources/5_resultater.tex)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 112.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [16] (./sources/6_konklusion_og_disussion.tex)
+ [21] (./sources/6_konklusion_og_disussion.tex)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 117.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [17] (./sources/8_fremtidig_arbejde.tex)
+ [22] (./sources/8_fremtidig_arbejde.tex)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 125.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [18] (./main.lof)
+ [23] (./main.lof)
 \tf@lof=\write7
 \openout7 = `main.lof'.
 
@@ -820,21 +846,21 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 84AC5936C3720BD09B862F4390745182;2913.
+(rerunfilecheck)             Checksum: 8CC91647BBFDC83BA94D056E6707CE35;4166.
  ) 
 Here is how much of TeX's memory you used:
- 18725 strings out of 468904
- 305766 string characters out of 5454207
- 1061728 words of memory out of 5000000
- 46970 multiletter control sequences out of 15000+600000
+ 18780 strings out of 468904
+ 306860 string characters out of 5454207
+ 1060728 words of memory out of 5000000
+ 46996 multiletter control sequences out of 15000+600000
  644338 words of font info for 79 fonts, out of 8000000 for 9000
  350 hyphenation exceptions out of 8191
- 110i,15n,118p,752b,495s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 110i,15n,118p,759b,492s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx2488.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfxc1200.pfb>
-Output written on main.pdf (26 pages, 454516 bytes).
+Output written on main.pdf (31 pages, 476050 bytes).
 PDF statistics:
- 453 PDF objects out of 1000 (max. 8388607)
- 378 compressed objects within 4 object streams
- 90 named destinations out of 1000 (max. 500000)
- 184 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 528 PDF objects out of 1000 (max. 8388607)
+ 447 compressed objects within 5 object streams
+ 113 named destinations out of 1000 (max. 500000)
+ 224 words of extra memory for PDF output out of 10000 (max. 10000000)
 
