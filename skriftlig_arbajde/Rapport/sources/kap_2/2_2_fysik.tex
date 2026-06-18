@@ -234,13 +234,14 @@ For dette eksperiment er profilerne givet ved:
 \end{figure}
 
 Funktionerne i HESEL modellen er givet ved:
-\begin{align*}
-    &n: n(x,y,t)\\
-    &p_{e,i}: p_{e,i}(x,y,t)\\
-    &T_{e,i}: T_{e,i}(x,y,t)\\
-    &\phi: \phi(x,y,t)\\
-    &\omega^*: \omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i\\
-\end{align*}
+\begin{align}
+    &n: n(x,y,t) \label{foo: tætheds funktionen}\\
+    &p_{e,i}: p_{e,i}(x,y,t) \label{foo: tryk funktionen}\\
+    &T_{e,i}: T_{e,i}(x,y,t) \label{foo: temperatur funktionen}\\
+    &p_{e,i} = nT_{e,i} \label{eq: tryk temperatur sammenhængen}\\
+    &\phi: \phi(x,y,t) \label{foo: phi funktionen}\\
+    &\omega^*: \omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i \label{eq: vorticitet funktionen}
+\end{align}
 Her beskriver $n$ plasmaets partikel tæthed, $p_{e,i}$ er henholdsvis elektron og iontryk, $T_{e,i}$ er elektron og ion temperatur, $\phi$ er det elektriske potentiale og $\omega^*$ er den modificerede vorticitet.
 Sammenhængen mellem tæthed, tryk og temperatur, er givet ved $p_{e,i} = nT_{e,i},$ hvilket er følge af Boltzmanns konstanten og temperatur samles til et led 
 \begin{equation*}

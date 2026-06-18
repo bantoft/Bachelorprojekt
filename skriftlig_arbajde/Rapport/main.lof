@@ -1,2 +1,5 @@
 \babel@toc {english}{}\relax 
 \contentsline {figure}{\numberline {1}{\ignorespaces Påtvungne profiler i numerisk domæne, med ghost cells,"init" er $n_p$, $p_{e,p}$ og $p_{i,p}$, med sigma profiler der bestemmer hvor $\Lambda $ termerne håndhæves. x-aksen har Bohm normaliseret længde: $x = 140/\rho _s$}}{13}{figure.caption.1}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Standard simuleringen $\texttt {Alexander\_pi}$ til $t=0$. Akserne er i numeriske grid enheder og ghost cells inkluderet. Fysiske enheder er $z = 140/\rho _s$, $x = 140/\rho _s + ghostcells$}}{25}{figure.caption.2}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Standard simuleringen $\texttt {Alexander\_pi}$ til $t=3000$. Akserne er i numeriske grid enheder og ghost cells inkluderet. Fysiske enheder er $z = 140/\rho _s$, $x = 140/\rho _s + ghostcells$}}{25}{figure.caption.3}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Tidsudviklingen af feltet ln(n) for udvalgte simuleringerne $\texttt {Alexander\_*}$}}{V}{figure.caption.4}%

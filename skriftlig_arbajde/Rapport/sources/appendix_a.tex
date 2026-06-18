@@ -1,23 +1,100 @@
-\subsection{Input fil for konfiguration af simulering} \label{apndx:sim_fil}
-Dette er standard konfigurationsfil for simuleringer af BOUT-HESEL.
+% \subsection{Input fil for konfiguration af simulering} \label{apndx:sim_fil}
+% Dette er standard konfigurationsfil for simuleringer af BOUT-HESEL.
 
-\lstinputlisting[
-    basicstyle=\ttfamily\small,
-    breaklines=true,
-    columns=fullflexible,
-    language={},
-    caption={BOUT\texttt{.}inp for datasættet Alexander\_phi\_0},
-    label={lst:bout_inp}
-]{../../sim_data/Alexander_phi_0/BOUT.inp}
+% \lstinputlisting[
+%     basicstyle=\ttfamily\small,
+%     breaklines=true,
+%     columns=fullflexible,
+%     language={},
+%     caption={BOUT\texttt{.}inp for datasættet Alexander\_phi\_0},
+%     label={lst:bout_inp}
+% ]{../../sim_data/Alexander_phi_0/BOUT.inp}
 
-\subsection{Opsætning af BOUT++ og BOUT-HESEL} \label{apndx:BOUT_opsætnig}
+% \subsection{Opsætning af BOUT++ og BOUT-HESEL} \label{apndx:BOUT_opsætnig}
 
-\lstinputlisting[
-    basicstyle=\ttfamily\small,
-    breaklines=true,
-    columns=fullflexible,
-    language={},
-    literate={æ}{{\ae}}1 {ø}{{\o}}1 {å}{{\aa}}1 {Æ}{{\AE}}1 {Ø}{{\O}}1 {Å}{{\AA}}1,
-    caption={Gennemgang af opsaetning og installation af BOUT++ og BOUT-HESEL},
-    label={lst:bout_opsaetning}
-]{../opsaetning/opsaetning.txt}
+% \lstinputlisting[
+%     basicstyle=\ttfamily\small,
+%     breaklines=true,
+%     columns=fullflexible,
+%     language={},
+%     literate={æ}{{\ae}}1 {ø}{{\o}}1 {å}{{\aa}}1 {Æ}{{\AE}}1 {Ø}{{\O}}1 {Å}{{\AA}}1,
+%     caption={Gennemgang af opsaetning og installation af BOUT++ og BOUT-HESEL},
+%     label={lst:bout_opsaetning}
+% ]{../opsaetning/opsaetning.txt}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}[t]{0.15\textwidth}
+        \centering
+        \texttt{pi}\par\vspace{0.3em}
+        \centering
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t0.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t100.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t200.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t300.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t400.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t500.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t600.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t700.png}
+    \end{minipage}%
+    \hfill%
+    \begin{minipage}[t]{0.15\textwidth}
+        \centering
+        \texttt{phi\_0}\par\vspace{0.3em}
+        \centering
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t0.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t100.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t200.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t300.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t400.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t500.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t600.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t700.png}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[t]{0.15\textwidth}
+        \centering
+        \texttt{fys\_R\_1}\par\vspace{0.3em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t0.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t100.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t200.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t300.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t400.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t500.png}
+    \end{minipage}%
+    \hfill%
+    \begin{minipage}[t]{0.15\textwidth}
+        \centering
+        \texttt{grid\_c\_0}\par\vspace{0.3em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t0.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t100.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t200.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t300.png}
+        \vspace{0.05em}
+        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t400.png}
+    \end{minipage}%
+    \caption{Tidsudviklingen af feltet ln(n) for udvalgte simuleringerne $\texttt{Alexander\_*}$}
+    \label{fig: Alexander ln(n) tidsudvikling}
+\end{figure}

@@ -40,7 +40,7 @@ På dette domæne beskrives plasmaets tilstand ved de fire primære felter
 \]
 hvor \(n\) er densitet, \(p_e\) og \(p_i\) er elektron og iontryk, og \(\phi\) er det elektrostatiske potentiale. Logaritmerne bruges for at gøre simuleringen numerisk stabil og undgå negative værdier for \(n\), \(p_e\) og \(p_i\).
 
-Ud fra disse felter dannes også afledte størrelser. I implementeringen beregnes blandt andet vorticiteten som $\omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i$, som var givet i \ref{ch2_2}.
+Ud fra disse felter dannes også afledte størrelser. I implementeringen beregnes blandt andet vorticiteten som $\omega^*(x,y,t) = \nabla^2\phi + \nabla^2 p_i$, som var givet i \eqref{eq: vorticitet funktionen}.
 Da vorticiteten kan udledes direkte fra $\phi$ og $p_i$, er den ikke inkluderet som et separat felt i modellen, men udregnes i \texttt{hesel\_scraper/bout\_phys.py}.
 
 Fra simulationen fås et diskret gitter \((x_i,z_j,t_n)\), og i \texttt{bout\_dump.py} organiseres data derfor som tensorfelter af typen

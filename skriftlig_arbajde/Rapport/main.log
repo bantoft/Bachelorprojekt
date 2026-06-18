@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.1)  17 JUN 2026 18:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026/Arch Linux) (preloaded format=pdflatex 2026.6.1)  18 JUN 2026 15:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -630,7 +630,7 @@ Package caption Info: float package is loaded.
 Package caption Info: threeparttable package is loaded.
 Package caption Info: End \AtBeginDocument code.
  (./sources/0_frontpage.tex
-<root/dtu.png, id=144, 123.5817pt x 57.3342pt>
+<root/dtu.png, id=136, 123.5817pt x 57.3342pt>
 File: root/dtu.png Graphic file (type png)
 <use root/dtu.png>
 Package pdftex.def Info: root/dtu.png  used on input line 6.
@@ -649,12 +649,12 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 pdfTeX warning (ext4): destination with the same identifier (name{page.i}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.36 ...{\numberline {9}Appendix B}{XV}{section.9}
+l.35 ... af Boltzmann ligning}{VI}{subsection.9.1}
                                                   % [1])
 \tf@toc=\write6
 \openout6 = `main.toc'.
 
-<root/logo.pdf, id=197, 248.93pt x 58.2175pt>
+<root/logo.pdf, id=187, 248.93pt x 58.2175pt>
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 85.
@@ -733,24 +733,24 @@ File: root/logo.pdf Graphic file (type pdf)
 Package pdftex.def Info: root/logo.pdf  used on input line 220.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
 [11]
-<figures/Hesel_profiles.png, id=349, 1817.79124pt x 1014.79124pt>
+<figures/Hesel_profiles.png, id=339, 1817.79124pt x 1014.79124pt>
 File: figures/Hesel_profiles.png Graphic file (type png)
 <use figures/Hesel_profiles.png>
 Package pdftex.def Info: figures/Hesel_profiles.png  used on input line 230.
 (pdftex.def)             Requested size: 469.47049pt x 262.07426pt.
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 257.
+Package pdftex.def Info: root/logo.pdf  used on input line 258.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
  [12]
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 279.
+Package pdftex.def Info: root/logo.pdf  used on input line 280.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
  [13 <./figures/Hesel_profiles.png (PNG copy)>]
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 283.
+Package pdftex.def Info: root/logo.pdf  used on input line 284.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
  [14]) (./sources/kap_2/2_3_numeriske_metoder.tex
 File: root/logo.pdf Graphic file (type pdf)
@@ -829,27 +829,47 @@ File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 16.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
-[23]))
+[23]
+File: root/logo.pdf Graphic file (type pdf)
+<use root/logo.pdf>
+Package pdftex.def Info: root/logo.pdf  used on input line 61.
+(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
+ [24]
+<figures/Standard_fields/_Alexander_pi_samlet_0.png, id=446, 1815.78375pt x 1034.86626pt>
+File: figures/Standard_fields/_Alexander_pi_samlet_0.png Graphic file (type png)
+<use figures/Standard_fields/_Alexander_pi_samlet_0.png>
+Package pdftex.def Info: figures/Standard_fields/_Alexander_pi_samlet_0.png  used on input line 64.
+(pdftex.def)             Requested size: 375.57782pt x 214.04384pt.
+<figures/Standard_fields/_Alexander_pi_samlet_200.png, id=447, 1815.78375pt x 1034.86626pt>
+File: figures/Standard_fields/_Alexander_pi_samlet_200.png Graphic file (type png)
+<use figures/Standard_fields/_Alexander_pi_samlet_200.png>
+Package pdftex.def Info: figures/Standard_fields/_Alexander_pi_samlet_200.png  used on input line 71.
+(pdftex.def)             Requested size: 375.57782pt x 214.04384pt.
+File: root/logo.pdf Graphic file (type pdf)
+<use root/logo.pdf>
+Package pdftex.def Info: root/logo.pdf  used on input line 81.
+(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
+ [25 <./figures/Standard_fields/_Alexander_pi_samlet_0.png (PNG copy)> <./figures/Standard_fields/_Alexander_pi_samlet_200.png (PNG copy)>]))
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 108.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [24] (./sources/5_resultater.tex)
+ [26] (./sources/5_resultater.tex)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 112.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [25] (./sources/6_konklusion_og_disussion.tex)
+ [27] (./sources/6_konklusion_og_disussion.tex)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 117.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [26] (./sources/8_fremtidig_arbejde.tex)
+ [28] (./sources/8_fremtidig_arbejde.tex)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 123.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [27] (./main.lof)
+ [29] (./main.lof)
 \tf@lof=\write7
 \openout7 = `main.lof'.
 
@@ -875,62 +895,153 @@ File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 144.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [4] (./sources/appendix_a.tex (../../sim_data/Alexander_phi_0/BOUT.inp
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 41.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [5]
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 82.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [6]
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 121.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [7]
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 166.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [8]
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 208.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [9]
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 251.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [10]
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 291.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [11]
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 336.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [12]) (../opsaetning/opsaetning.txt
-File: root/logo.pdf Graphic file (type pdf)
-<use root/logo.pdf>
-Package pdftex.def Info: root/logo.pdf  used on input line 27.
-(pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [13]))
+ [4] (./sources/appendix_a.tex
+<figures/Tidsudvikling/Alexander_pi_lnn_t0.png, id=509, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_pi_lnn_t0.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_pi_lnn_t0.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_pi_lnn_t0.png  used on input line 31.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_pi_lnn_t100.png, id=510, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_pi_lnn_t100.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_pi_lnn_t100.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_pi_lnn_t100.png  used on input line 33.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_pi_lnn_t200.png, id=511, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_pi_lnn_t200.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_pi_lnn_t200.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_pi_lnn_t200.png  used on input line 35.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_pi_lnn_t300.png, id=512, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_pi_lnn_t300.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_pi_lnn_t300.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_pi_lnn_t300.png  used on input line 37.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_pi_lnn_t400.png, id=513, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_pi_lnn_t400.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_pi_lnn_t400.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_pi_lnn_t400.png  used on input line 39.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_pi_lnn_t500.png, id=514, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_pi_lnn_t500.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_pi_lnn_t500.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_pi_lnn_t500.png  used on input line 41.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_pi_lnn_t600.png, id=515, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_pi_lnn_t600.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_pi_lnn_t600.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_pi_lnn_t600.png  used on input line 43.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_pi_lnn_t700.png, id=516, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_pi_lnn_t700.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_pi_lnn_t700.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_pi_lnn_t700.png  used on input line 45.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_phi_0_lnn_t0.png, id=517, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_phi_0_lnn_t0.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_phi_0_lnn_t0.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_phi_0_lnn_t0.png  used on input line 52.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_phi_0_lnn_t100.png, id=518, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_phi_0_lnn_t100.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_phi_0_lnn_t100.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_phi_0_lnn_t100.png  used on input line 54.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_phi_0_lnn_t200.png, id=519, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_phi_0_lnn_t200.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_phi_0_lnn_t200.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_phi_0_lnn_t200.png  used on input line 56.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_phi_0_lnn_t300.png, id=520, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_phi_0_lnn_t300.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_phi_0_lnn_t300.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_phi_0_lnn_t300.png  used on input line 58.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_phi_0_lnn_t400.png, id=521, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_phi_0_lnn_t400.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_phi_0_lnn_t400.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_phi_0_lnn_t400.png  used on input line 60.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_phi_0_lnn_t500.png, id=522, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_phi_0_lnn_t500.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_phi_0_lnn_t500.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_phi_0_lnn_t500.png  used on input line 62.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_phi_0_lnn_t600.png, id=523, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_phi_0_lnn_t600.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_phi_0_lnn_t600.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_phi_0_lnn_t600.png  used on input line 64.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander_phi_0_lnn_t700.png, id=524, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander_phi_0_lnn_t700.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander_phi_0_lnn_t700.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander_phi_0_lnn_t700.png  used on input line 66.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander__fys_R_1_lnn_t0.png, id=525, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t0.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__fys_R_1_lnn_t0.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t0.png  used on input line 72.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander__fys_R_1_lnn_t100.png, id=526, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t100.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__fys_R_1_lnn_t100.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t100.png  used on input line 74.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander__fys_R_1_lnn_t200.png, id=527, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t200.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__fys_R_1_lnn_t200.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t200.png  used on input line 76.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander__fys_R_1_lnn_t300.png, id=528, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t300.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__fys_R_1_lnn_t300.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t300.png  used on input line 78.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander__fys_R_1_lnn_t400.png, id=529, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t400.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__fys_R_1_lnn_t400.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t400.png  used on input line 80.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander__fys_R_1_lnn_t500.png, id=530, 510.2262pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t500.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__fys_R_1_lnn_t500.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__fys_R_1_lnn_t500.png  used on input line 82.
+(pdftex.def)             Requested size: 70.4177pt x 60.98654pt.
+<figures/Tidsudvikling/Alexander__grid_c_0_lnn_t0.png, id=531, 508.7808pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t0.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__grid_c_0_lnn_t0.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t0.png  used on input line 88.
+(pdftex.def)             Requested size: 70.4177pt x 61.16187pt.
+<figures/Tidsudvikling/Alexander__grid_c_0_lnn_t100.png, id=532, 508.7808pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t100.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__grid_c_0_lnn_t100.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t100.png  used on input line 90.
+(pdftex.def)             Requested size: 70.4177pt x 61.16187pt.
+<figures/Tidsudvikling/Alexander__grid_c_0_lnn_t200.png, id=533, 508.7808pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t200.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__grid_c_0_lnn_t200.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t200.png  used on input line 92.
+(pdftex.def)             Requested size: 70.4177pt x 61.16187pt.
+<figures/Tidsudvikling/Alexander__grid_c_0_lnn_t300.png, id=534, 508.7808pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t300.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__grid_c_0_lnn_t300.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t300.png  used on input line 94.
+(pdftex.def)             Requested size: 70.4177pt x 61.16187pt.
+<figures/Tidsudvikling/Alexander__grid_c_0_lnn_t400.png, id=535, 508.7808pt x 441.93105pt>
+File: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t400.png Graphic file (type png)
+<use figures/Tidsudvikling/Alexander__grid_c_0_lnn_t400.png>
+Package pdftex.def Info: figures/Tidsudvikling/Alexander__grid_c_0_lnn_t400.png  used on input line 96.
+(pdftex.def)             Requested size: 70.4177pt x 61.16187pt.
+)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 148.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [14] (./sources/appendix_b.tex)
+ [5 <./figures/Tidsudvikling/Alexander_pi_lnn_t0.png> <./figures/Tidsudvikling/Alexander_pi_lnn_t100.png> <./figures/Tidsudvikling/Alexander_pi_lnn_t200.png> <./figures/Tidsudvikling/Alexander_pi_lnn_t300.png> <./figures/Tidsudvikling/Alexander_pi_lnn_t400.png> <./figures/Tidsudvikling/Alexander_pi_lnn_t500.png> <./figures/Tidsudvikling/Alexander_pi_lnn_t600.png> <./figures/Tidsudvikling/Alexander_pi_lnn_t700.png> <./figures/Tidsudvikling/Alexander_phi_0_lnn_t0.png> <./figures/Tidsudvikling/Alexander_phi_0_lnn_t100.png> <./figures/Tidsudvikling/Alexander_phi_0_lnn_t200.png> <./figures/Tidsudvikling/Alexander_phi_0_lnn_t300.png> <./figures/Tidsudvikling/Alexander_phi_0_lnn_t400.png> <./figures/Tidsudvikling/Alexander_phi_0_lnn_t500.png> <./figures/Tidsudvikling/Alexander_phi_0_lnn_t600.png> <./figures/Tidsudvikling/Alexander_phi_0_lnn_t700.png> <./figures/Tidsudvikling/Alexander__fys_R_1_lnn_t0.png> <./figures/Tidsudvikling/Alexander__fys_R_1_lnn_t100.png> <./figures/Tidsudvikling/Alexander__fys_R_1_lnn_t200.png> <./figures/Tidsudvikling/Alexander__fys_R_1_lnn_t300.png> <./figures/Tidsudvikling/Alexander__fys_R_1_lnn_t400.png> <./figures/Tidsudvikling/Alexander__fys_R_1_lnn_t500.png> <./figures/Tidsudvikling/Alexander__grid_c_0_lnn_t0.png> <./figures/Tidsudvikling/Alexander__grid_c_0_lnn_t100.png> <./figures/Tidsudvikling/Alexander__grid_c_0_lnn_t200.png> <./figures/Tidsudvikling/Alexander__grid_c_0_lnn_t300.png> <./figures/Tidsudvikling/Alexander__grid_c_0_lnn_t400.png>] (./sources/appendix_b.tex)
 File: root/logo.pdf Graphic file (type pdf)
 <use root/logo.pdf>
 Package pdftex.def Info: root/logo.pdf  used on input line 152.
 (pdftex.def)             Requested size: 152.07877pt x 35.56593pt.
- [15] 
+ [6] 
 enddocument/afterlastpage (AED): lastpage setting LastPage.
 (./main.aux)
  ***********
@@ -938,21 +1049,21 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 4A714382573FD0F3DD7CF0991BB2BE17;6250.
+(rerunfilecheck)             Checksum: AD3E80BA0F805B7D527078462190E563;5734.
  ) 
 Here is how much of TeX's memory you used:
- 20074 strings out of 468904
- 322893 string characters out of 5454207
- 1455728 words of memory out of 5000000
- 47832 multiletter control sequences out of 15000+600000
- 646360 words of font info for 84 fonts, out of 8000000 for 9000
+ 19053 strings out of 468904
+ 319839 string characters out of 5454207
+ 1062728 words of memory out of 5000000
+ 47234 multiletter control sequences out of 15000+600000
+ 645277 words of font info for 82 fonts, out of 8000000 for 9000
  350 hyphenation exceptions out of 8191
- 110i,15n,118p,859b,2237s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx2488.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfxc1200.pfb>
-Output written on main.pdf (45 pages, 631064 bytes).
+ 110i,15n,118p,859b,616s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfbx2488.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1200.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sfxc1200.pfb>
+Output written on main.pdf (38 pages, 3828086 bytes).
 PDF statistics:
- 1180 PDF objects out of 1200 (max. 8388607)
- 1073 compressed objects within 11 object streams
- 550 named destinations out of 1000 (max. 500000)
- 304 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 697 PDF objects out of 1000 (max. 8388607)
+ 550 compressed objects within 6 object streams
+ 138 named destinations out of 1000 (max. 500000)
+ 433 words of extra memory for PDF output out of 10000 (max. 10000000)
 

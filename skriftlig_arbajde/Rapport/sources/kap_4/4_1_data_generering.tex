@@ -4,7 +4,7 @@ BOUT++ og BOUT-HESEL blev opsat på DTU's HPC-cluster i et separat softwaremilj�
 Selve installationen blev udført i to trin. Først blev BOUT++ klonet fra det officielle repository, sat til version \texttt{v4.3.2}, konfigureret med \texttt{./configure} og derefter kompileret med \texttt{make -j16}. BOUT++ fungerer her som den generelle simuleringsramme, som håndterer numerisk løsning, gitterstruktur og parallel udførelse. Herefter blev BOUT-HESEL klonet med tilhørende submoduler. I denne del af opsætningen blev de nødvendige komponenter fra \texttt{HESEL-Common} koblet til projektet, så HESEL-modellen kunne bygges oven på den allerede kompilerede BOUT++-installation. Til sidst blev BOUT-HESEL også kompileret med \texttt{make -j16}.
 
 Når både BOUT++ og BOUT-HESEL var bygget, kunne simuleringerne køres med \texttt{mpirun -np 4 ./hesel -d <folder med BOUT.inp fil>}. Her læser programmet sin konfiguration fra den tilhørende \texttt{BOUT.inp}-fil, som specificerer blandt andet gitteropløsning, tidsstep, randbetingelser og fysiske parametre. Denne opsætning gjorde det muligt at generere konsistente HESEL-simuleringer på clusteret, som efterfølgende kunne bruges som datagrundlag for de læringsbaserede modeller.
-Dette projekts opsætning af BOUT++ og BOUT-HESEL er dokumenteret i detaljer i bilag \ref{apndx:BOUT_opsætnig}, hvor alle nødvendige kommandoer og trin er gennemgået for at sikre reproducerbarhed.
+Dette projekts opsætning af BOUT++ og BOUT-HESEL er dokumenteret i detaljer i filen $\texttt{skriftlig\_arbajde/opsaetning}$, hvor alle nødvendige kommandoer og trin er gennemgået for at sikre reproducerbarhed.
 
 
 \subsubsection{Data generaring}
@@ -18,8 +18,7 @@ grid opløsninger, fysiske parametre og tilfældige seed ligger i folderen $\tex
     \item Folderen med modificeret grid opløsning starter med $\texttt{sim\_data/Alexander\_\_grid\_c}$
 \end{itemize}
 
-Standard input filen $\texttt{sim\_data/Alexander\_phi\_0/BOUT.inp}$ er lagt i bilag \ref{apndx:sim_fil}. Resten kan findes inde i folderen \texttt{sim\_data}.
-
+Alle input filer i $\texttt{sim\_data/Alexander\_*/BOUT.inp}$.
 Alle simulerninger blev udført på Danmarks Tekniske Universitet (DTU)'s High Performance Computing (HPC) cluster, med 16 CPU kerner.
 Hver simulering tog ikke længere end 1 time.
 Submit filen til simuleringen ligger her: $\texttt{sim\_data/submit\_simulering.sh}$.
@@ -45,10 +44,40 @@ For simuleringen med modificeret fysik er følgende variabler ændret til
 Disse blev vurderet til at være mest almindelige fysiske parametre at variere.
 For simuleringen med modificeret grid opløsning blev ændre til at være $\texttt{nx = 514}, \texttt{nz = 512}$
 
-Alle filer, både standard og modificerede, havde forskellige seeds for at sikre at modellerne ikke overfittede på specifikke begyndelsestilstande.
+Alle filer, både standard og modificerede, havde forskellige seeds for at sikre at udviklingen af simuleringerne var forksellige.
 
 
 \subsubsection{Data visualisering}
-Selve visualiseringen af data er udført i $\texttt{hesel\_scraper/visulizer.ipynb}$. Her bruges klassen \texttt{BOUTHESELInfo} fra \texttt{bout\_dump} biblioteket.
-Denne klasse læser data'en via $\texttt{xbout}$ og gemmer den som tensorer så python nemmere kan arbejde med det. 
+Selve visualiseringen af data er udført i $\texttt{hesel\_scraper/visualizer.ipynb}$.
+Til indlæsning af simuleringsdata anvendes klassen $\texttt{BOUTHESELInfo}$ fra biblioteket $\texttt{bout\_dump}$.
+Klassen benytter $\texttt{xbout}$ til at læse de parallelle outputfiler fra hver data folder, hvor simuleringsdomænet er opdelt i flere subdomæner,
+ét for hver processor. Disse subdomæner sammensættes automatisk til det oprindelige globale gitter, hvorefter data lagres som PyTorch tensorer.
 
+Det første billede genereret er begyndelsestilstanden for hvert felt, som set i \ref{fig:hesel_profiles}. Hvert felt er udvidet symetrisk om $z$-aksen.
+For felterne $n$, $p_e$ og $p_i$ tages logaritmen, og $\omega^*$ er initialiseret til 0 og $\phi$ er udregnet med formelen \eqref{eq: vorticitet funktionen}.
+For det første billede genereret tilføjes der også en lille tilfældig støj så alle simuleringer udvikler sig forskelligt over tid. Denne støj er ikke synlig i $t=0$.
+Den vertikale bar ved siden af hver felt viser farveskalaen for det pågældende felt.
+Dette giver følgende billeder.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Standard_fields/_Alexander_pi_samlet_0.png}
+    \caption{Standard simuleringen $\texttt{Alexander\_pi}$ til $t=0$. Akserne er i numeriske grid enheder og ghost cells inkluderet.
+    Fysiske enheder er $z = 140/\rho_s$, $x = 140/\rho_s + ghostcells$}
+    \label{fig: Alexander pi 0}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Standard_fields/_Alexander_pi_samlet_200.png}
+    \caption{Standard simuleringen $\texttt{Alexander\_pi}$ til $t=3000$. Akserne er i numeriske grid enheder og ghost cells inkluderet.
+    Fysiske enheder er $z = 140/\rho_s$, $x = 140/\rho_s + ghostcells$}
+    \label{fig: Alexander pi 3000}
+\end{figure}
+
+For tidsudviklingen af feltet ln(n) for udvalgte simuleringer, se \ref{fig: Alexander ln(n) tidsudvikling}. Her blev der udvalgt 2 standard simuleringer og 
+simuleringen af modificeret fysik, og modificeret grid opløsning. Da simuleringerne af modificeret tidstep og den sidste standard simulering har samme fysik
+og gridopløsning er disse undladt at have med. Ellers kan alle bill
+
+ikke udvikler sig så langt i tid som de andre, blev den ikke inkluderet i dette billede.
+
+Her er det tydeligt at alle simuleringer udvikler sig forskelligt over tid, hvilket skyldes både de forskellige seeds og de forskellige konfigurationer. Det er også tydeligt at ændringer i tidsteppet, fysikken og grid opløsningen har en betydelig indvirkning på udviklingen af feltet ln(n) over tid.

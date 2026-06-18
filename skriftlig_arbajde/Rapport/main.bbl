@@ -24,7 +24,7 @@ S.~I. Braginskii, ``Transport processes in a plasma,'' {\em Reviews of Plasma Ph
 \newblock Accessed: 2026-06-11.
 
 \bibitem{bsc_projekt}
-A.~Antoft, ``Bachelorprojekt: Physics informed neural networks and operators for hesel simulations,'' 2026.
-\newblock GitHub repository, accessed: 2026-06-17.
+A.~Antoft, ``Bachelorprojekt: Physics informed neural networks and operators for hesel simulations.'' \url{https://github.com/bantoft/Bachelorprojekt}, 2026.
+\newblock Mit github repository for dette projekt.
 
 \end{thebibliography}
