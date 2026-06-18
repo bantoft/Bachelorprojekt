@@ -121,7 +121,7 @@ class WrappedPINN(torch.nn.Module):
         pred_std = self.pinn.network(network_input).reshape(model_input.shape[0], self.num_output_channels, self.nx, 1)
         N_theta = pred_std * self.std + self.mean
 
-        f_theta = g_x[None] + sigma_t * (H_x[None] - g_x[None] + D_x[None] * (N_theta - H_x[None]))
+        f_theta = g_x[None] + sigma_t * (H_x[None] - g_x[None] + D_x[None] * N_theta)
         f_theta = {
             name: f_theta[:, index : index + 1]
             for index, name in enumerate(self.pinn.output_names)

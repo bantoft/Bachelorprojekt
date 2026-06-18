@@ -1,0 +1,54 @@
+\subsubsection{BOUT opsætning}
+BOUT++ og BOUT-HESEL blev opsat på DTU's HPC-cluster i et separat softwaremiljø, hvor de nødvendige moduler for MPI, FFTW, NetCDF og Intel compiler først blev loadet. Dette var nødvendigt, fordi både kompilering og kørsel af simuleringerne afhænger af parallelisering og eksterne numeriske biblioteker. Derudover blev \texttt{OMP\_NUM\_THREADS} sat til 16, så opsætningen matchede den ønskede brug af clusterets CPU-ressourcer.
+
+Selve installationen blev udført i to trin. Først blev BOUT++ klonet fra det officielle repository, sat til version \texttt{v4.3.2}, konfigureret med \texttt{./configure} og derefter kompileret med \texttt{make -j16}. BOUT++ fungerer her som den generelle simuleringsramme, som håndterer numerisk løsning, gitterstruktur og parallel udførelse. Herefter blev BOUT-HESEL klonet med tilhørende submoduler. I denne del af opsætningen blev de nødvendige komponenter fra \texttt{HESEL-Common} koblet til projektet, så HESEL-modellen kunne bygges oven på den allerede kompilerede BOUT++-installation. Til sidst blev BOUT-HESEL også kompileret med \texttt{make -j16}.
+
+Når både BOUT++ og BOUT-HESEL var bygget, kunne simuleringerne køres med \texttt{mpirun -np 4 ./hesel -d <folder med BOUT.inp fil>}. Her læser programmet sin konfiguration fra den tilhørende \texttt{BOUT.inp}-fil, som specificerer blandt andet gitteropløsning, tidsstep, randbetingelser og fysiske parametre. Denne opsætning gjorde det muligt at generere konsistente HESEL-simuleringer på clusteret, som efterfølgende kunne bruges som datagrundlag for de læringsbaserede modeller.
+Dette projekts opsætning af BOUT++ og BOUT-HESEL er dokumenteret i detaljer i bilag \ref{apndx:BOUT_opsætnig}, hvor alle nødvendige kommandoer og trin er gennemgået for at sikre reproducerbarhed.
+
+
+\subsubsection{Data generaring}
+Til dette er der generet 6 simuleringer. Herfra er 3 standard simuleringer og 3 simuleringer hvor eneste ændring er: tidsteppet, fysikken og grid opløsningen.
+Alle simulerings konfigurations filer der bestemmer begyndelsestilstande, randbetingleser,
+grid opløsninger, fysiske parametre og tilfældige seed ligger i folderen $\texttt{sim\_data}$ i Github repositoryet.
+\begin{itemize}
+    \item 3 standard simuleringer starter med $\texttt{sim\_data/Alexander\_*}$ " Her er * en plads for forskellige seed"
+    \item Folderen med modificeret tidsteppet starter med $\texttt{sim\_data/Alexander\_\_t\_n}$
+    \item Folderen med modificeret fysik starter med $\texttt{sim\_data/Alexander\_\_fys\_R\_1}$
+    \item Folderen med modificeret grid opløsning starter med $\texttt{sim\_data/Alexander\_\_grid\_c}$
+\end{itemize}
+
+Standard input filen $\texttt{sim\_data/Alexander\_phi\_0/BOUT.inp}$ er lagt i bilag \ref{apndx:sim_fil}. Resten kan findes inde i folderen \texttt{sim\_data}.
+
+Alle simulerninger blev udført på Danmarks Tekniske Universitet (DTU)'s High Performance Computing (HPC) cluster, med 16 CPU kerner.
+Hver simulering tog ikke længere end 1 time.
+Submit filen til simuleringen ligger her: $\texttt{sim\_data/submit\_simulering.sh}$.
+Træningen af modellerne blev udført lokalt. Derofr blev filer downloadet fra HPC clusteret til lokal maskine med 
+\[
+    \texttt{rsync -avh --progress ssh:<sti til data> <sti til lokal folder>}
+\]
+Det er ikke forvæntet at download skule ødelegge data'en når den komprimeres og downloades med rsync.
+
+
+
+
+For simuleringen med modificeret tidstep sættes variablen $\texttt{timestep = 25}$. Det betyder at modellen skal forudsige længere frem
+i tiden end hvad den er trænet på.
+
+For simuleringen med modificeret fysik er følgende variabler ændret til
+\begin{align*}
+    &\texttt{Z\_eff  = 1.7} \\
+    &\texttt{Bt      = 2.32} \\
+    &\texttt{Te0     = 75.6} \\
+    &\texttt{Ti0     = 75.6} \\
+\end{align*}
+Disse blev vurderet til at være mest almindelige fysiske parametre at variere.
+For simuleringen med modificeret grid opløsning blev ændre til at være $\texttt{nx = 514}, \texttt{nz = 512}$
+
+Alle filer, både standard og modificerede, havde forskellige seeds for at sikre at modellerne ikke overfittede på specifikke begyndelsestilstande.
+
+
+\subsubsection{Data visualisering}
+Selve visualiseringen af data er udført i $\texttt{hesel\_scraper/visulizer.ipynb}$. Her bruges klassen \texttt{BOUTHESELInfo} fra \texttt{bout\_dump} biblioteket.
+Denne klasse læser data'en via $\texttt{xbout}$ og gemmer den som tensorer så python nemmere kan arbejde med det. 
+

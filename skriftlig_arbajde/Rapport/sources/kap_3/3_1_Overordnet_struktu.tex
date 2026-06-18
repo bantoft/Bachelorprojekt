@@ -69,7 +69,7 @@ De to modeller \texttt{PINN\_z} og \texttt{PINO\_z} behandles derimod samlet som
 
 For \texttt{PINN\_z} og \texttt{PINO\_z} bruges der en hard constraint konstruktion. Her skrives modeloutputtet ikke blot som et frit netværksoutput, men indlejres i en ansats af formen
 \[
-\hat{\mathbf{u}}_\theta = \mathbf{g} + \sigma(t)\bigl(\mathbf{H} - \mathbf{g} + \mathbf{D}\odot(\mathbf{N}_\theta - \mathbf{H})\bigr),
+\hat{\mathbf{u}}_\theta = \mathbf{g} + \sigma(t)\bigl(\mathbf{H} - \mathbf{g} + \mathbf{D} \mathbf{N}_\theta\bigr),
 \]
 hvor \(\mathbf{g}\) repræsenterer initialtilstanden, \(\mathbf{H}\) er en hjælpefunktion der opfylder randbetingelserne, \(\mathbf{D}\) er en dæmpningsfunktion som går mod nul ved randen, og \(\sigma(t)\) sørger for korrekt kobling til begyndelsestiden. Dermed bliver dele af initial og randbetingelserne opfyldt konstruktivt for alle \(\theta\), i stedet for kun at blive presset ned via ekstra tabsled.
 

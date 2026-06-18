@@ -45,7 +45,7 @@ Dette er i tråd med både den klassiske formulering for neurale netværk til di
 og den senere PINN formulering i \cite{raissi2017pinn_part1}, hvor løsningen repræsenteres med simple feedforward netværk.
 Raissi et al.\ viser desuden, at glatte aktiveringsfunktioner som $\tanh$ og en vis netværksdybde giver en mærkbar forbedring
 i approksimationskvaliteten.
-På den baggrund vælges her et simpelt, men forholdsvis bredt søgeområde bestående af 3 eller 4 skjulte lag og hidden dimensioner fra cirka 256 til 4096.
+På den baggrund vælges her et simpelt, men forholdsvis bredt søgeområde bestående af 2, 4, 6 eller 8 skjulte lag og hidden dimensioner fra 256 til 4096.
 For aktiveringsfunktionerne undersøges både $\tanh$, og SiLU som er velafprøvet i PINN litteraturen.
 Der undersøges 
 
@@ -61,3 +61,23 @@ og derfor ikke er i stand til at forudsige de små detaljer i løsningen, som er
 Derfor skal modellen have et mindre input og output format, så den kan fokusere på de vigtigste detaljer i løsningen.
 
 
+% Da Hesel modellen består af et koblet system af partielle differentialligninger, som ikke har en analytisk løsning, approksimeres løsningen numerisk.
+% Fremgangsmåden er at bruge fysikken bag Hesel modellen og data simuleringer af dynamikkerne til at træne en model $\hat{f}_{\theta}$, til at minimere dynamikker og PDE fejl.
+% Det forvæntes at en model trænet på et bestemt sæt af dynamikker og PDE, ville kunne genskabe både interpolation og ekstrapolation simuleret dynamikker, og samtidig opfylde PDE systemet.
+% Hvis ekstrapolation ikke er så godt vil modellen kunne trænes samtidig med simuleringen køre og kunne blive brugt meget hurtigt til dette nye sæt af dynamikker og PDE system.
+% Ved brug af disse metoder forvæntes det at simuleringen kan gøres computationalt billigere, hurtigere og samtidig vedligeholde fysisk nøjagtighed.
+
+% Den videnskabelige tilgang er som følgene:
+% \begin{itemize}
+%     \item Et grundigt litteraturstudie af PDE'er, numeriske metoder, datadrevne og fysik informede metoder
+%     \item Forstå og redgøre for de grundlæggende matematiske og fysiske principper bag Hesel modellen
+%     \item Udsvikle ablations studier og eksperimenter
+%     \item Implementere og træne datadrevne og fysik informede modeller
+%     \item Evaluere og sammenligne resultaterne
+%     \item Iterere og forbedre modellerne baseret på resultaterne
+% \end{itemize}
+% Disse approksimative modeller bliver evalueret på følgende test:
+% \begin{itemize}
+%     \item Hvor godt de approksimative modeller opfylder Hesel modellen
+%     \item Genskabe både interpolation og ekstrapolation simuleret dynamikker
+% \end{itemize}

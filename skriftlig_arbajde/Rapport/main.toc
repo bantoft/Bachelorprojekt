@@ -1,7 +1,7 @@
 \babel@toc {english}{}\relax 
 \contentsline {section}{\numberline {1}Introduction}{1}{section.1}%
 \contentsline {section}{\numberline {2}Metode}{4}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Datadrevne og fysik informerede metoder}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.1}Approksimation af PDE'er med neurale netværk}{4}{subsection.2.1}%
 \contentsline {subsubsection}{\numberline {2.1.1}Hard constraints for randbetingelser}{4}{subsubsection.2.1.1}%
 \contentsline {subsubsection}{\numberline {2.1.2}Physics-informed neural networks og soft constraints}{5}{subsubsection.2.1.2}%
 \contentsline {subsection}{\numberline {2.2}Fysikken bag Hesel modellen}{6}{subsection.2.2}%
@@ -18,14 +18,20 @@
 \contentsline {subsection}{\numberline {3.1}Overordnet struktur}{19}{subsection.3.1}%
 \contentsline {subsubsection}{\numberline {3.1.1}Pipeline for modellen}{19}{subsubsection.3.1.1}%
 \contentsline {subsubsection}{\numberline {3.1.2}Sammenhæng mellem simulation, data og model}{20}{subsubsection.3.1.2}%
-\contentsline {section}{\numberline {4}Data og analyse}{23}{section.4}%
-\contentsline {section}{\numberline {5}Resultater}{24}{section.5}%
-\contentsline {section}{\numberline {6}Konklusion og diskussion}{25}{section.6}%
-\contentsline {section}{\numberline {7}Fremtidigt arbejde}{26}{section.7}%
+\contentsline {section}{\numberline {4}Data og eksperiement}{23}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Opsætning og generering af data}{23}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}BOUT opsætning}{23}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Data generaring}{23}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Data visualisering}{24}{subsubsection.4.1.3}%
+\contentsline {section}{\numberline {5}Resultater}{25}{section.5}%
+\contentsline {section}{\numberline {6}Konklusion og diskussion}{26}{section.6}%
+\contentsline {section}{\numberline {7}Fremtidigt arbejde}{27}{section.7}%
 \contentsline {section}{List of Figures}{I}{section.7}%
 \contentsline {section}{List of Tables}{II}{section.7}%
 \contentsline {section}{Nomenclature}{III}{section.7}%
 \contentsline {section}{References}{IV}{section.7}%
 \contentsline {section}{\numberline {8}Appendix A}{V}{section.8}%
-\contentsline {section}{\numberline {9}Appendix B}{VI}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Anvendelse af Boltzmann ligning}{VI}{subsection.9.1}%
+\contentsline {subsection}{\numberline {8.1}Input fil for konfiguration af simulering}{V}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Opsætning af BOUT++ og BOUT-HESEL}{XIII}{subsection.8.2}%
+\contentsline {section}{\numberline {9}Appendix B}{XV}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Anvendelse af Boltzmann ligning}{XV}{subsection.9.1}%

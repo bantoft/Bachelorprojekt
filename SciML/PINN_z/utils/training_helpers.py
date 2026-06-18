@@ -299,65 +299,39 @@ def iterator(loader,
             batch = [x.to(info.device, non_blocking=True) for x in batch]
             last_batch_idx = batch_idx
 
-            # Data loss
             optimizer.zero_grad(set_to_none=True)
-            if is_training:
-                f_theta, _ = model(batch, requires_coord_grad=False)
-            else:
-                with torch.no_grad():
-                    f_theta, _ = model(batch, requires_coord_grad=False)
+            f_theta, coord_fys = model(batch, requires_coord_grad=True)
+            _, _, avg_z, _, coords_num = batch
+
             pred_da = torch.cat([f_theta[name] for name in ("lnn", "lnpe", "lnpi", "phi")], dim=1)
             center_idx = pred_da.shape[-1] // 2
             pred_da_center = pred_da[:, :, :, center_idx : center_idx + 1]
             data_loss = condition(pred_da_center, batch[1])
             data_loss_value = data_loss.detach().cpu().item()
 
-            if not torch.isfinite(data_loss):
-                print(f"Skipping batch {batch_idx + 1}: non-finite data loss.")
-                save_checkpoint(train_config,
-                                skipped_batch_info={
-                                    "reason": "non-finite data loss",
-                                    "batch_idx": batch_idx,
-                                    "data_loss": data_loss_value,
-                                })
-                del f_theta, pred_da, pred_da_center, data_loss, batch
-                processed_batches += 1
-                state["batch_idx"] = batch_idx + 1
-                continue
-
-            if is_training:
-                data_loss.backward()
-                optimizer.step()
-
-            del f_theta, pred_da, pred_da_center, data_loss
-
-            # Equation loss
-            optimizer.zero_grad(set_to_none=True)
-            u, _, avg_z, coords_fys, coords_num = batch
-            f_theta, coord_fys = model(batch, requires_coord_grad=True)
             eq_res = phys.eq_res(avg_z, f_theta, coord_fys, coords_num)
             eq_res = torch.stack(list(eq_res.values()))
             loss_eq = condition(eq_res, torch.zeros_like(eq_res))
             loss_eq_value = loss_eq.detach().cpu().item()
 
-            if not torch.isfinite(loss_eq):
-                print(f"Skipping batch {batch_idx + 1}: non-finite eq loss.")
+            if not torch.isfinite(data_loss) or not torch.isfinite(loss_eq):
+                print(f"Skipping batch {batch_idx + 1}: non-finite loss.")
                 save_checkpoint(train_config,
                                 skipped_batch_info={
-                                    "reason": "non-finite eq loss",
+                                    "reason": "non-finite loss",
                                     "batch_idx": batch_idx,
                                     "data_loss": data_loss_value,
                                     "eq_loss": loss_eq_value,
                                 })
                 optimizer.zero_grad(set_to_none=True)
-                del u, avg_z, coords_fys, coords_num
-                del f_theta, coord_fys, eq_res, loss_eq, batch
+                del f_theta, coord_fys, pred_da, pred_da_center, data_loss, eq_res, loss_eq, batch
                 processed_batches += 1
                 state["batch_idx"] = batch_idx + 1
                 continue
 
             if is_training:
-                loss_eq.backward()
+                batch_loss = data_loss + loss_eq
+                batch_loss.backward()
                 optimizer.step()
 
             batch_total_loss = data_loss_value + loss_eq_value
@@ -384,8 +358,9 @@ def iterator(loader,
                     "eq": loss_eq_value},
                 )
 
-            del u, avg_z, coords_fys, coords_num
-            del f_theta, coord_fys, eq_res, loss_eq, batch
+            if is_training:
+                del batch_loss
+            del f_theta, coord_fys, pred_da, pred_da_center, data_loss, eq_res, loss_eq, batch
 
             processed_batches += 1
             state["batch_idx"] = batch_idx + 1

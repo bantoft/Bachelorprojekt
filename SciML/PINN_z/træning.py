@@ -21,13 +21,13 @@ from SciML.PINN_z.utils.training_helpers import (
 
 # Til endelige test
 train_config = {
-    "resume": True,
+    "resume": False,
     # root er folder med output fra simulering
     "root" : [ROOT_DIR / r"sim_data/Alexander_e", ROOT_DIR / r"sim_data/Alexander_phi_0"],
     # data_dir er folder hvor experiment data og modeller gemmes/læses alt efter resume
-    "data_dir": ROOT_DIR / r"Experimenter/PINN_z/Test_1",
+    "data_dir": ROOT_DIR / r"Experimenter/PINN_z/DoE/ex_12_4",
     "seed": np.random.randint(0, 2**32 - 1),
-    "status_frequency": 100,
+    "status_frequency": 500,
     "flush_frequency": 501, # <- Flush på server er relativt langsom i forhold til lokalt
     "z_width": 3,
     "batch_size": 512,
@@ -37,7 +37,7 @@ train_config = {
     "num_workers": 4,
     "prefetch_factor": 2,
     "pin_memory": True,
-    "lr": 1e-5,
+    "lr": 1e-4,
     "epochs": 5,
     "early_stopping_patience": 5,
     "early_stopping_min_delta": 0.0,
@@ -46,10 +46,14 @@ train_config = {
         "output_size": 4, # Overskrives i wrapperen til 4 * nx * z_width
         "output_names": ("lnn", "lnpe", "lnpi", "phi"),
         "layers": [
+            {"size": 2**8, "non_lin_foo": torch.nn.Tanh},
+            {"size": 2**8, "non_lin_foo": torch.nn.Tanh},
+            {"size": 2**8, "non_lin_foo": torch.nn.Tanh},
+            {"size": 2**8, "non_lin_foo": torch.nn.Tanh},
             {"size": 2**8, "non_lin_foo": torch.nn.SiLU},
             {"size": 2**8, "non_lin_foo": torch.nn.SiLU},
             {"size": 2**8, "non_lin_foo": torch.nn.SiLU},
-            # {"size": 2**8, "non_lin_foo": torch.nn.SiLU},
+            {"size": 2**8, "non_lin_foo": torch.nn.SiLU},
         ],
     }
 }
