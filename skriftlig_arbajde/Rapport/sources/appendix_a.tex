@@ -24,77 +24,51 @@
 
 \begin{figure}[H]
     \centering
-    \begin{minipage}[t]{0.15\textwidth}
-        \centering
-        \texttt{pi}\par\vspace{0.3em}
-        \centering
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t0.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t100.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t200.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t300.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t400.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t500.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t600.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_pi_lnn_t700.png}
-    \end{minipage}%
-    \hfill%
-    \begin{minipage}[t]{0.15\textwidth}
-        \centering
-        \texttt{phi\_0}\par\vspace{0.3em}
-        \centering
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t0.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t100.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t200.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t300.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t400.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t500.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t600.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t700.png}
-    \end{minipage}
-    \hfill%
-    \begin{minipage}[t]{0.15\textwidth}
-        \centering
-        \texttt{fys\_R\_1}\par\vspace{0.3em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t0.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t100.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t200.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t300.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t400.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t500.png}
-    \end{minipage}%
-    \hfill%
-    \begin{minipage}[t]{0.15\textwidth}
-        \centering
-        \texttt{grid\_c\_0}\par\vspace{0.3em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t0.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t100.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t200.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t300.png}
-        \vspace{0.05em}
-        \includegraphics[width=\linewidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t400.png}
-    \end{minipage}%
-    \caption{Tidsudviklingen af feltet ln(n) for udvalgte simuleringerne $\texttt{Alexander\_*}$}
+     \setlength{\tabcolsep}{3pt}
+    \renewcommand{\arraystretch}{1.05}
+    \begin{tabular}{@{}c c c c c@{}}
+        & \texttt{pi} & \texttt{phi\_0} & \texttt{\_fys\_R\_1} & \texttt{\_grid\_c\_0} \\
+        $t=0$ &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_pi_lnn_t0.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t0.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t0.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t0.png} \\
+        $t=100$ &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_pi_lnn_t100.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t100.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t100.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t100.png} \\
+        $t=200$ &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_pi_lnn_t200.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t200.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t200.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t200.png} \\
+        $t=300$ &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_pi_lnn_t300.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t300.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t300.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t300.png} \\
+        $t=400$ &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_pi_lnn_t400.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t400.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t400.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__grid_c_0_lnn_t400.png} \\
+        $t=500$ &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_pi_lnn_t500.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t500.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander__fys_R_1_lnn_t500.png} &
+        \\
+        $t=600$ &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_pi_lnn_t600.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t600.png} &
+        &
+        \\
+        $t=700$ &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_pi_lnn_t700.png} &
+        \includegraphics[width=0.15\textwidth]{figures/Tidsudvikling/Alexander_phi_0_lnn_t700.png} &
+        &
+        \\
+    \end{tabular}
+    \caption{Tidsudviklingen af feltet ln(n) for udvalgte simuleringer}
     \label{fig: Alexander ln(n) tidsudvikling}
 \end{figure}

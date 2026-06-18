@@ -45,7 +45,7 @@ Da vorticiteten kan udledes direkte fra $\phi$ og $p_i$, er den ikke inkluderet 
 
 Fra simulationen fås et diskret gitter \((x_i,z_j,t_n)\), og i \texttt{bout\_dump.py} organiseres data derfor som tensorfelter af typen
 \[
-\mathbf{u}_{n,i,j} = \mathbf{u}(t_n, x_i, z_j).
+\mathbf{u}_{n,i,j} = \mathbf{u}(t_{n-1}, x_i, z_j).
 \]
 Samtidig udledes de normaliserede parametre, der indgår i Hesel ligningerne, eksempelvis transportkoefficienter, karakteristiske tider og længdeskalaer. Dermed bliver simulationens numeriske opsætning oversat til et model klart objekt, som både indeholder rådata og den fysik, der skal bruges til træning.
 
@@ -65,8 +65,20 @@ hvor \(\theta\) er netværkets parametre.
 Den punktvise PINN er en soft constraint formulering, fordi de fysiske krav ikke bygges direkte ind i selve modelansatsen, men i stedet håndhæves gennem tabsfunktionen. Hvis modellen skrives som \(\hat{\mathbf{u}}_\theta\), bliver initialbetingelser, randbetingelser og ligninger derfor kun opfyldt approksimativt gennem residualled som straffes under træningen.
 Det betyder også, at denne model naturligt beskrives som en punktvis regressionsmodel med fysisk regularisering.
 
-De to modeller \texttt{PINN\_z} og \texttt{PINO\_z} behandles derimod samlet som en anden modeltype. Her generaliseres ideen fra enkeltpunkter til hele snit i \(x\) aksen. Input er derfor ikke kun lokale punkter, men linjer, der bevarer mere af den rumlige struktur. Det betyder, at modellerne i højere grad lærer en operator mellem felter frem for blot en lokal regressionsregel. Den præcise repræsentation af input og output beskrives senere i kapitlet, men overordnet er formålet det samme: at approksimere tidsudviklingen af Hesel felterne.
+De to modeller \texttt{PINN\_z} og \texttt{PINO\_z} behandles derimod samlet som en anden modeltype.
+Her generaliseres ideen fra enkeltpunkter til hele snit i \(x\) aksen. Derfor kan modellen beskrives således:
+\[
+\hat{\mathbf{u}}_\theta(t_n,\left[x_{min}:x_{max}\right], z_j) = F_\theta\!\left(t_{n-1, n-2}, \mathbf{S}_k\right),
+\]
 
+hvor \(\mathbf{S}_k\) nu er et vindue i \(z\) retningen, givet ved: 
+% \[
+%     \(\mathbf{S}_k\) = \{\mathbf{u}_{n-1,[i-1:i+1],j}, \mathbf{u}_{n-2,i,j}\}_{i=0}^{N_x},
+% \]
+som indeholder hele $x$aksen.
+
+
+Input er derfor ikke kun lokale punkter, men linjer, der bevarer mere af den rumlige struktur. Det betyder, at modellerne i højere grad lærer en operator mellem felter frem for blot en lokal regressionsregel. Den præcise repræsentation af input og output beskrives senere i kapitlet, men overordnet er formålet det samme: at approksimere tidsudviklingen af Hesel felterne.
 For \texttt{PINN\_z} og \texttt{PINO\_z} bruges der en hard constraint konstruktion. Her skrives modeloutputtet ikke blot som et frit netværksoutput, men indlejres i en ansats af formen
 \[
 \hat{\mathbf{u}}_\theta = \mathbf{g} + \sigma(t)\bigl(\mathbf{H} - \mathbf{g} + \mathbf{D} \mathbf{N}_\theta\bigr),

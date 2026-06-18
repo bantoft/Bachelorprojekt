@@ -1,0 +1,35 @@
+I dette afsnit beskrives dataopdelingen, og hvordan modelarkitekturen vælges.
+
+
+\subsubsection{Opdeling af data til eksperiment}
+Formålet med eksperimenterne er at undersøge modellens evne til at forudsige den næste tidstilstand, iterativt approksimere tidsudviklingsoperatoren,
+generalisere til både kendte og ukendte fysiske begyndelsesbetingelser samt overføre viden mellem simuleringer med forskellige rumlige opløsninger.
+
+For at muliggøre disse undersøgelser anvendes kun datasættene \texttt{Alexander\_phi\_0} og \texttt{Alexander\_e} til træning, mens de resterende simuleringer reserveres til test.
+Dette gør det muligt at evaluere modellens generaliseringsevne på fysiske scenarier, som ikke er observeret under træningen.
+
+Datasættet \texttt{Alexander\_pi} indeholder en længere tidsserie end både \texttt{Alexander\_phi\_0} og \texttt{Alexander\_e}. Det anvendes derfor som et
+særligt testsæt til at undersøge modellens evne til at forudsige plasmaets udvikling over længere tidshorisonter end dem, der indgår i træningsdataene.
+
+Da modellen både skal kunne interpolere og ekstrapolere i tidsdimensionen, opdeles datasættene forskelligt. Tidsrækken i \texttt{Alexander\_e}
+opdeles kronologisk, således at de tidligste observationer anvendes til træning, mens senere observationer anvendes til validering og test.
+For \texttt{Alexander\_phi\_0} foretages derimod en tilfældig opdeling af samples.
+
+For begge datasæt anvendes 70\% af data til træning, 15\% til validering og 15\% til test.
+
+\subsubsection{Domæne for modelarkitektur}
+Domænet for antal lag, aktiveringsfunktioner og hidden dimension blev diskuteret i afsnit \ref{ch2_4_2}. På den baggrund undersøges følgende kombinationer:
+\begin{equation*}
+\begin{aligned}
+    \text{Antal lag} &\in \{2, 4, 6, 8\}, \\
+    \text{Aktiveringsfunktion} &\in \{\tanh, \text{SiLU}, \text{blanding af tanh og SiLU}\}, \\
+    \text{Hidden dimension} &\in \{256, 512, 1024, 2048, 4096\}.
+\end{aligned}
+\end{equation*}
+Først kommer Hidden dimension til at være låst fast til 256. Så det kun er antallet af lag og aktiveringsfunktion der varierer.
+Herefter vælges nogle af de bedste aktiveringsfunktion og antal lag, og så undersøges det bedste hidden dimension konfiguration.
+
+Da SiLU aktiveringsfunktionen er yderst sensitiv overfor learning rate, kommer learning rate til at variere imellem eksperimenterne. Når der kommer
+flere lag i netværket, bliver blandingen af aktiveringsfunktioner opdelt i fire grupper, første gruppe har tanh og SiLU skiftevis, 
+anden gruppe har SiLU og tanh skiftevis tedje gruppe har første halvdel tanh og anden halvdel SiLU, fjerde gruppe har første halvdel SiLU og anden halvdel tanh.
+Dette gøres for at give begge aktiveringsfunktioner mulighed for at konvergere.

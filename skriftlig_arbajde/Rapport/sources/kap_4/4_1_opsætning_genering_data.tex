@@ -7,15 +7,15 @@ Når både BOUT++ og BOUT-HESEL var bygget, kunne simuleringerne køres med \tex
 Dette projekts opsætning af BOUT++ og BOUT-HESEL er dokumenteret i detaljer i filen $\texttt{skriftlig\_arbajde/opsaetning}$, hvor alle nødvendige kommandoer og trin er gennemgået for at sikre reproducerbarhed.
 
 
-\subsubsection{Data generaring}
+\subsubsection{Data generaring} \label{ch4_1_1}
 Til dette er der generet 6 simuleringer. Herfra er 3 standard simuleringer og 3 simuleringer hvor eneste ændring er: tidsteppet, fysikken og grid opløsningen.
 Alle simulerings konfigurations filer der bestemmer begyndelsestilstande, randbetingleser,
 grid opløsninger, fysiske parametre og tilfældige seed ligger i folderen $\texttt{sim\_data}$ i Github repositoryet.
 \begin{itemize}
     \item 3 standard simuleringer starter med $\texttt{sim\_data/Alexander\_*}$ " Her er * en plads for forskellige seed"
-    \item Folderen med modificeret tidsteppet starter med $\texttt{sim\_data/Alexander\_\_t\_n}$
-    \item Folderen med modificeret fysik starter med $\texttt{sim\_data/Alexander\_\_fys\_R\_1}$
-    \item Folderen med modificeret grid opløsning starter med $\texttt{sim\_data/Alexander\_\_grid\_c}$
+    \item Folderen med modificeret tidsteppet hedder $\texttt{sim\_data/Alexander\_\_t\_n}$
+    \item Folderen med modificeret fysik hedder $\texttt{sim\_data/Alexander\_\_fys\_R\_1}$
+    \item Folderen med modificeret grid opløsning hedder $\texttt{sim\_data/Alexander\_\_grid\_c\_0}$
 \end{itemize}
 
 Alle input filer i $\texttt{sim\_data/Alexander\_*/BOUT.inp}$.
@@ -27,9 +27,6 @@ Træningen af modellerne blev udført lokalt. Derofr blev filer downloadet fra H
     \texttt{rsync -avh --progress ssh:<sti til data> <sti til lokal folder>}
 \]
 Det er ikke forvæntet at download skule ødelegge data'en når den komprimeres og downloades med rsync.
-
-
-
 
 For simuleringen med modificeret tidstep sættes variablen $\texttt{timestep = 25}$. Det betyder at modellen skal forudsige længere frem
 i tiden end hvad den er trænet på.
@@ -44,7 +41,26 @@ For simuleringen med modificeret fysik er følgende variabler ændret til
 Disse blev vurderet til at være mest almindelige fysiske parametre at variere.
 For simuleringen med modificeret grid opløsning blev ændre til at være $\texttt{nx = 514}, \texttt{nz = 512}$
 
-Alle filer, både standard og modificerede, havde forskellige seeds for at sikre at udviklingen af simuleringerne var forksellige.
+Alle filer, både standard og modificerede, havde forskellige seeds for at sikre at udviklingen af simuleringerne var forksellige. Dette gav følgende længer af simuleringer:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lrr}
+        \toprule
+        simulation & $t_{\text{end}}$ & $t_{\text{idx}}$ \\
+        \midrule
+        \texttt{pi}   & 15015 & 1001 \\
+        \texttt{e}    & 14055 & 937  \\
+        \texttt{phi\_0}& 11130 & 742  \\
+        \texttt{\_t\_n} & 17950 & 718  \\
+        \texttt{\_fys\_R\_1} & 7665 & 511  \\
+        \texttt{\_grid\_c\_0} & 7155 & 477  \\
+        \bottomrule
+    \end{tabular}
+    \caption{Længden af simuleringerne i Bohm normaliserede tidsenheder og antal tidsindekser.}
+    \label{tab:sim_times}
+\end{table}
+Det bemærkes at alle standard simuleringerne og simuleringen med modificeret tidstep var længere end simuleringerne med modificeret fysik og grid opløsning. Der blev
+generet flere filer med modificeret fysik og grid men dette var blot de simuleringer der kom længst.
 
 
 \subsubsection{Data visualisering}
@@ -76,8 +92,5 @@ Dette giver følgende billeder.
 
 For tidsudviklingen af feltet ln(n) for udvalgte simuleringer, se \ref{fig: Alexander ln(n) tidsudvikling}. Her blev der udvalgt 2 standard simuleringer og 
 simuleringen af modificeret fysik, og modificeret grid opløsning. Da simuleringerne af modificeret tidstep og den sidste standard simulering har samme fysik
-og gridopløsning er disse undladt at have med. Ellers kan alle bill
-
-ikke udvikler sig så langt i tid som de andre, blev den ikke inkluderet i dette billede.
-
-Her er det tydeligt at alle simuleringer udvikler sig forskelligt over tid, hvilket skyldes både de forskellige seeds og de forskellige konfigurationer. Det er også tydeligt at ændringer i tidsteppet, fysikken og grid opløsningen har en betydelig indvirkning på udviklingen af feltet ln(n) over tid.
+og gridopløsning er disse undladt at have med. Ellers kan alle billederne ses i folderen $\texttt{billeder}$. Hvis man har simuleringsdataen kan man 
+bruge $\texttt{hesel\_scraper/visualizer.ipynb}$ til se udviklingen af alle felter for én simulering.

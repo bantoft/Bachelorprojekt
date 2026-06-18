@@ -1,0 +1,26 @@
+Der blev udført følgende eksperimenter i hver domæneundersøgelse med konstant gemte dimension.
+
+
+Alt data'en for DoE ligger i mappen $\texttt{Experimenter/PINN\_z/DoE}$
+
+DoE for modellen \texttt{PINN\_z} med 256 i gemte dimension i alle lag havde følgende resultater:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|}
+        \hline
+        \textbf{Eks} & \textbf{Funk} & \textbf{Lag} & \textbf{Trial \{1, 2, 3, 4\}} & \textbf{Avg}\\ \hline
+        1 & tanh & 2 & \{4.5, 4.4, 4.2, 4.3\} & 4.35 \\ \hline
+        2 & tanh & 4 & \{5.0, 5.0, 5.1, 5.0\} & 5.03 \\ \hline
+        3 & tanh & 6 & \{5.1, 5.1, 5.0, 5.1\} & 4.95 \\ \hline
+        4 & tanh & 8 & \{4.5, 4.4, 4.2, 4.3\} & 4.35 \\ \hline
+        5 & SiLU & 2 & \{1.9, 2.3, 2.0, 1.8\} & 2.00 \\ \hline
+        6 & SiLU & 4 & \{1.9, 1.2, 1.9, 1.8\} & 1.70 \\ \hline
+        7 & SiLU & 6 & \{Na , Na,  2.4, 2.3\} & 4.95 \\ \hline
+        8 & SiLU & 8 & \{4.5, 4.4, 4.2, 4.3\} & 4.35 \\ \hline
+    \end{tabular}
+    \caption{PINN\_z}
+\end{table}
+For for eksperimenterne 
+
+Her står \textbf{Eks} for eksperiment i, \textbf{Funk} er hvilken ikke linear aktiverings funktion der bliver brugt, \textbf{Lag} er antal lag,
+\textbf{Trial \{1, 2, 3, 4\}} er gennemsnitlige test loss for hver trial og \textbf{Avg} er gennemsnitlige traial loss. 
