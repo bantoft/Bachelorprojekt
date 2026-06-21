@@ -7,20 +7,20 @@ Givet en tilstand $u(t)$ er målet således at lære en approksimation af tidsud
 hvor $\mathcal{F}_\theta$ repræsenterer den lærte model med parametre $\theta$. Hvis en sådan approksimation kan opnås med høj nøjagtighed, vil modellen potentielt kunne fungere som en
 surrogatmodel for dele af den numeriske løsning og dermed reducere behovet for kostbare beregninger.
 
-HESEL modellen beskriver et stærkt ikke lineært og turbulent system, hvor små variationer i begyndelsesbetingelserne kan føre til markant forskellige udviklingsforløb.
-Som følge heraf er det relevant først at undersøge modellens evne til at rekonstruere simuleringer genereret fra kendte begyndelsesbetingelser.
+HESEL modellen beskriver et stærkt ikke lineært og turbulent system, hvor små variationer i simulation konfigurationen kan føre til markant forskellige udviklingsforløb.
+Som følge heraf er det relevant først at undersøge modellens evne til at rekonstruere simuleringer genereret fra kendte simulerings konfigurationener.
 Dette giver et mål for, hvor godt modellen er i stand til at lære den underliggende dynamik i de data, den er trænet på.
 
-Et centralt spørgsmål er ligeledes modellens evne til at generalisere til tidligere usete begyndelsesbetingelser. Hvis modellen kan forudsige udviklingen af simuleringer, som ikke indgår i træningsdatasættet,
-indikerer det, at den har lært generelle strukturer i dynamikken frem for blot at memorisere specifikke løsninger.
+Hvis modellen kan forudsige udviklingen af simuleringer, som ikke indgår i træningsdatasættet,
+indikerer det, at den har lært generelle strukturer i dynamikken frem for blot at huske specifikke løsninger.
 En sådan egenskab vil være særligt værdifuld i forbindelse med hurtig udforskning af nye parameterrum og scenarier, hvor numeriske simuleringer endnu ikke er udført.
 
-Derudover undersøges modellens langsigtede stabilitet gennem autoregressiv tidsintegration. Her anvendes modellens egen prædiktion som input til næste tidssteg,
-\begin{equation*}
-    u_{n+1} = \mathcal{F}_\theta(u_n),
-\end{equation*}
-således at fejl kan akkumulere over tid. Formålet er at undersøge, hvor langt frem i tiden modellen kan forudsige systemets udvikling, før løsningen afviger væsentligt fra den numeriske reference.
-Dette giver et mål for modellens evne til at opretholde fysisk meningsfulde løsninger uden løbende korrektion fra simuleringsdata.
+% Derudover undersøges modellens langsigtede stabilitet gennem autoregressiv tidsintegration. Her anvendes modellens egen prædiktion som input til næste tidssteg,
+% \begin{equation*}
+%     u_{n+1} = \mathcal{F}_\theta(u_n),
+% \end{equation*}
+% således at fejl kan akkumulere over tid. Formålet er at undersøge, hvor langt frem i tiden modellen kan forudsige systemets udvikling, før løsningen afviger væsentligt fra den numeriske reference.
+% Dette giver et mål for modellens evne til at opretholde fysisk meningsfulde løsninger uden løbende korrektion fra simuleringsdata.
 
 
 Endelig undersøges modellens evne til at generalisere på tværs af rumlige opløsninger. Målet er at afklare, om en model trænet på et grovere gitter kan anvendes til at approksimere løsninger på finere gitre.
@@ -28,56 +28,11 @@ En sådan skalerbarhed er særligt interessant i plasmafysiske anvendelser, hvor
 Hvis modellen kan overføre information mellem forskellige opløsninger, kan dette potentielt reducere den samlede beregningstid og gøre det muligt at generere tilnærmede højopløselige løsninger betydeligt hurtigere end ved traditionelle numeriske metoder.
 
 
-\subsubsection{Opstilling af eksperimenter}
-Til at undersøge disse spørgsmål anvendes et sæt af numeriske simuleringer genereret med BOUT++ og BOUT HESEL. 
-Det blev valgt at simulere nogle begyndelsesbetingelser, der var hurtigt blev kaotiske og svære at simulere. Dette blev valgt for at udfordre modellen og undersøge, 
-hvor godt den kunne lære og generalisere i et komplekst dynamisk regime. Disse begyndelsesbetingelser kaldes standarden.
+% \subsubsection{Opstilling af eksperimenter}
+% Til at undersøge disse spørgsmål anvendes et sæt af numeriske simuleringer genereret med BOUT++\cite{Dudson_2009} og BOUT HESEL\cite{num_sim_blobs} \cite{udledning_af_hesel}. 
+% Det blev valgt at simulere nogle simulerings konfigurationer, der hurtigt blev kaotiske og svære at simulere. Dette blev valgt for at udfordre modellen og undersøge, 
+% hvor godt den kunne lære og generalisere i et komplekst dynamisk regime. Disse kaldes standard konfigurationer.
 
 
-Der blev genereret 6 forskellige simuleringer. Tre af disse simuleringer var standarden, hvor det kun var det seed der blev ændret.
-De resterende tre simuleringer var også standard hvor kun en parameter blev ændret. Disse var tidssteg afstanden, gitteropløsningen og den fysiske parameter.
-
-\subsubsection{Valg af model arkitektur}\label{ch2_4_2}
-
-Herefter blev der udført design af eksperimenter på to af standard simuleringerne for at bestemme netværksarkitektur.
-Som udgangspunkt vælges et almindeligt fuldt forbundet neuralt netværk. 
-Dette er i tråd med både den klassiske formulering for neurale netværk til differentialligninger i \cite{lagaris1997ann_pde}
-og den senere PINN formulering i \cite{raissi2017pinn_part1}, hvor løsningen repræsenteres med simple feedforward netværk.
-Raissi et al.\ viser desuden, at glatte aktiveringsfunktioner som $\tanh$ og en vis netværksdybde giver en mærkbar forbedring
-i approksimationskvaliteten.
-På den baggrund vælges her et simpelt, men forholdsvis bredt søgeområde bestående af 2, 4, 6 eller 8 skjulte lag og hidden dimensioner fra 256 til 4096.
-For aktiveringsfunktionerne undersøges både $\tanh$, og SiLU som er velafprøvet i PINN litteraturen.
-Der undersøges 
-
-Her efter udføres der design of eksperimenter for forskellige netværksarkitekturer før den endelige arkitektur vælges. 
-
-Der bliver undersøgt 2 forskellige input og output formater størrelser. Begge får de to forrige tidssteg som input, samt deres koordinater de skal forudsige.
-Den første model får blot ét punkt og de omkringliggende punkter som input, og skal forudsige det næste tidssteg for det samme punkt.
-Den næste model får hele $x$ aksen og de to nabocellerne som input, og skal forudsige det næste tidssteg for hele $x$ aksen.
-Den første model der kun skal forudsige ét punkt ad gangen, blvier softconstrained i mens modellen der skal forudsige hele $x$ aksen bliver hardconstrained.
-Dette valg er baseret på, at den første model kan fokusere på at lære de lokale detaljer i løsningen, mens den anden model kan lære de globale strukturer i løsningen.
-Grunden til ikke at modellen skal have hele billedet som input og skal forudsige hele billedet som output er grundet at neurale netværk forudsiger gennemsnitlige værdier,
-og derfor ikke er i stand til at forudsige de små detaljer i løsningen, som er vigtige for at opnå en god løsning.
-Derfor skal modellen have et mindre input og output format, så den kan fokusere på de vigtigste detaljer i løsningen.
-
-
-% Da Hesel modellen består af et koblet system af partielle differentialligninger, som ikke har en analytisk løsning, approksimeres løsningen numerisk.
-% Fremgangsmåden er at bruge fysikken bag Hesel modellen og data simuleringer af dynamikkerne til at træne en model $\hat{f}_{\theta}$, til at minimere dynamikker og PDE fejl.
-% Det forvæntes at en model trænet på et bestemt sæt af dynamikker og PDE, ville kunne genskabe både interpolation og ekstrapolation simuleret dynamikker, og samtidig opfylde PDE systemet.
-% Hvis ekstrapolation ikke er så godt vil modellen kunne trænes samtidig med simuleringen køre og kunne blive brugt meget hurtigt til dette nye sæt af dynamikker og PDE system.
-% Ved brug af disse metoder forvæntes det at simuleringen kan gøres computationalt billigere, hurtigere og samtidig vedligeholde fysisk nøjagtighed.
-
-% Den videnskabelige tilgang er som følgene:
-% \begin{itemize}
-%     \item Et grundigt litteraturstudie af PDE'er, numeriske metoder, datadrevne og fysik informede metoder
-%     \item Forstå og redgøre for de grundlæggende matematiske og fysiske principper bag Hesel modellen
-%     \item Udsvikle ablations studier og eksperimenter
-%     \item Implementere og træne datadrevne og fysik informede modeller
-%     \item Evaluere og sammenligne resultaterne
-%     \item Iterere og forbedre modellerne baseret på resultaterne
-% \end{itemize}
-% Disse approksimative modeller bliver evalueret på følgende test:
-% \begin{itemize}
-%     \item Hvor godt de approksimative modeller opfylder Hesel modellen
-%     \item Genskabe både interpolation og ekstrapolation simuleret dynamikker
-% \end{itemize}
+% Der blev genereret 6 forskellige simuleringer. Tre af disse simuleringer var standard konfigurationer, hvor det kun var det seed der blev ændret.
+% De resterende tre simuleringer blev kun en konfigurationer ændret. Disse var tidssteg afstanden, gitteropløsningen og den fysiske parameter.

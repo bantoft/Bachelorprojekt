@@ -1,8 +1,11 @@
-Neurale netværk kan bruges til at approksimere løsningen til en differentialligning ved at repræsentere den ukendte løsning som en differentiabel funktion med et sæt justerbare parametre. I stedet for først at diskretisere ligningen på et fast gitter kan man indsætte den approksimerede løsning direkte i den kontinuerte ligning og derefter justere parametrene, så funktionen både opfylder differentialligningen og de tilhørende rand- eller initialbetingelser \cite{lagaris1997ann_pde}.
+Neurale netværk kan bruges til at approksimere løsningen til en differentialligning ved at repræsentere den ukendte løsning som en differentiabel
+funktion med et sæt justerbare parametre. Da simuleringerne og det neurale netværk beggge er diskretiseret i tid og rum kan 
+det neurale netværk indsættes i den approksimerede løsning og derefter justere parametrene, så funktionen både opfylder differentialligningen og de tilhørende rand eller 
+initialbetingelser \cite{lagaris1997ann_pde}.
 
-For et generelt PDE-problem kan løsningen skrives som
+For et generelt PDE problem kan løsningen skrives som
 \begin{equation}
-    \mathcal{G}\!\left(t,x,y,u,\partial_t u,\nabla u,\nabla^2 u\right)=0,
+    \mathcal{F}\!\left(t,x,y,u,\partial_t u,\nabla u,\nabla^2 u\right)=0,
     \qquad
     (t,x,y) \in [0,T]\times\Omega ,
     \label{eq:pinn_general_pde}
@@ -22,26 +25,27 @@ Metoden erstatter den ukendte løsning med en approksimation $u_\theta(t,x,y)$, 
 \begin{equation}
     r_\theta(t,x,y)
     =
-    \mathcal{G}\!\left(t,x,y,u_\theta,\partial_t u_\theta,\nabla u_\theta,\nabla^2 u_\theta\right).
+    \mathcal{F}\!\left(t,x,y,u_\theta,\partial_t u_\theta,\nabla u_\theta,\nabla^2 u_\theta\right).
     \label{eq:pinn_residual}
 \end{equation}
-Hvis $u_\theta$ var den eksakte løsning, ville residualet være nul overalt i domænet. Træningen består derfor i at vælge $\theta$, så residualet bliver lille i et antal kollokationspunkter i domænet.
+Hvis $u_\theta$ var den eksakte løsning, ville residualet være nul overalt i domænet. Træningen består derfor i at vælge $\theta$, så residualet
+bliver lille i domænet.
 
-\subsubsection{Hard constraints for randbetingelser}
-En klassisk tilgang er at indbygge rand- og initialbetingelser direkte i ansatsen for løsningen. I formuleringen fra \cite{lagaris1997ann_pde} skrives den approksimerede løsning som
+\subsubsection{Hårde begrænsninger for randbetingelser}
+En klassisk tilgang er at indbygge rand og initialbetingelser direkte i ansatsen for løsningen. I formuleringen fra \cite{lagaris1997ann_pde} skrives den approksimerede løsning som
 \begin{equation}
     u_\theta(t,x,y) = A(t,x,y) + M(t,x,y)N_\theta(t,x,y),
     \label{eq:pinn_trial_solution}
 \end{equation}
-hvor $A$ vælges, så den alene opfylder rand- og initialbetingelserne, mens maskefunktionen $M$ konstrueres, så den forsvinder på de dele af randen, hvor Dirichlet-betingelser pålægges. Dermed påvirker korrektionsleddet $M N_\theta$ ikke de påtvungne randværdier. Ved blandede randbetingelser kan $M$ tilsvarende vælges, så også den normale afledte forsvinder på de relevante randsegmenter.
+hvor $A$ vælges, så den alene opfylder rand og initialbetingelserne, mens maskefunktionen $M$ konstrueres, så den forsvinder på de dele af randen, hvor Dirichletbetingelser pålægges. Dermed påvirker korrektionsleddet $M N_\theta$ ikke de påtvungne randværdier. Ved blandede randbetingelser kan $M$ tilsvarende vælges, så også den normale afledte forsvinder på de relevante randområder.
 
-For en elliptisk ligning, eksempelvis Poisson-ligningen
+For en elliptisk ligning, eksempelvis Poisson ligningen
 \[
     \nabla^2 u(x,y) = f(x,y),
     \qquad
     (x,y)\in\Omega,
 \]
-kan residualet evalueres direkte fra de rumlige afledte af $u_\theta$. For tidsafhængige PDE'er behandles tiden blot som endnu en inputvariabel, så både $\partial_t u_\theta$ og de rumlige afledte indgår i residualet. For et koblet PDE-system kan approksimationen tilsvarende skrives som en vektor
+kan residualet evalueres direkte fra de rumlige afledte af $u_\theta$. For tidsafhængige PDE'er behandles tiden blot som endnu en inputvariabel, så både $\partial_t u_\theta$ og de rumlige afledte indgår i residualet. For et koblet PDE system kan approksimationen tilsvarende skrives som en vektor
 \[
     \mathbf{u}_\theta(t,x,y)\in\mathbb{R}^m,
 \]
@@ -55,21 +59,21 @@ Når randbetingelserne er indbygget på denne måde, behøver tabsfunktionen kun
     \left|r_\theta(t_i,x_i,y_i)\right|^2,
     \label{eq:pinn_loss}
 \end{equation}
-hvor $\{(t_i,x_i,y_i)\}_{i=1}^{N_r}$ er kollokationspunkter i domænet. Randbetingelserne håndhæves her som hard constraints, fordi de opfyldes præcist ved konstruktion af ansatsen.
+hvor $\{(t_i,x_i,y_i)\}_{i=1}^{N_r}$ er det diskretiseret domæne. Her bliver randbetingelserne hårdt håndhævet, fordi de opfyldes præcist ved konstruktion af ansatsen.
 
-\subsubsection{Physics-informed neural networks og soft constraints}
-I physics-informed neural networks (PINNs) bruges den samme grundidé, nemlig at approksimere den ukendte løsning med et neuralt netværk og evaluere differentialligningen gennem et residual. I stedet for at indbygge rand- og initialbetingelser eksplicit i ansatsen vælges der dog ofte en mere direkte parameterisering af løsningen, og betingelserne håndhæves i tabsfunktionen. Denne formulering gennemgås i \textit{Physics Informed Deep Learning} af Raissi, Perdikaris og Karniadakis \cite{raissi2017pinn_part1}.
+\subsubsection{Fysik informerede neurale netværk og bløde begrænsninger}
+I fysikinformerede neurale netværk (Physics Informed Neural Networks, PINNs) bruges den samme grundidé, nemlig at approksimere den ukendte løsning med et neuralt netværk og evaluere differentialligningen gennem et residual. I stedet for at indbygge rand og initialbetingelser eksplicit i ansatsen vælges der dog ofte en mere direkte parameterisering af løsningen, og betingelserne håndhæves i tabsfunktionen. Denne formulering gennemgås i \textit{Physics Informed Deep Learning} af Raissi, Perdikaris og Karniadakis \cite{raissi2017pinn_part1}.
 
-For et tidsafhængigt PDE-problem på formen
+For et tidsafhængigt PDE problem på formen
 \begin{equation}
-    \partial_t u + \mathcal{N}[u] = 0,
+    \partial_t u + \mathcal{F}[u] = 0,
     \label{eq:raissi_general_pde}
 \end{equation}
-hvor $\mathcal{N}$ er en ikke-lineær differentialoperator, introduceres både en approksimation $u_\theta(t,x,y)$ og et tilhørende fysik-residual
+hvor $\mathcal{F}$ er en ikke lineær differentialoperator, introduceres både en approksimation $u_\theta(t,x,y)$ og et tilhørende fysikresidual
 \begin{equation}
     f_\theta(t,x,y)
     =
-    \partial_t u_\theta(t,x,y) + \mathcal{N}[u_\theta](t,x,y).
+    \partial_t u_\theta(t,x,y) + \mathcal{F}[u_\theta](t,x,y).
     \label{eq:pinn_physics_residual}
 \end{equation}
 De samme parametre $\theta$ indgår i både $u_\theta$ og $f_\theta$, så optimeringen samtidig former løsningen og dens afledte egenskaber.
@@ -87,7 +91,7 @@ hvor
     \left|u_\theta(t_u^i,x_u^i,y_u^i)-u^i\right|^2
     \label{eq:pinn_soft_data}
 \end{equation}
-måler afvigelsen fra kendte initial- og randdata, mens
+måler afvigelsen fra kendte initial og randdata, mens
 \begin{equation}
     \mathcal{L}_f
     =
@@ -95,8 +99,30 @@ måler afvigelsen fra kendte initial- og randdata, mens
     \left|f_\theta(t_f^i,x_f^i,y_f^i)\right|^2
     \label{eq:pinn_soft_physics}
 \end{equation}
-måler, hvor godt differentialligningen opfyldes i et antal kollokationspunkter i domænets indre. Her angiver $\{(t_u^i,x_u^i,y_u^i),u^i\}_{i=1}^{N_u}$ de punkter, hvor løsningens værdi er kendt fra initial- eller randbetingelser, mens $\{(t_f^i,x_f^i,y_f^i)\}_{i=1}^{N_f}$ er de punkter, hvor fysikken håndhæves gennem residualet.
+måler, hvor godt differentialligningen opfyldes i det indre domænee. 
 
-Denne formulering svarer til soft constraints, fordi rand- og initialbetingelser ikke nødvendigvis opfyldes præcist i hvert punkt, men i stedet gøres dyre at bryde gennem tabsfunktionen. Til gengæld er metoden fleksibel, fordi samme grundstruktur kan anvendes til mange forskellige typer PDE'er uden at skulle konstruere en særlig ansats for hver ny kombination af randbetingelser. Fysikleddet $\mathcal{L}_f$ virker samtidig som en regularisering, der begrænser løsningsrummet til funktioner, som i høj grad respekterer den underliggende differentialligning \cite{raissi2017pinn_part1}.
+Her angiver $\{(t_u^i,x_u^i,y_u^i),u^i\}_{i=1}^{N_u}$ de punkter, hvor løsningens værdi er kendt fra initial eller randbetingelser, mens $\{(t_f^i,x_f^i,y_f^i)\}_{i=1}^{N_f}$ er de punkter, hvor fysikken håndhæves gennem residualet.
 
-Forskellen mellem de to formuleringer er derfor primært, hvordan rand- og initialbetingelser håndhæves. Hard constraints bygger betingelserne ind i selve ansatsen og opfylder dem præcist, mens PINN-formuleringen med soft constraints håndhæver dem gennem optimeringen. I begge tilfælde er målet at finde en glat funktion, som approksimerer løsningen til PDE'en i hele domænet frem for kun i et endeligt antal gitterpunkter.
+Denne formulering svarer til blødt begrænset randbetingelse, fordi rand og initialbetingelser ikke nødvendigvis opfyldes præcist i hvert punkt, men i stedet gøres dyre at bryde gennem tabsfunktionen.
+Hertil er metoden fleksibel, fordi samme grundstruktur kan anvendes til mange forskellige typer PDE'er uden at skulle konstruere en særlig ansats for hver ny kombination af randbetingelser. Fysikleddet $\mathcal{L}_f$ virker samtidig som en regularisering, der begrænser løsningsrummet til funktioner, som i høj grad respekterer den underliggende differentialligning \cite{raissi2017pinn_part1}.
+
+
+
+\subsubsection{Valg af rand begrænsning}\label{ch2_1_2}
+
+Som udgangspunkt anvendes almindelige fuldt forbundne feedforward netværk. Dette er i tråd med både den klassiske formulering i \cite{lagaris1997ann_pde} og PINN formuleringen i \cite{raissi2017pinn_part1}, hvor løsningen repræsenteres ved et relativt simpelt neuralt netværk frem for en mere specialiseret arkitektur. Valget af model handler derfor her primært om, hvordan input og output organiseres, og hvordan randbetingelserne håndhæves.
+
+For modellen \texttt{PINN} bruges en punktvis model. Inputtet består af de to foregående tidssteg for et lokalt $3\times 3$ naboskab omkring ét punkt samt punktets fysiske koordinater, hvor netværket forudsiger de fire felter i næste tidssteg for centerpunktet. Denne opsætning følger den bløde PINN formulering fra \cite{raissi2017pinn_part1}, fordi netværkets output bruges direkte som approksimation af løsningen, mens differentialligning, initialbetingelser og randbetingelser håndhæves gennem tabsfunktionen. 
+\texttt{PINN} er derfor blødt begrænsing i randen, fordi betingelserne kun opfyldes i det omfang optimeringen gør det billigt at bryde dem.
+
+For modellen \texttt{PINN\_z} bruges stadig et feedforward netværk, men nu på linjeform. Inputtet er de to foregående tidssteg for hele $x$ aksen og et lille vindue i $z$ retningen samt deres koordinater,
+netværket forudsiger de fire felter for hele $x$ aksen i næste tidssteg. 
+Den rå netværksprædiktion indsættes derefter i en hårdt begrænser indpakning på formen
+
+\begin{equation}
+    u_\theta = g_x + \sigma_t\bigl(H_x - g_x + \mathcal{C}[N_\theta]\bigr),
+\end{equation}
+hvor $H_x$ og korrektionsleddet $\mathcal{C}[N_\theta]$ konstrueres ud fra randbetingelserne, så korrektionsleddet forsvinder på randen, svarende til idéen i \cite{lagaris1997ann_pde}. \texttt{PINN\_z} er 
+derfor hårdt begrænset i randen, fordi randbetingelserne bygges direkte ind i selve outputkonstruktionen i stedet for kun at blive straffet i tabsfunktionen.
+
+Denne opdeling er valgt, fordi punktmodellen er fleksibel og velegnet til den klassiske blødt begrænset PINN formulering, mens linjemodellen gør det praktisk at indbygge randbetingelser eksplicit langs hele $x$ aksen. Derefter udføres en separat udforskning af lagdybde, hidden dimension og aktiveringsfunktioner for at vælge den endelige arkitektur.

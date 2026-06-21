@@ -1,9 +1,13 @@
 
 \begin{thenomenclature} 
 \nomgroup{A}
-  \item [{BTE}]\begingroup Boltzman transport ligning\nomeqref {54}\nompageref{III}
-  \item [{HESEL}]\begingroup Hot Edge SOL Electrostatic\nomeqref {54}\nompageref{III}
-  \item [{SciML}]\begingroup Scientific Machine Learning\nomeqref {54}\nompageref{III}
-  \item [{SOL}]\begingroup Scrape off layer\nomeqref {54}\nompageref{III}
+  \item [{BTE}]\begingroup Boltzman transport ligning\nomeqref {70}\nompageref{III}
+  \item [{DTU}]\begingroup Danmarks Tekniske Universitet\nomeqref {70}\nompageref{III}
+  \item [{HESEL}]\begingroup Hot Edge SOL Electrostatic\nomeqref {70}\nompageref{III}
+  \item [{HPC}]\begingroup High Performance Computing\nomeqref {70}\nompageref{III}
+  \item [{PDE}]\begingroup Partielle Differential Ligninger\nomeqref {70}\nompageref{III}
+  \item [{PINN}]\begingroup Physics Informed Neural Networks\nomeqref {70}\nompageref{III}
+  \item [{SciML}]\begingroup Scientific Machine Learning\nomeqref {70}\nompageref{III}
+  \item [{SOL}]\begingroup Scrape off layer\nomeqref {70}\nompageref{III}
 
 \end{thenomenclature}

@@ -83,7 +83,7 @@ For \texttt{PINN\_z} og \texttt{PINO\_z} bruges der en hard constraint konstrukt
 \[
 \hat{\mathbf{u}}_\theta = \mathbf{g} + \sigma(t)\bigl(\mathbf{H} - \mathbf{g} + \mathbf{D} \mathbf{N}_\theta\bigr),
 \]
-hvor \(\mathbf{g}\) repræsenterer initialtilstanden, \(\mathbf{H}\) er en hjælpefunktion der opfylder randbetingelserne, \(\mathbf{D}\) er en dæmpningsfunktion som går mod nul ved randen, og \(\sigma(t)\) sørger for korrekt kobling til begyndelsestiden. Dermed bliver dele af initial og randbetingelserne opfyldt konstruktivt for alle \(\theta\), i stedet for kun at blive presset ned via ekstra tabsled.
+hvor \(\mathbf{g}\) repræsenterer initialtilstanden, \(\mathbf{H}\) er en hjælpefunktion der opfylder randbetingelserne, \(\mathbf{D}\) er en dæmpningsfunktion som går mod nul ved randen, og \(\sigma(t)\) sørger for korrekt kobling til simulerings konfiguratin. Dermed bliver dele af initial og randbetingelserne opfyldt konstruktivt for alle \(\theta\), i stedet for kun at blive presset ned via ekstra tabsled.
 
 Den centrale sondring i projektet er derfor:
 \begin{itemize}
@@ -122,3 +122,7 @@ hvor de fire led svarer til henholdsvis datafit, ligningsresidual, initialbeting
 Forskellen mellem modeltyperne ligger i, hvordan disse residualer bruges. For den punktvise \texttt{PINN} indgår data, initial, rand og ligningsresidualer alle direkte i tabsfunktionen. For \texttt{PINN\_z} og \texttt{PINO\_z} er initial og randbetingelser i høj grad bygget ind i ansatsen, og derfor trænes disse modeller primært med dataresidual og ligningsresidual.
 
 For den punktvise soft constraint model er denne tabsfunktion den direkte træningsmålsætning. For de to hard constraint modeller reduceres træningsmålsætningen i praksis til de led, som ikke allerede er håndhævet konstruktivt, hvilket i implementeringen svarer til en kombination af datafit og ligningsresidual.
+\texttt{hesel\_scraper} indeholder kode til at indlæse og behandle output fra BOUT++ og HESEL, samt til at opstille de fysiske residualer og randbetingelser.
+\texttt{SciML} indeholder de implementerede modeller og træningskode, herunder \texttt{PINN}, \texttt{PINN\_z} og \texttt{PINO\_z}.
+\texttt{sim\_data} indeholder de genererede simulationsdatasæt, som bruges til træning, validering og test af modellerne.
+\texttt{skriftlig\_arbajde} indeholder den skriftlige dokumentation for projektet, herunder rapport, projektplan, opsætning og øvrigt materiale.

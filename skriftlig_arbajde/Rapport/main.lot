@@ -1,3 +1,6 @@
 \babel@toc {english}{}\relax 
-\contentsline {table}{\numberline {1}{\ignorespaces Længden af simuleringerne i Bohm normaliserede tidsenheder og antal tidsindekser.}}{24}{table.caption.2}%
-\contentsline {table}{\numberline {2}{\ignorespaces PINN\_z}}{28}{table.caption.5}%
+\contentsline {table}{\numberline {1}{\ignorespaces Længden af simuleringerne i Bohm normaliserede tidsenheder og antal tidsindekser.}}{20}{table.caption.103}%
+\contentsline {table}{\numberline {2}{\ignorespaces PINN\_z strukturer sorteret efter bedste \textbf {Avg test loss}}}{25}{table.caption.125}%
+\contentsline {table}{\numberline {3}{\ignorespaces Resultater af udforskning med varierende hidden dimension}}{26}{table.caption.126}%
+\contentsline {table}{\numberline {4}{\ignorespaces Resultater af hyperparameterudforskning med varierende hidden dimension sorteret efter uvægtet test loss}}{27}{table.caption.130}%
+\contentsline {table}{\numberline {5}{\ignorespaces Uvægtede test losses for den endelige PINN model på de ukendte datasæt, opdelt i total loss, data loss, PDE (eq) loss, IC loss og BC loss.}}{33}{table.caption.139}%

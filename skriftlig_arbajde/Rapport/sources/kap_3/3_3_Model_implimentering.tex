@@ -1,3 +1,10 @@
-\subsubsection{Implementering af den datadrevne model}
-\subsubsection{Implementering af den fysik-informerede model}
-\subsubsection{Input, output og repræsentation af felter}
+\texttt{SciML} indeholder implementeringen af projektets læringsmodeller og den tilhørende træningskode. Mappen er opdelt i tre hovedretninger, som svarer til de tre modeltyper, der er undersøgt i projektet.
+
+De vigtigste dele af \texttt{SciML} kan opsummeres som:
+\begin{itemize}
+    \item \texttt{SciML/PINN}: indeholder den punktvise soft constraint model. Filen \texttt{træning.py} fungerer som indgangspunkt for træningen, \texttt{util/model.py} definerer selve MLP modellen, \texttt{util/data\_loader.py} konstruerer de punktvise træningseksempler, og det hele  samles files i \texttt{util/træning\_helpers.py}, tabsfunktioner og checkpoint logik.
+    \item \texttt{SciML/PINN\_z}: indeholder den linjebaserede hard constraint model med MLP arkitektur. Filen \texttt{træning.py} styrer træningen, \texttt{utils/data\_loader.py} opbygger linjebaserede input langs \(x\) aksen, \texttt{utils/wrapper.py} indbygger randbetingelserne direkte i modeloutputtet, og \texttt{utils/training\_helpers.py} håndterer træning, evaluering og lagring af checkpoints.
+    \item \texttt{SciML/PINO\_z}: indeholder den operatorbaserede hard constraint model. Strukturen ligner \texttt{PINN\_z}, men i \texttt{utils/wrapper.py} bruges en FNO lignende model i stedet for et almindeligt MLP, mens \texttt{utils/data\_loader.py} og \texttt{utils/training\_helpers.py} varetager datahåndtering og træningsforløb på tilsvarende måde.
+\end{itemize}
+
+På tværs af disse mapper er strukturen derfor bevidst holdt ens: hver modeltype har et træningsscript, en dataloader og hjælpefunktioner til modelopbygning og træning. Det gør det lettere at sammenligne modeltyperne, fordi forskellene primært ligger i repræsentationen af input og output samt i, hvordan de fysiske begrænsninger håndhæves.

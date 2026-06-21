@@ -3,6 +3,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage[margin=2.25cm,headheight=26pt,includeheadfoot]{geometry}
 \usepackage[english]{babel}
+\renewcommand{\contentsname}{Indholdsfortegnelse}
+\renewcommand{\listfigurename}{Figurliste}
+\renewcommand{\listtablename}{Tabelliste}
+\renewcommand{\refname}{Referencer}
 \usepackage{listings}
 \usepackage{color}
 \usepackage{titlesec}
@@ -10,7 +14,7 @@
 \usepackage[framed, numbered]{matlab-prettifier}
 \usepackage{changepage}
 \usepackage{amsmath, amssymb, amsfonts}
-\usepackage{hyperref}
+\usepackage[hypertexnames=false,pdfpagelabels]{hyperref}
 \usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
@@ -31,6 +35,7 @@
 \usepackage{xcolor}
 \usepackage{lipsum}
 \makenomenclature
+\renewcommand{\nomname}{Nomenklatur}
 
 
 % --- set footer and header ---
@@ -86,7 +91,7 @@ numbersep=0.5cm
 \pagenumbering{arabic} 
 \fancyfoot[C]{Page \thepage\ of \pageref{EndOfText}}
 
-\section{Introduction} \label{ch1}
+\section{Introduktion} \label{ch1}
 \input{sources/1_introduction.tex} 
 
 % Saml alt det teoretiske i og tilgangen til eksperimentet
@@ -106,38 +111,38 @@ numbersep=0.5cm
 
 % Fortolkning af resultaterne, og hvordan det kan bruges til at forbedre modellen, og hvad det betyder for fremtidigt arbejde
 \newpage
-\section{Resultater} \label{ch5}
+\section{Resultater og diskution} \label{ch5}
 \input{sources/5_resultater.tex}
 
 \newpage
-\section{Konklusion og diskussion}\label{ch6}
+\section{Konklusion}\label{ch6}
 \input{sources/6_konklusion_og_disussion.tex}
 
-
-\newpage
-\section{Fremtidigt arbejde}\label{ch7}
-\input{sources/8_fremtidig_arbejde.tex}
-
+\phantomsection
 \label{EndOfText}
 
 \newpage
 \pagenumbering{Roman} 
-\addcontentsline{toc}{section}{List of Figures}
+\phantomsection
+\addcontentsline{toc}{section}{Figurliste}
 \fancyfoot[C]{Page \thepage\ of \pageref{endOfDoc}}
 \listoffigures
 \thispagestyle{fancy}
 
 \newpage
-\addcontentsline{toc}{section}{List of Tables}
+\phantomsection
+\addcontentsline{toc}{section}{Tabelliste}
 \listoftables
 \thispagestyle{fancy}
 
 \newpage
-\addcontentsline{toc}{section}{Nomenclature}
+\phantomsection
+\addcontentsline{toc}{section}{Nomenklatur}
 \input{sources/nomenclat.tex}
 
 \newpage
-\addcontentsline{toc}{section}{References}
+\phantomsection
+\addcontentsline{toc}{section}{Referencer}
 \bibliography{document.bib} 
 \bibliographystyle{ieeetr}
 
@@ -148,5 +153,6 @@ numbersep=0.5cm
 \newpage
 \section{Appendix B} \label{appendixB}
 \input{sources/appendix_b.tex}
+\phantomsection
 \label{endOfDoc}
 \end{document}

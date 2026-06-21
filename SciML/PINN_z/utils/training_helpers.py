@@ -17,22 +17,6 @@ CHECKPOINT_NAME = "checkpoint.pt"
 CHECKPOINT_BACKUP_NAME = "checkpoint.prev.pt"
 
 
-def _load_checkpoint_candidates(*candidates: Path) -> tuple[dict | None, Path | None, list[str]]:
-    load_errors = []
-
-    for candidate in candidates:
-        if not candidate.exists():
-            continue
-        try:
-            return (
-                torch.load(candidate, map_location="cpu", weights_only=False),
-                candidate,
-                load_errors,
-            )
-        except (RuntimeError, OSError, EOFError, ValueError, pickle.UnpicklingError) as exc:
-            load_errors.append(f"{candidate}: {exc}")
-
-    return None, None, load_errors
 
 class HistoryBuffer:
     def __init__(self, save_path: Path):
@@ -139,6 +123,53 @@ def load_checkpoint(training_config):
     )
 
 
+def _load_checkpoint_candidates(*candidates: Path) -> tuple[dict | None, Path | None, list[str]]:
+    load_errors = []
+
+    for candidate in candidates:
+        if not candidate.exists():
+            continue
+        try:
+            return (
+                torch.load(candidate, map_location="cpu", weights_only=False),
+                candidate,
+                load_errors,
+            )
+        except (RuntimeError, OSError, EOFError, ValueError, pickle.UnpicklingError) as exc:
+            load_errors.append(f"{candidate}: {exc}")
+
+    return None, None, load_errors
+
+
+def save_invalid_batch(training_config: dict,
+                       state: dict,
+                       batch_idx: int,
+                       batch: list[torch.Tensor],
+                       f_theta: dict[str, torch.Tensor],
+                       coord_fys: torch.Tensor,
+                       eq_res: torch.Tensor,
+                       data_loss_value: float,
+                       eq_loss_value: float):
+    output_dir = Path(training_config["data_dir"]).resolve() / "skipped_batches"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{state['split']}_epoch{state['epoch']}_batch{batch_idx:06d}.pt"
+
+    torch.save(
+        {
+            "epoch": state["epoch"],
+            "split": state["split"],
+            "batch_idx": batch_idx,
+            "data_loss": data_loss_value,
+            "eq_loss": eq_loss_value,
+            "batch": [tensor.detach().cpu() for tensor in batch],
+            "f_theta": {name: tensor.detach().cpu() for name, tensor in f_theta.items()},
+            "coord_fys": coord_fys.detach().cpu(),
+            "eq_res": eq_res.detach().cpu(),
+        },
+        output_path,
+    )
+    return output_path
+
 
 data_loader_setup1 = {
     "TSSplit": True,
@@ -175,7 +206,8 @@ def init_experinment(train_cfg):
                             "shuffle": train_cfg["shuffle"],
                             "num_workers": train_cfg["num_workers"],
                             "prefetch_factor": train_cfg["prefetch_factor"],
-                            "pin_memory": train_cfg["pin_memory"]
+                            "pin_memory": train_cfg["pin_memory"],
+                            "persistent_workers": train_cfg["persistent_workers"]
                             }
         
         for key, value in data_loader_dict.items():
@@ -195,21 +227,24 @@ def init_experinment(train_cfg):
                                   shuffle=train_cfg["shuffle"],
                                   num_workers=train_cfg["num_workers"],
                                   pin_memory=train_cfg["pin_memory"],
-                                  prefetch_factor=train_cfg["prefetch_factor"]
+                                  prefetch_factor=train_cfg["prefetch_factor"],
+                                  persistent_workers=train_cfg["persistent_workers"]
                                   )
         val_loader = DataLoader(val_dataset,
                                 batch_size=train_cfg["batch_size"],
                                 shuffle=False,
                                 num_workers=train_cfg["num_workers"],
                                 pin_memory=train_cfg["pin_memory"],
-                                prefetch_factor=train_cfg["prefetch_factor"]
+                                prefetch_factor=train_cfg["prefetch_factor"],
+                                persistent_workers=train_cfg["persistent_workers"]
                                 )
         test_loader = DataLoader(test_dataset,
                                 batch_size=train_cfg["batch_size"],
                                 shuffle=False,
                                 num_workers=train_cfg["num_workers"],
                                 pin_memory=train_cfg["pin_memory"],
-                                prefetch_factor=train_cfg["prefetch_factor"]
+                                prefetch_factor=train_cfg["prefetch_factor"],
+                                persistent_workers=train_cfg["persistent_workers"]
                                 )
 
     else:
@@ -274,9 +309,8 @@ def iterator(loader,
 
     total_loss = 0.0
     num_loss_batches = 0
-    status_total_loss = 0.0
-    status_da_loss = 0.0
-    status_eq_loss = 0.0
+    status_data = 0.0
+    status_eq = 0.0
     status_loss_batches = 0
     try:
         for batch_idx, batch in enumerate(loader, start=start_batch_idx):
@@ -312,16 +346,29 @@ def iterator(loader,
             eq_res = phys.eq_res(avg_z, f_theta, coord_fys, coords_num)
             eq_res = torch.stack(list(eq_res.values()))
             loss_eq = condition(eq_res, torch.zeros_like(eq_res))
+            loss_eq = torch.clamp(loss_eq, max=1e5)
             loss_eq_value = loss_eq.detach().cpu().item()
 
             if not torch.isfinite(data_loss) or not torch.isfinite(loss_eq):
                 print(f"Skipping batch {batch_idx + 1}: non-finite loss.")
+                invalid_batch_path = save_invalid_batch(
+                    training_config=train_config,
+                    state=state,
+                    batch_idx=batch_idx,
+                    batch=batch,
+                    f_theta=f_theta,
+                    coord_fys=coord_fys,
+                    eq_res=eq_res,
+                    data_loss_value=data_loss_value,
+                    eq_loss_value=loss_eq_value,
+                )
                 save_checkpoint(train_config,
                                 skipped_batch_info={
                                     "reason": "non-finite loss",
                                     "batch_idx": batch_idx,
                                     "data_loss": data_loss_value,
                                     "eq_loss": loss_eq_value,
+                                    "saved_batch": str(invalid_batch_path),
                                 })
                 optimizer.zero_grad(set_to_none=True)
                 del f_theta, coord_fys, pred_da, pred_da_center, data_loss, eq_res, loss_eq, batch
@@ -329,56 +376,51 @@ def iterator(loader,
                 state["batch_idx"] = batch_idx + 1
                 continue
 
+
             if is_training:
-                batch_loss = data_loss + loss_eq
-                batch_loss.backward()
+                (data_loss * train_config["da_weight"] + loss_eq * train_config["eq_weight"]).backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
                 optimizer.step()
 
-            batch_total_loss = data_loss_value + loss_eq_value
-            total_loss += batch_total_loss
+            batch_weighted_loss = data_loss_value * train_config["da_weight"] + loss_eq_value * train_config["eq_weight"]
             num_loss_batches += 1
-            status_total_loss += batch_total_loss
-            status_da_loss += data_loss_value
-            status_eq_loss += loss_eq_value
-            status_loss_batches += 1
-            history.append(
-                split=state["split"],
-                loss_type="raw",
-                values={
-                    "total": batch_total_loss,
-                    "da": data_loss_value,
-                    "eq": loss_eq_value},
-                )
-            history.append(
-                split=state["split"],
-                loss_type="weighted",
-                values={
-                    "total": batch_total_loss,
-                    "da": data_loss_value,
-                    "eq": loss_eq_value},
-                )
+            
+            history.append(split=state["split"], loss_type="raw",
+                           values={"total": data_loss_value + loss_eq_value, 
+                                   "da": data_loss_value,
+                                   "eq": loss_eq_value})
 
-            if is_training:
-                del batch_loss
+            history.append(split=state["split"], loss_type="weighted",
+                           values={"total": batch_weighted_loss,
+                                   "da": data_loss_value * train_config["da_weight"],
+                                   "eq": loss_eq_value * train_config["eq_weight"]}
+                                   )
+            
+            total_loss += batch_weighted_loss
+            status_data += data_loss_value
+            status_eq += loss_eq_value
+            status_loss_batches += 1
+
             del f_theta, coord_fys, pred_da, pred_da_center, data_loss, eq_res, loss_eq, batch
 
             processed_batches += 1
             state["batch_idx"] = batch_idx + 1
 
-            if (
-                train_config["status_frequency"]
+            if (train_config["status_frequency"]
                 and status_loss_batches
                 and processed_batches % train_config["status_frequency"] == 0
-            ):
-                print(
-                    f"{state['split']}, Batch {batch_idx + 1}/{total_loader_batches} |\t "
-                    f"avg total_loss: {status_total_loss / status_loss_batches:.6e} | "
-                    f"avg da_loss: {status_da_loss / status_loss_batches:.6e} | "
-                    f"avg eq_loss: {status_eq_loss / status_loss_batches:.6e}"
-                )
-                status_total_loss = 0.0
-                status_da_loss = 0.0
-                status_eq_loss = 0.0
+                ):
+
+                print(f"{state['split']}, Batch {batch_idx + 1}/{total_loader_batches}\t"
+                      f"raw({(status_data + status_eq) / status_loss_batches:.3e}, "
+                      f"{status_data / status_loss_batches:.3e}, "
+                      f"{status_eq / status_loss_batches:.3e}), "
+                      f"weighted({status_data / status_loss_batches * train_config['da_weight'] + status_eq / status_loss_batches * train_config['eq_weight']:.3e}, "
+                      f"{status_data / status_loss_batches * train_config['da_weight']:.3e}, "
+                      f"{status_eq / status_loss_batches * train_config['eq_weight']:.3e}))"
+                      )
+                status_data = 0.0
+                status_eq = 0.0
                 status_loss_batches = 0
     finally:
         if param_requires_grad is not None:
@@ -386,12 +428,14 @@ def iterator(loader,
                 param.requires_grad_(old_value)
 
     if train_config["status_frequency"] and status_loss_batches:
-        print(
-            f"{state['split']}, Batch {state['batch_idx']}/{total_loader_batches} | "
-            f"avg total_loss: {status_total_loss / status_loss_batches:.6e} | "
-            f"avg da_loss: {status_da_loss / status_loss_batches:.6e} | "
-            f"avg eq_loss: {status_eq_loss / status_loss_batches:.6e}"
-        )
+        print(f"{state['split']}, Batch {state['batch_idx']}/{total_loader_batches}\t"
+              f"raw({(status_data + status_eq) / status_loss_batches:.3e}, "
+              f"{status_data / status_loss_batches:.3e}, "
+              f"{status_eq / status_loss_batches:.3e}), "
+              f"weighted({status_data / status_loss_batches * train_config['da_weight'] + status_eq / status_loss_batches * train_config['eq_weight']:.3e}, "
+              f"{status_data / status_loss_batches * train_config['da_weight']:.3e}, "
+              f"{status_eq / status_loss_batches * train_config['eq_weight']:.3e}))"
+              )
 
     state["batch_idx"] = max(0, last_batch_idx + 1)
     history.flush()

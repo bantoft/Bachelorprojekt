@@ -1,1 +1,30 @@
-Her står der en masse om mine tanker til forbedringer og videre arbejde. Det er ikke sikkert at det
+Projektet viser, at Scientific Machine Learning (SciML) har potentiale til at blive anvendt til modellering af randdynamik i plasma beskrevet ved HESEL-modellen. Resultaterne indikerer dog, at de undersøgte modeller endnu ikke er modne nok til at erstatte klassiske numeriske simuleringer. Til gengæld viser de lovende egenskaber som approksimationer af tidsudviklingsoperatoren, hvor de kan forudsige næste tidstilstand med betydeligt lavere beregningsomkostninger end en fuld numerisk løsning.
+
+Særligt blev det vist, at simple fysikinformerede modeller kan opnå høj nøjagtighed ved forudsigelse af lokale dynamikker, selv når de kun anvender information fra et begrænset område af domænet. Dette peger på, at fysikinformeret maskinlæring kan fungere som et nyttigt supplement til eksisterende simuleringsværktøjer.
+
+Forskningsspørgsmålene kan på denne baggrund besvares som følger:
+
+\begin{enumerate}
+\item \textbf{Hvordan kan fysikinformerede neurale netværk anvendes til at modellere HESEL-modellen?}
+
+Fysikinformerede neurale netværk kan anvendes til at lære plasmaets tidsudvikling ved at kombinere simuleringsdata med de underliggende differentialligninger. Resultaterne viser, at modellerne endnu ikke kan erstatte klassiske simuleringer som selvstændig metode, da præcisionen fortsat er utilstrækkelig til dette formål. De udviser dog lovende egenskaber som supplement til numeriske metoder, særligt når målet er hurtig approksimation af næste tidstilstand.
+
+\item \textbf{Hvilken betydning har vægtningen mellem data-loss og PDE-loss, og hvordan påvirker dataopløsningen resultaterne?}
+
+Vægtningen mellem data-loss og PDE-loss har stor betydning for modellernes adfærd. PDE-loss bidrog i flere tilfælde til ustabil træning, men forbedrede samtidig modellernes evne til at generalisere på tværs af forskellige dataopløsninger og ukendte simuleringskonfigurationer. Resultaterne peger derfor på et vigtigt kompromis mellem træningsstabilitet og fysisk konsistens.
+
+\item \textbf{I hvor høj grad kan modellen generalisere til ukendte punkter, tidsskridt og simulationskonfigurationer?}
+
+Modellerne demonstrerede en tilfredsstillende generaliseringsevne på tværs af både ukendte tidspunkter og ændrede simulationskonfigurationer. Resultaterne tyder på, at den fysiske information indlejret i træningen hjælper modellerne med at bevare meningsfulde forudsigelser, selv når de anvendes uden for træningsdatasættet.
+
+\item \textbf{Hvor meget kan modellen effektiviseres, før tabet i præcision bliver væsentligt?}
+
+Resultaterne viser, at modelkompleksiteten har stor betydning for træningsforløbet. For PINN\_z-modellen var simple arkitekturer generelt mere stabile end større modeller, som ofte førte til ustabiliteter i PDE-loss. Omvendt krævede den punktbaserede PINN-model en relativt stor modelkapacitet for overhovedet at kunne lære de observerede dynamikker. Der findes derfor ikke én optimal kompleksitet, men snarere et kompromis mellem stabilitet, modelkapacitet og præcision.
+
+\end{enumerate}
+
+Den samlede konklusion er, at fysikinformerede neurale netværk udgør et lovende supplement til klassiske numeriske metoder inden for simulering af randplasma. Modellerne kan endnu ikke erstatte traditionelle simuleringer, men de demonstrerer en evne til at lære væsentlige dele af plasmaets dynamik og til at generalisere til nye scenarier.
+
+Resultaterne viser samtidig, at størrelsen af det område, modellen skal forudsige, har stor betydning for træningsstabiliteten. Forudsigelse af større dele af domænet medførte markant vanskeligere optimeringsproblemer og større risiko for ustabile træningsforløb.
+
+Endelig peger resultaterne på, at fysikinformerede modeller kan udnytte viden fra stabile simulationskonfigurationer til at foretage forudsigelser på mere udfordrende konfigurationer. Dette gør dem interessante som fremtidige surrogate-modeller, der potentielt kan reducere beregningstiden ved numeriske plasmaeksperimenter og understøtte udforskningen af nye parameterrum.

@@ -1,5 +1,14 @@
-Her står der lidt om simulering opsætning
+\texttt{hesel\_scraper} og \texttt{sim\_data} udgør tilsammen projektets data bearbejdning. Folderen \texttt{hesel\_scraper} fungerer som bindeled mellem rå HESEL simulationer og SciML modellerne, 
+mens \texttt{sim\_data} folderen indeholder selve simulationskørslerne.
 
-\subsubsection{Generering eller indlæsning af simulationsdata}
-\subsubsection{Preprocessing og normalisering}
-\subsubsection{Opdeling i træning, validering og test}
+De vigtigste filer i \texttt{hesel\_scraper} kan opsummeres som:
+\begin{itemize}
+    \item \texttt{hesel\_scraper/bout\_dump.py}: indeholder klassen \texttt{BOUTHESELInfo}, denne klasse læser og gemmer data fra \texttt{BOUT.settings} og \texttt{BOUT.dmp.*.nc} filer,
+    og udleder de normaliserede parametre, der bruges videre i modellerne.
+    \item \texttt{hesel\_scraper/bout\_phys.py}: indeholder klassen \texttt{BOUTHESELPhys}, som opstiller initialbetingelser, randbetingelser og ligningsresidualer for HESEL systemet.
+    \item \texttt{hesel\_scraper/api/dump\_helper.py}: indeholder hjælpefunktioner til at fortolke og evaluere udtryk fra \texttt{BOUT.settings}.
+    \item \texttt{hesel\_scraper/api/operators.py}: indeholder autograd baserede differentialoperatorer, som bruges til at beregne gradienter og Laplaceoperatoren på modeloutputtet.
+\end{itemize}
+
+Hver undermappe svarer til en bestemt simulerings konfiguration med selve simulerings konfigurtionen \texttt{BOUT.inp}.
+Efter simulerings er startet generes blandt andet \texttt{BOUT.settings}, \texttt{BOUT.dmp.*.nc}, \texttt{BOUT.restart.*.nc} og \texttt{BOUT.log.*}. Dermed rummer hver mappe både simuleringsopsætningen og de tilhørende outputfiler, som efterfølgende behandles i \texttt{hesel\_scraper}.

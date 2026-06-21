@@ -1,5 +1,17 @@
 \babel@toc {english}{}\relax 
-\contentsline {figure}{\numberline {1}{\ignorespaces Påtvungne profiler i numerisk domæne, med ghost cells,"init" er $n_p$, $p_{e,p}$ og $p_{i,p}$, med sigma profiler der bestemmer hvor $\Lambda $ termerne håndhæves. x-aksen har Bohm normaliseret længde: $x = 140/\rho _s$}}{13}{figure.caption.1}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Standard simuleringen $\texttt {Alexander\_pi}$ til $t=0$. Akserne er i numeriske grid enheder og ghost cells inkluderet. Fysiske enheder er $z = 140/\rho _s$, $x = 140/\rho _s + ghostcells$}}{25}{figure.caption.3}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Standard simuleringen $\texttt {Alexander\_pi}$ til $t=3000$. Akserne er i numeriske grid enheder og ghost cells inkluderet. Fysiske enheder er $z = 140/\rho _s$, $x = 140/\rho _s + ghostcells$}}{26}{figure.caption.4}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Tidsudviklingen af feltet ln(n) for udvalgte simuleringer}}{V}{figure.caption.6}%
+\contentsline {figure}{\numberline {1}{\ignorespaces Påtvungne profiler i numerisk domæne, med ghost cells,"init" er $n_p$, $p_{e,p}$ og $p_{i,p}$, med sigma profiler der bestemmer hvor $\Lambda $ termerne håndhæves. x-aksen har Bohm normaliseret længde: $x = 140/\rho _s$}}{12}{figure.caption.56}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Standard simuleringen $\texttt {Alexander\_pi}$ til $t=0$. Akserne er i numeriske grid enheder og ghost cells inkluderet. Fysiske enheder er $z = 140/\rho _s$, $x = 140/\rho _s + ghostcells$}}{21}{figure.caption.105}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Standard simuleringen $\texttt {Alexander\_pi}$ til $t=3000$. Akserne er i numeriske grid enheder og ghost cells inkluderet. Fysiske enheder er $z = 140/\rho _s$, $x = 140/\rho _s + ghostcells$}}{22}{figure.caption.106}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Trænings-, validerings- og testkurver for eksperiment 13 med varierende hidden dimension}}{26}{figure.caption.127}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Endelige eksperimenter for PINN\_z med 3 forskellige random seeds, vægtet og uvægtet loss, og moving average med vindue størrelse 50.}}{29}{figure.caption.133}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Endelige eksperiment for PINN\_z, Eksperiment 1, med vægtede og uvægtede losses for total, data og PDE (eq), samt moving average med vindue størrelse 50.}}{30}{figure.caption.134}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Total uvægtet loss på testdatasættene for Eksperiment 1, 2 og 3, alle med batchstørrelse 1024.}}{31}{figure.caption.135}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Modellens mål at forudsige \texttt {Alexander\_\_t\_n} ved \texttt {t\_idx = 500} og \texttt {t\_fys = 12500}, sammenlignet med det faktiske resultat, data loss og PDE (eq) loss.}}{32}{figure.caption.136}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Endelige eksperimenter for PINN, vægtet og uvægtet loss}}{33}{figure.caption.138}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Modellens mål at forudsige \texttt {Alexander\_\_grid\_c\_0} ved \texttt {t\_idx = 400} og \texttt {t\_fys = 00}, sammenlignet med det faktiske resultat, data loss, PDE (eq) loss}}{34}{figure.caption.140}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Tidsudviklingen af feltet ln(n) for udvalgte simuleringer}}{V}{figure.caption.152}%
+\contentsline {figure}{\numberline {12}{\ignorespaces PINN\_z overlap for tanh-modeller, med moving average med vindue størrelse på 3.}}{VI}{figure.caption.153}%
+\contentsline {figure}{\numberline {13}{\ignorespaces PINN\_z overlap for SiLU-modeller, med moving average med vindue størrelse på 3.}}{VII}{figure.caption.154}%
+\contentsline {figure}{\numberline {14}{\ignorespaces PINN\_z overlap for blandede SiLU- og tanh-modeller, med moving average med vindue størrelse på 3.}}{VIII}{figure.caption.155}%
+\contentsline {figure}{\numberline {15}{\ignorespaces PINN\_z modeller med 2 lag, med moving average med vindue størrelse på 5.}}{IX}{figure.caption.156}%
+\contentsline {figure}{\numberline {16}{\ignorespaces PINN\_z modeller med 3 lag, med moving average med vindue størrelse på 5.}}{X}{figure.caption.157}%

@@ -19,10 +19,10 @@ if __name__ == "__main__":
         "resume": False,
         # !! Paths skal være referet fra ROOT_DIR !!
         # Folder med dump filer og settings fil
-        "root" : [r"sim_data/Alexander_e", r"sim_data/Alexander_phi_0"],
+        "root" : [r"sim_data/Alexander_e"],
         # Bool eller liste med samme længde som root, fx [True, False] for 2 datasæt.
         # True = timeseries split, False = random sample split.
-        "TSSplit": [True, False],
+        "TSSplit": [True],
         # Output folder for checkpoints, history og best model
         # Kald folderen for: history<...> så det ikke flyttes til repo
         "out_folder": r"Experimenter/PINN/test_run",
@@ -32,26 +32,26 @@ if __name__ == "__main__":
         
         # Optimization
         "lr": 1e-4,
-        "epochs": 6,
-        "early_stopping_patience": 2,
+        "epochs": 1,
+        "early_stopping_patience": 1,
         "early_stopping_min_delta": 0.0,
 
         # Logging / status
-        "status_frequency": 50,
-        "flush_frequency": 500,
+        "status_frequency": 100,
+        "flush_frequency": 500000,
 
         # Dataset split
         "train_ratio": 0.8,
         "val_ratio": 0.1,
 
         # Loss weights
-        "da": 500.0,
-        "ic": 1.0,
-        "eq": 25000.0, # Brug opløsigligheden af (num_x*num_z)
-        "bc": 1.0,
+        "da": 500,
+        "ic": 1,
+        "eq": 1e3,
+        "bc": 1,
 
         # DataLoader
-        "batch_size": 2**12 + 2**11 + 2**9 + 2**7,
+        "batch_size": 3600,
         "shuffle": True, # Bruges kun i val/test loader, da sampler bruges i train loader
         "pin_memory": True,
         "persistent_workers": True,

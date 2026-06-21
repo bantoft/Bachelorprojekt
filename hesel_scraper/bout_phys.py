@@ -35,9 +35,13 @@ class BOUTHESELPhys:
         self.bc_res = self._bc_residuals
         self.eq_res = self._eq_residuals
 
+    @staticmethod
+    def _safe_exp(tensor: Tensor, clamp: float = 20.0) -> Tensor:
+        return torch.exp(torch.clamp(tensor, min=-clamp, max=clamp))
+
 
     def _get_vort_field(self, state: dict[str, Tensor], coord: Tensor):
-        return laplacian_perp(state["phi"] + torch.exp(state["lnpi"]), coord)
+        return laplacian_perp(state["phi"] + self._safe_exp(state["lnpi"]), coord)
 
 
     def _ic(self) -> dict[str, Tensor]:
@@ -208,16 +212,16 @@ class BOUTHESELPhys:
         x_idx = cord_num[:, 0].int()
 
         lnn, lnpe, lnpi, phi = state["lnn"], state["lnpe"], state["lnpi"], state["phi"]
-        n, pe, pi = torch.exp(lnn), torch.exp(lnpe), torch.exp(lnpi)
+        n, pe, pi = self._safe_exp(lnn), self._safe_exp(lnpe), self._safe_exp(lnpi)
         lnte, lnti = lnpe - lnn, lnpi - lnn
-        te, ti = torch.exp(lnte), torch.exp(lnti)
-        tau = torch.exp(lnti - lnte)
+        te, ti = self._safe_exp(lnte), self._safe_exp(lnti)
+        tau = self._safe_exp(lnti - lnte)
         cs_hot = torch.sqrt(torch.clamp(ti + te, min=1e-12))
         
 
-        init_n = torch.exp(self.ic["init_lnn"][x_idx]).view_as(n)
-        init_pe = torch.exp(self.ic["init_lnpe"][x_idx]).view_as(pe)
-        init_pi = torch.exp(self.ic["init_lnpi"][x_idx]).view_as(pi)
+        init_n = self._safe_exp(self.ic["init_lnn"][x_idx]).view_as(n)
+        init_pe = self._safe_exp(self.ic["init_lnpe"][x_idx]).view_as(pe)
+        init_pi = self._safe_exp(self.ic["init_lnpi"][x_idx]).view_as(pi)
 
         b_field = self.profiles["b_field"][x_idx].view_as(n)
         sigma_open = self.profiles["sigma_open"][x_idx].view_as(n)
@@ -460,11 +464,11 @@ class BOUTHESELPhys:
             if self.hes_settings.get("parallel_sheath_damping", 0) == 0:
                 damp_sheath = torch.zeros_like(n)
             elif self.hes_settings.get("parallel_sheath_damping", 0) == 1:
-                damp_sheath = (1.0 / float(params.norm_lc)) * (1.0 - torch.exp(float(params.bohm_potential) - avg_phi / torch.clamp(avg_te, min=1e-12)))
+                damp_sheath = (1.0 / float(params.norm_lc)) * (1.0 - self._safe_exp(float(params.bohm_potential) - avg_phi / torch.clamp(avg_te, min=1e-12)))
             elif self.hes_settings.get("parallel_sheath_damping", 0) == 2:
-                damp_sheath = avg_cs_hot / float(params.norm_lc) * (1.0 - torch.exp(float(params.bohm_potential) - avg_phi / torch.clamp(avg_te, min=1e-12)))
+                damp_sheath = avg_cs_hot / float(params.norm_lc) * (1.0 - self._safe_exp(float(params.bohm_potential) - avg_phi / torch.clamp(avg_te, min=1e-12)))
             elif self.hes_settings.get("parallel_sheath_damping", 0) == 3:
-                damp_sheath = cs_hot / float(params.norm_lc) * (1.0 - torch.exp(float(params.bohm_potential) - phi / torch.clamp(te, min=1e-12)))
+                damp_sheath = cs_hot / float(params.norm_lc) * (1.0 - self._safe_exp(float(params.bohm_potential) - phi / torch.clamp(te, min=1e-12)))
             else:
                 raise ValueError("Unsupported parallel_sheath_damping option from BOUT-HESEL.")
             parallel["lnpi"] = parallel["lnpi"] + 2.0 / 3.0 * sigma_open * damp_sheath

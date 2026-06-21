@@ -1,0 +1,6 @@
+\babel@toc {danish}{}\relax 
+\contentsline {section}{\numberline {1}Motivation}{1}{section.1}%
+\contentsline {section}{\numberline {2}Forsknings spørgsmål}{1}{section.2}%
+\contentsline {section}{\numberline {3}Læringsmål}{2}{section.3}%
+\contentsline {section}{\numberline {4}Gantt chart}{2}{section.4}%
+\contentsline {section}{References}{3}{figure.caption.2}%

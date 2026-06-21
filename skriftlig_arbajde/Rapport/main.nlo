@@ -1,4 +1,8 @@
-\nomenclatureentry{aBTE@[{BTE}]\begingroup Boltzman transport ligning\nomeqref {54}|nompageref}{III}
-\nomenclatureentry{aSOL@[{SOL}]\begingroup Scrape off layer\nomeqref {54}|nompageref}{III}
-\nomenclatureentry{aHESEL@[{HESEL}]\begingroup Hot Edge SOL Electrostatic\nomeqref {54}|nompageref}{III}
-\nomenclatureentry{aSciML@[{SciML}]\begingroup Scientific Machine Learning\nomeqref {54}|nompageref}{III}
+\nomenclatureentry{aBTE@[{BTE}]\begingroup Boltzman transport ligning\nomeqref {70}|nompageref}{III}
+\nomenclatureentry{aSOL@[{SOL}]\begingroup Scrape off layer\nomeqref {70}|nompageref}{III}
+\nomenclatureentry{aHESEL@[{HESEL}]\begingroup Hot Edge SOL Electrostatic\nomeqref {70}|nompageref}{III}
+\nomenclatureentry{aSciML@[{SciML}]\begingroup Scientific Machine Learning\nomeqref {70}|nompageref}{III}
+\nomenclatureentry{aPDE@[{PDE}]\begingroup Partielle Differential Ligninger\nomeqref {70}|nompageref}{III}
+\nomenclatureentry{aPINN@[{PINN}]\begingroup Physics Informed Neural Networks\nomeqref {70}|nompageref}{III}
+\nomenclatureentry{aDTU@[{DTU}]\begingroup Danmarks Tekniske Universitet\nomeqref {70}|nompageref}{III}
+\nomenclatureentry{aHPC@[{HPC}]\begingroup High Performance Computing\nomeqref {70}|nompageref}{III}

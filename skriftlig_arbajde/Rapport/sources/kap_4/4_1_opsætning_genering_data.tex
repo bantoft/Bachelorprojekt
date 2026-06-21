@@ -1,10 +1,13 @@
 \subsubsection{BOUT opsætning}
-BOUT++ og BOUT-HESEL blev opsat på DTU's HPC-cluster i et separat softwaremiljø, hvor de nødvendige moduler for MPI, FFTW, NetCDF og Intel compiler først blev loadet. Dette var nødvendigt, fordi både kompilering og kørsel af simuleringerne afhænger af parallelisering og eksterne numeriske biblioteker. Derudover blev \texttt{OMP\_NUM\_THREADS} sat til 16, så opsætningen matchede den ønskede brug af clusterets CPU-ressourcer.
+BOUT++ \cite{Dudson_2009} og BOUT HESEL blev opsat på 
+Danmarks Tekniske Universitet (DTU)'s High Performance Computing (HPC) cluster, i et separat softwaremiljø, hvor de nødvendige moduler for MPI, FFTW, NetCDF og Intel compiler først blev loadet. Dette var nødvendigt, fordi både kompilering og kørsel af simuleringerne afhænger af parallelisering og eksterne numeriske biblioteker. Derudover blev \texttt{OMP\_NUM\_THREADS} sat til 16, så opsætningen matchede den ønskede brug af clusterets CPU ressourcer.
+BOUT++ er selve simuleringsrammen og BOUT HESEL er simuleringsmodellen udviklit af DTU's Plasma Physics and Fusion Energy afdeling.
 
-Selve installationen blev udført i to trin. Først blev BOUT++ klonet fra det officielle repository, sat til version \texttt{v4.3.2}, konfigureret med \texttt{./configure} og derefter kompileret med \texttt{make -j16}. BOUT++ fungerer her som den generelle simuleringsramme, som håndterer numerisk løsning, gitterstruktur og parallel udførelse. Herefter blev BOUT-HESEL klonet med tilhørende submoduler. I denne del af opsætningen blev de nødvendige komponenter fra \texttt{HESEL-Common} koblet til projektet, så HESEL-modellen kunne bygges oven på den allerede kompilerede BOUT++-installation. Til sidst blev BOUT-HESEL også kompileret med \texttt{make -j16}.
 
-Når både BOUT++ og BOUT-HESEL var bygget, kunne simuleringerne køres med \texttt{mpirun -np 4 ./hesel -d <folder med BOUT.inp fil>}. Her læser programmet sin konfiguration fra den tilhørende \texttt{BOUT.inp}-fil, som specificerer blandt andet gitteropløsning, tidsstep, randbetingelser og fysiske parametre. Denne opsætning gjorde det muligt at generere konsistente HESEL-simuleringer på clusteret, som efterfølgende kunne bruges som datagrundlag for de læringsbaserede modeller.
-Dette projekts opsætning af BOUT++ og BOUT-HESEL er dokumenteret i detaljer i filen $\texttt{skriftlig\_arbajde/opsaetning}$, hvor alle nødvendige kommandoer og trin er gennemgået for at sikre reproducerbarhed.
+Selve installationen blev udført i to trin. Først blev BOUT++ klonet fra det officielle repository, sat til version \texttt{v4.3.2}, konfigureret med \texttt{./configure} og derefter kompileret med \texttt{make j16}. BOUT++ fungerer her som den generelle simuleringsramme, som håndterer numerisk løsning, gitterstruktur og parallel udførelse. Herefter blev BOUT HESEL klonet med tilhørende submoduler. I denne del af opsætningen blev de nødvendige komponenter fra \texttt{HESELCommon} koblet til projektet, så HESELmodellen kunne bygges oven på den allerede kompilerede BOUT++installation. Til sidst blev BOUT HESEL også kompileret med \texttt{make j16}.
+
+Når både BOUT++ og BOUT HESEL var bygget, kunne simuleringerne køres med \texttt{mpirun np 4 ./hesel d <folder med BOUT.inp fil>}. Her læser programmet sin konfiguration fra den tilhørende \texttt{BOUT.inp}fil, som specificerer blandt andet gitteropløsning, tidsstep, randbetingelser og fysiske parametre. Denne opsætning gjorde det muligt at generere konsistente HESEL simuleringer på clusteret, som efterfølgende kunne bruges som datagrundlag for de læringsbaserede modeller.
+Dette projekts opsætning af BOUT++ og BOUT HESEL er dokumenteret i detaljer i filen $\texttt{skriftlig\_arbajde/opsaetning}$, hvor alle nødvendige kommandoer og trin er gennemgået for at sikre reproducerbarhed.
 
 
 \subsubsection{Data generaring} \label{ch4_1_1}
@@ -24,7 +27,7 @@ Hver simulering tog ikke længere end 1 time.
 Submit filen til simuleringen ligger her: $\texttt{sim\_data/submit\_simulering.sh}$.
 Træningen af modellerne blev udført lokalt. Derofr blev filer downloadet fra HPC clusteret til lokal maskine med 
 \[
-    \texttt{rsync -avh --progress ssh:<sti til data> <sti til lokal folder>}
+    \texttt{rsync -avh ssh:<sti til data> <sti til lokal folder>}
 \]
 Det er ikke forvæntet at download skule ødelegge data'en når den komprimeres og downloades med rsync.
 
@@ -69,7 +72,7 @@ Til indlæsning af simuleringsdata anvendes klassen $\texttt{BOUTHESELInfo}$ fra
 Klassen benytter $\texttt{xbout}$ til at læse de parallelle outputfiler fra hver data folder, hvor simuleringsdomænet er opdelt i flere subdomæner,
 ét for hver processor. Disse subdomæner sammensættes automatisk til det oprindelige globale gitter, hvorefter data lagres som PyTorch tensorer.
 
-Det første billede genereret er begyndelsestilstanden for hvert felt, som set i \ref{fig:hesel_profiles}. Hvert felt er udvidet symetrisk om $z$-aksen.
+Det første billede genereret er begyndelsestilstanden for hvert felt, som set i fig \ref{fig:hesel_profiles}. Hvert felt er udvidet symetrisk om $z$aksen.
 For felterne $n$, $p_e$ og $p_i$ tages logaritmen, og $\omega^*$ er initialiseret til 0 og $\phi$ er udregnet med formelen \eqref{eq: vorticitet funktionen}.
 For det første billede genereret tilføjes der også en lille tilfældig støj så alle simuleringer udvikler sig forskelligt over tid. Denne støj er ikke synlig i $t=0$.
 Den vertikale bar ved siden af hver felt viser farveskalaen for det pågældende felt.

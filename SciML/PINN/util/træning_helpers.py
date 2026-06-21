@@ -288,7 +288,11 @@ def step(info,
             for name, loss in weighted_loss.items()
         },
     )
-    return weighted_loss["total"]
+    return (
+        weighted_loss["total"],
+        {name: loss.detach().cpu().item() for name, loss in losses.items()},
+        {name: loss.detach().cpu().item() for name, loss in weighted_loss.items()},
+    )
 
 def iterate(info,
             phys,
@@ -319,34 +323,59 @@ def iterate(info,
 
     avg_iter_loss = 0.0
     processed_batches = 0
+    status_raw = {name: 0.0 for name in ("total", "da", "eq", "ic", "bc")}
+    status_weighted = {name: 0.0 for name in ("total", "da", "eq", "ic", "bc")}
+    status_loss_batches = 0
 
     try:
         for batch_idx, batch in enumerate(batch_iter, start=first_batch):
             avg_z, cord_fys, cord_num, input_data, target = move_batch_to_device((batch), info.device, training_config["pin_memory"])
-            loss_total = step(info,
-                            phys,
-                            model,
-                            avg_z,
-                            cord_fys,
-                            cord_num,
-                            input_data,
-                            target,
-                            condition,
-                            training_config,
-                            history,
-                            split=split
-                            )
+            loss_total, raw_losses, weighted_losses = step(info,
+                                                           phys,
+                                                           model,
+                                                           avg_z,
+                                                           cord_fys,
+                                                           cord_num,
+                                                           input_data,
+                                                           target,
+                                                           condition,
+                                                           training_config,
+                                                           history,
+                                                           split=split
+                                                           )
 
             avg_iter_loss += loss_total.item()
             processed_batches += 1
+            status_loss_batches += 1
+            for name in status_raw:
+                status_raw[name] += raw_losses[name]
+                status_weighted[name] += weighted_losses[name]
 
             if is_training:
                 optimizer.zero_grad(set_to_none=True)
                 loss_total.backward()
                 optimizer.step()
 
-            if batch_idx % training_config["status_frequency"] == 0:
-                print(f"{split} {batch_idx}/{num_batches}\t Loss: {loss_total.item():.6f}")
+            if (training_config["status_frequency"]
+                and status_loss_batches
+                and processed_batches % training_config["status_frequency"] == 0
+                ):
+                print(
+                    f"{split}, Batch {batch_idx + 1}/{num_batches}\t"
+                    f"raw({status_raw['total'] / status_loss_batches:.3e}, "
+                    f"{status_raw['da'] / status_loss_batches:.3e}, "
+                    f"{status_raw['eq'] / status_loss_batches:.3e}, "
+                    f"{status_raw['ic'] / status_loss_batches:.3e}, "
+                    f"{status_raw['bc'] / status_loss_batches:.3e}), "
+                    f"weighted({status_weighted['total'] / status_loss_batches:.3e}, "
+                    f"{status_weighted['da'] / status_loss_batches:.3e}, "
+                    f"{status_weighted['eq'] / status_loss_batches:.3e}, "
+                    f"{status_weighted['ic'] / status_loss_batches:.3e}, "
+                    f"{status_weighted['bc'] / status_loss_batches:.3e}))"
+                )
+                status_raw = {name: 0.0 for name in status_raw}
+                status_weighted = {name: 0.0 for name in status_weighted}
+                status_loss_batches = 0
 
             if batch_idx % training_config["flush_frequency"] == 0:
                 history.flush()
@@ -367,5 +396,20 @@ def iterate(info,
 
     if processed_batches > 0:
         avg_iter_loss /= processed_batches
+
+    if training_config["status_frequency"] and status_loss_batches:
+        print(
+            f"{split}, Batch {first_batch + processed_batches}/{num_batches}\t"
+            f"raw({status_raw['total'] / status_loss_batches:.3e}, "
+            f"{status_raw['da'] / status_loss_batches:.3e}, "
+            f"{status_raw['eq'] / status_loss_batches:.3e}, "
+            f"{status_raw['ic'] / status_loss_batches:.3e}, "
+            f"{status_raw['bc'] / status_loss_batches:.3e}), "
+            f"weighted({status_weighted['total'] / status_loss_batches:.3e}, "
+            f"{status_weighted['da'] / status_loss_batches:.3e}, "
+            f"{status_weighted['eq'] / status_loss_batches:.3e}, "
+            f"{status_weighted['ic'] / status_loss_batches:.3e}, "
+            f"{status_weighted['bc'] / status_loss_batches:.3e}))"
+        )
 
     return avg_iter_loss

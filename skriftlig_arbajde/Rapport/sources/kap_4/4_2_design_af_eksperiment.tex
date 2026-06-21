@@ -1,5 +1,3 @@
-I dette afsnit beskrives dataopdelingen, og hvordan modelarkitekturen vælges.
-
 
 \subsubsection{Opdeling af data til eksperiment}
 Formålet med eksperimenterne er at undersøge modellens evne til at forudsige den næste tidstilstand, iterativt approksimere tidsudviklingsoperatoren,
@@ -18,7 +16,7 @@ For \texttt{Alexander\_phi\_0} foretages derimod en tilfældig opdeling af sampl
 For begge datasæt anvendes 70\% af data til træning, 15\% til validering og 15\% til test.
 
 \subsubsection{Domæne for modelarkitektur}
-Domænet for antal lag, aktiveringsfunktioner og hidden dimension blev diskuteret i afsnit \ref{ch2_4_2}. På den baggrund undersøges følgende kombinationer:
+Domænet for antal lag, aktiveringsfunktioner og hidden dimension blev diskuteret i afsnit \ref{ch2_1_2}. På den baggrund undersøges følgende kombinationer:
 \begin{equation*}
 \begin{aligned}
     \text{Antal lag} &\in \{2, 4, 6, 8\}, \\

@@ -27,4 +27,7 @@ S.~I. Braginskii, ``Transport processes in a plasma,'' {\em Reviews of Plasma Ph
 A.~Antoft, ``Bachelorprojekt: Physics informed neural networks and operators for hesel simulations.'' \url{https://github.com/bantoft/Bachelorprojekt}, 2026.
 \newblock Mit github repository for dette projekt.
 
+\bibitem{Dudson_2009}
+B.~Dudson, M.~Umansky, X.~Xu, P.~Snyder, and H.~Wilson, ``Bout++: A framework for parallel plasma fluid simulations,'' {\em Computer Physics Communications}, vol.~180, pp.~1467--1480, Sep 2009.
+
 \end{thebibliography}

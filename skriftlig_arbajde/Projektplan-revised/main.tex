@@ -1,0 +1,161 @@
+\documentclass[12pt,oneside,a4paper,danish]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.25cm,headheight=26pt,includeheadfoot]{geometry}
+\usepackage[danish]{babel}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage[framed, numbered]{matlab-prettifier}
+\usepackage{changepage}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{caption}
+\usepackage{tocloft}
+\usepackage{setspace}
+\usepackage{multirow}
+\usepackage{titling}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{booktabs}
+\usepackage{indentfirst}
+\usepackage{lscape}
+\usepackage{booktabs,caption}
+\usepackage[flushleft]{threeparttable}
+\usepackage[danish]{nomencl}
+\usepackage{xcolor}
+\usepackage[normalem]{ulem}
+\usepackage{lipsum}
+\usepackage{amsmath}
+
+% --- set footer and header ---
+\pagestyle{fancy}
+\fancyhf{}
+
+\setlength{\parindent}{2em}
+\title{Prjekt plan}
+\makeatletter\let\Title\@title\makeatother
+
+
+
+\lstset{language=Matlab,
+style=Matlab-editor,
+basicstyle=\normalsize\mlttfamily,
+numbers=left,
+numberstyle={\scriptsize\color{black}},
+numbersep=0.5cm											
+}
+
+\newlist{steps}{enumerate}{1}
+\setlist[steps, 1]{leftmargin=1.5cm,label = Step \arabic*:}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+
+\rhead{\nouppercase{\rightmark}}
+\lhead{\Title}
+\rfoot{\includegraphics[height=1.25cm]{root/logo.pdf}} % right header logo
+\setlength\headheight{16pt}
+\setlength{\footskip}{50pt}
+\lhead{\Title} %rightH title
+\cfoot{\thepage}
+
+% --- End of page settings ---
+
+
+\begin{document}
+\pagenumbering{roman}
+
+\input{sources/0_frontpage.tex}
+
+\newpage
+\doublespacing
+%\addcontentsline{toc}{section}{Table of Contents}
+\renewcommand{\baselinestretch}{1}\normalsize
+\tableofcontents
+\renewcommand{\baselinestretch}{1}\normalsize
+%\singlespacing
+\thispagestyle{fancy} % force page style
+
+\newpage
+\pagenumbering{arabic} 
+\fancyfoot[C]{Page \thepage\ of \pageref{EndOfText}}
+
+% --- Main text ---
+
+
+% 5. Projekt schedule (Ghant)
+
+% Milepæle:
+%     - Kom i gang med SciML på Braginskii ligninger
+%         - 1D:
+%             Modellere Braginskii's tæthed/transport ligning
+%             Modellere de andre ligninger individuelt
+%             Modellere hele ligningsystemet
+%         - 2D:
+%             Modellere Braginskii's tæthed/transport ligning
+%             Modellere de andre ligninger individuelt
+%             Modellere hele ligningsystemet
+
+%         Modellere nHesel ligninger i 2D
+
+
+\section{Motivation} \label{Motivation}
+\input{sources/Motivation.tex}
+
+\section{Forsknings spørgsmål} \label{Forsknings_sp}
+\input{sources/Forsknings_sporgsmaal.tex}
+
+
+% \section{Metoder} \label{Metoder}
+% \input{sources/Metoder.tex}
+
+\section{Læringsmål} \label{laeringsmaal}
+\input{sources/laeringsmaal.tex}
+
+\section{Gantt chart}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figurer/gantt_chart.png}
+    \caption{projektets planlagte tidslinje}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figurer/Gantchart.png}
+    \caption{projektets tidslinje}
+\end{figure}
+
+\label{EndOfText}
+
+
+
+% --- End of main text ---
+
+% \newpage
+% \pagenumbering{Roman} 
+% \addcontentsline{toc}{section}{List of Figures}
+% \fancyfoot[C]{Page \thepage\ of \pageref{endOfDoc}}
+% \listoffigures
+% \thispagestyle{fancy}
+
+
+
+% \newpage
+% \addcontentsline{toc}{section}{Nomenclature}
+% \input{sources/9_nomenclat.tex}
+
+\newpage
+\addcontentsline{toc}{section}{References}
+\bibliography{document.bib} 
+\bibliographystyle{ieeetr}
+% \newpage
+% \section{Appendix A} \label{ch6}
+
+\label{endOfDoc}
+\end{document}

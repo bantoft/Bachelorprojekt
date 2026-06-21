@@ -1,26 +1,174 @@
-Der blev udført følgende eksperimenter i hver domæneundersøgelse med konstant gemte dimension.
+Der udføres kun en udforskning af modelarkitektur og hyperparametre på \texttt{PINN\_z}, da data'en og PDE loss er helt den samme for alle modeltyper.
+Det eneste der varier er input og output dimension, hvilket ikke burde have en stor indflydelse på model arkitektur. 
 
 
-Alt data'en for DoE ligger i mappen $\texttt{Experimenter/PINN\_z/DoE}$
+Alt data'en for denne udforskning ligger i eksperimentmapperne under \texttt{Experimenter/PINN\_z}. Opdeling af foldere med eksperiment nummer og trial nummer, er som følgene:
 
-DoE for modellen \texttt{PINN\_z} med 256 i gemte dimension i alle lag havde følgende resultater:
+$\textbf{Eks}$ er eksperiment nummer der referer til folderen \texttt{ex\_<>\_i}, indekset $i \in \{1,2,3,4\}$ angiver specifikationen 
+der er brugt i trial $\{\_,\_,\_,\_\}$. 
+
+For at få mest mulig information om arkitekturerne blev blandinger af aktiveringsfunktioner valgt således:
+\begin{align}
+    &struktur_{9,\{1,2\}} = \{S,t\}\label{struk9_1}\\
+    &struktur_{9,\{3,4\}} = \{t,S\}\label{struk9_3}\\
+    &struktur_{10,1} = \{S,t,S,t\}\label{struk10_1}\\
+    &struktur_{10,2} = \{t,S,t,S\}\label{struk10_2}\\
+    &struktur_{10,3} = \{S,S,t,t\}\label{struk10_3}\\
+    &struktur_{10,4} = \{t,t,S,S\}\label{struk10_4}\\
+    &struktur_{11,1} = \{S,S,S,t,t,t\}\label{struk11_1}\\
+    &struktur_{11,2} = \{t,t,t,S,S,S\}\label{struk11_2}\\
+    &struktur_{11,3} = \{S,t,S,t,S,t\}\label{struk11_3}\\
+    &struktur_{11,4} = \{t,S,t,S,t,S\}\label{struk11_4}\\
+    &struktur_{12,1} = \{S,...,S,t,...,t\}\label{struk12_1}\\
+    &struktur_{12,2} = \{t,...,t,S,...,S\}\label{struk12_2}\\
+    &struktur_{12,3} = \{S,t,S,t,S,t,S,t\}\label{struk12_3}\\
+    &struktur_{12,4} = \{t,S,t,S,t,S,t,S\}\label{struk12_4}
+\end{align}\label{strukturer til arkitekturudforskning}
+Her betyder "$S$" SiLU aktiverings funktion og "$t$" betyder tanh aktiverings funktion. 
+
+
+Hyperparametrene for denne udforskning af \texttt{PINN\_z} var følgende: hidden dimension 256, batch size 512, og 5 epochs.
+
+Der ønskes kun at sortere groft så learning rate blev valgt efter behov så modellerne kunn konvegere nognelunde.
+For trænings, validering og test kurverne af de forskellige eksperimenter se appendix \ref{fig: tanh overlap}, \ref{fig: silu overlap} og \ref{fig: blandet overlap}.
+Bemærk dette er kun total loss, data og PDE loss er ikke inkluderet da dette ville gøre plotsne svære at læse. Der er blevet brugt moving average med vindue størrelse på 3.
+For plottet \ref{fig: silu overlap} er der loss i træning og validering som er ekstremt højt, dette er grundet den voldsomme ustabilitet af træning af SiLU netværk med relativt høj learning rate.
+For validering og test loss bliver tidsrække og random samplet datasættene kørt hvert for sig, hvilket giver de spring i validering og test kurverne.
+I hver epoch valideres der først på random sample split, hvilket viser interpolations evne, og derefter på tidsrække split, hvilket viser ekstrapolations evne. 
+Dette gør det selvfølgelig nemt at se forskellen mellem inter og ekstrapolation, men svært at se om der er en klar tendens i validering. 
+Dette håndteres i early stopping ved at tage samlet gennemsnit af validering.
+
 \begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|l|}
+        \hline
+        \textbf{Avg test loss} & \textbf{Test loss} & \textbf{Lr} & \textbf{Funk} & \textbf{Lag} & \textbf{Eks}\\ \hline
+        1.70 & \{1.9, 1.2, 1.9, 1.8\} & \{5,...,5\}  $\cdot 10^{(-5)}$ & \{\{s,s,s,s\},...\}                                                    & 4 & 6  \\ \hline
+        2.00 & \{1.9, 2.3, 2.0, 1.8\} & \{5,...,5\}  $\cdot 10^{(-5)}$ & \{\{s,s\},...\}                                                        & 2 & 5 \\ \hline
+        2.20 & \{1.9, Na,  2.4, 2.3\} & \{5,5,1,1\}  $\cdot 10^{(-5)}$ & \{\{s,s,s,s,s,s,s,s\},...\}                                            & 8 & 8 \\ \hline
+        2.40 & \{Na , Na,  2.4, 2.4\} & \{5,...,5\}  $\cdot 10^{(-5)}$ & \{\{s,s,s,s,s,s\},...\}                                                & 6 & 7 \\ \hline
+        3.38 & \{4.3, 2.4, 4.3, 2.5\} & \{1,1,1,1\}  $\cdot 10^{(-3)}$ & \{\ref{struk10_1}, \ref{struk10_2}, \ref{struk10_3}, \ref{struk10_4}\} & 4 & 10 \\ \hline
+        3.98 & \{5.0, 3.5, 4.2, 3.2\} & \{1,1,1,0.1\}$\cdot 10^{(-3)}$ & \{\ref{struk12_1}, \ref{struk12_2}, \ref{struk12_3}, \ref{struk12_4}\} & 8 & 12 \\ \hline
+        4.35 & \{4.5, 4.4, 4.2, 4.3\} & \{1,1,1,1\}  $\cdot 10^{(-3)}$ & \{\{t,t\},...\}                                                        & 2 & 1 \\ \hline
+        4.60 & \{4.6, 7.7, 3.5, 2.6\} & \{1,1,1,1\}  $\cdot 10^{(-3)}$ & \{\ref{struk9_1}, \ref{struk9_1}, \ref{struk9_3}, \ref{struk9_3}\}     & 2 & 9 \\ \hline
+        4.95 & \{5.1, 4.6, 5.1, 5.0\} & \{1,1,1,1\}  $\cdot 10^{(-3)}$ & \{\{t,t,t,t,t,t\},...\}                                                & 6 & 3 \\ \hline
+        5.03 & \{5.0, 5.0, 5.1, 5.0\} & \{1,1,1,1\}  $\cdot 10^{(-3)}$ & \{\{t,t,t,t\},...\}                                                    & 4 & 2 \\ \hline
+        5.08 & \{5.1, 5.1, 5.0, 5.1\} & \{1,1,1,1\}  $\cdot 10^{(-3)}$ & \{\{t,t,t,t,t,t,t,t\},...\}                                            & 8 & 4 \\ \hline
+        5.33 & \{5.8 , 5.0, 5.2, Na\} & \{1,1,1,0.1\}$\cdot 10^{(-3)}$ & \{\ref{struk11_1}, \ref{struk11_2}, \ref{struk11_3}, \ref{struk11_4}\} & 6 & 11 \\ \hline
+    \end{tabular}
+    \caption{PINN\_z strukturer sorteret efter bedste \textbf{Avg test loss}}\label{tbl:pinn_z_strukturer}
+\end{table}
+Her er $\textbf{Avg test loss}$ er gennemsnitlige traial test loss. $\textbf{Test loss}$ er de enkelte trial gennemsnitlige test loss, $\textbf{Lr}$ er learning rate, 
+$\textbf{Funk}$ er aktiverings funktioner i de forskellige lag, $\textbf{Lag}$ er antal skjulte lag.
+
+
+Bemærk der hvor der står Na, er det fordi træningen kollapsede og gav ikke endelige værdier. De ikke endelige værdier var udelukkende 
+fra PDE loss.
+Da det ikke vurderes at give nyttig information at køre disse igennem til test blev de bare stoppet.
+
+Valget af aktiverings funktion bestemmes til SiLU, og antal lag til 4, da disse modeller havde klart bedre \textbf{Avg test loss}. 
+Det kan dog bemærkes at eksperiment 10 og 12 trail 2, og 4, der var rimelige ens modeller, havde relativt lav loss, men dog ikke noget der nærmer sig SILU modellerne.
+Dette peger samlet på, at aktiveringsfunktionen havde større betydning end små variationer i lagopbygningen i denne første udforskning.
+
+Resultaterne af varierende hidden dimension kan ses i tabel~\ref{table:hidden-dim-lr-rate-og-test-loss}. 
+Her bestemmes learning rate igen så modellerne træner stabil og stadig kan konvegere nogenlunde.
+Hyper parametre er som følgende: batch size 1024, 4 lag og 10 epochs.
+
+Der blev kun kørt én trial for hver hidden dimension.
+\begin{table}
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Test loss} & \textbf{Hidden dim} & \textbf{Lr} & \textbf{Eks} \\ \hline
+        1.64 & 1024 & $3\cdot10^{-5}$ & 13\\ \hline
+        1.75 & 256 & $5\cdot10^{-5}$ &  14\\ \hline
+        2.03 & 4096 & $1\cdot10^{-5}$ & 15\\ \hline
+    \end{tabular}
+    \caption{Resultater af udforskning med varierende hidden dimension}
+    \label{table:hidden-dim-lr-rate-og-test-loss}
+\end{table}
+
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/arkitekturudforskning/PINN_z/ex_13_ex_14_ex_15_total_raw.png}
+    \caption{Trænings-, validerings- og testkurver for eksperiment 13 med varierende hidden dimension}
+    \label{fig: ex13 varierende hidden}
+\end{figure}
+Hertil skal det noteres at eksperiment 15 med hidden dimension 4096 havde bedste validerings loss i epoch 5, og derefter steg validerings lossen igen, hvilket kan være tegn på overfitting.
+Samtidig tyder tabellen på, at en mellemstor model gav den bedste balance mellem kapacitet og stabil generalisering.
+
+Til endelige eksperiment vælges modellen med hidden dimension 1024 og 4 lag. En vigtig note er at 
+alle foregående eksperimenter konvegerede PDE loss mod omkring $10^{-5}$ til $10^{-4}$ og data loss mod omkring $2$ til $10$. 
+
+
+\subsubsection{Model arkitektur for endelige eksperiment}
+Desværre overfittede de større modeller og da mindre modeller blev testet viste det sig at alle disse modeller overfittede. Derfor var 
+det eneste man kunne tage med fra udforskningen i kapitel \ref{ch5_1_design_af_eksperiment} var, at tanh som aktiveringsfunktion var værre end SiLU, date loss konvergerede mod $2$,
+PDE loss konvergerede mod $10^{-4}$, og PDE loss var meget ustabil.
+Da konvergencen ad data loss og PDE loss kunne approksimeres skaleres data og PDE loss med deres approksimerede konvergensværdier. Derofer sættes loss til:
+\begin{align}
+    loss_{total} = 2 \cdot data_{loss} + 10^{-4} \cdot pde_{loss}
+\end{align}
+
+Da PDE loss skaleres med samme skala som data loss, medfører det at PDE loss er meget mere stabil og learning rate kan komme højere op.
+Dette kommer af at når modellen skal afveje PDE loss mod data loss bliver den straffet hårdt med det samme. 
+Dog blev det opsaveret at hvis modellen fik kæmpe loss i første batches, så kollapsede træningen og gav NaN værdier og kunne ikke redes.
+Learning rate blev sat så højt som muligt uden at PDE loss blev ustabil, så modellerne kunne konvergere så hurtigt som muligt
+Hyperparametrene blev sat til: batch størrelse på 1024, træning, validering og test split på $[0, 80\%]$, $(80\%, 90\%]$ og $(90\%, 100\%]$.
+Hvor \texttt{Alexander\_e} splittes med tidsrække og \texttt{Alexander\_phi\_0} splittes med random sample, 100 epochs, og early stopping patience på 10 og min\_delta på 0.1.
+
+Alt data findes i eksperimentmapperne under \texttt{Experimenter/PINN\_z}. 
+
+\begin{table}
     \centering
     \begin{tabular}{|l|l|l|l|l|}
         \hline
-        \textbf{Eks} & \textbf{Funk} & \textbf{Lag} & \textbf{Trial \{1, 2, 3, 4\}} & \textbf{Avg}\\ \hline
-        1 & tanh & 2 & \{4.5, 4.4, 4.2, 4.3\} & 4.35 \\ \hline
-        2 & tanh & 4 & \{5.0, 5.0, 5.1, 5.0\} & 5.03 \\ \hline
-        3 & tanh & 6 & \{5.1, 5.1, 5.0, 5.1\} & 4.95 \\ \hline
-        4 & tanh & 8 & \{4.5, 4.4, 4.2, 4.3\} & 4.35 \\ \hline
-        5 & SiLU & 2 & \{1.9, 2.3, 2.0, 1.8\} & 2.00 \\ \hline
-        6 & SiLU & 4 & \{1.9, 1.2, 1.9, 1.8\} & 1.70 \\ \hline
-        7 & SiLU & 6 & \{Na , Na,  2.4, 2.3\} & 4.95 \\ \hline
-        8 & SiLU & 8 & \{4.5, 4.4, 4.2, 4.3\} & 4.35 \\ \hline
+        \textbf{Test loss uvægtet} & \textbf{Lag} & \textbf{Hidden dimension} & \textbf{Lr} & \textbf{eks} \\ \hline
+        1.73 & 2 & 8, 8 & $1\cdot10^{-4}$ & 3\\ \hline
+        1.97 & 3 & 4, 4, 4 & $7\cdot10^{-4}$ & 7\\ \hline
+        1.99 & 3 & 16, 16, 16 & $3\cdot10^{-4}$ & 9\\ \hline
+        2.02 & 3 & 8, 8, 8 & $3\cdot10^{-4}$ & 8\\ \hline
+        2.04 & 2 & 16, 16 & $1\cdot10^{-4}$ & 4\\ \hline
+        2.19 & 2 & 4, 4 & $1\cdot10^{-3}$ & 2\\ \hline
+        2.19 & 2 & 32, 32 & $5\cdot10^{-5}$ & 5\\ \hline
+        4.51 & 2 & 2, 2 & $1\cdot10^{-3}$ & 1\\ \hline
+        4.95 & 3 & 2, 2, 2 & $1\cdot10^{-3}$ & 6\\ \hline
     \end{tabular}
-    \caption{PINN\_z}
+    \caption{Resultater af hyperparameterudforskning med varierende hidden dimension sorteret efter uvægtet test loss}
+    \label{table:hyperparameter_resultater}
 \end{table}
-For for eksperimenterne 
 
-Her står \textbf{Eks} for eksperiment i, \textbf{Funk} er hvilken ikke linear aktiverings funktion der bliver brugt, \textbf{Lag} er antal lag,
-\textbf{Trial \{1, 2, 3, 4\}} er gennemsnitlige test loss for hver trial og \textbf{Avg} er gennemsnitlige traial loss. 
+Her skal det bæmærkes at selvom det normal medfører øget ustabilitet at have større model, vidste det sig at modellerne i eksperiment 8, 9 var mere stabile end eksperiment 6 og 7
+og derfor havde højere learning rate. Alle modeller konvergerede inden de nåede 100 epochs se fig \ref{fig: to lag overlap} og fig \ref{fig: tre lag overlap}. 
+Her skal det også bemærkes at modellerne i eksperiment 2 og 6 nåede til omkring epoch 95 før early stopping blev aktiveret.
+Det vigtigste resultat her er, at de bedste testtab opnås med små modeller, hvilket tyder på at større modeller ikke gav ekstra gevinst på dette datasæt.
+
+Arkitekturen for den endelige model bliver derfor bestemt til 2 lag med 8 hidden dimensioner.
+
+
+
+% Her skal det noteres at 
+
+% Her skal det noteres at eks_13\_3 havde bedste validerings loss i epch 6, og derefter steg validerings lossen igen .
+
+% Da hidden dimension var holdt konstant på 256, laves der et sidste arkitektureksperiment med varierende hidden dimension for at afgøre endelige struktur. 
+% Da SiLU bliver meget sensitiv for learning rate/batch size, når antal parametre bliver højt, sættes learning rate som vist i tabel~\ref{table:hidden-dim-lr-rate-og-test-loss}.
+
+% De resterende hyperparametre sættes til batch size 512, 4 lag og 10 epochs. 
+% Der køres kun én trial for hver hidden dimension, da variancen af konvegerede modeller med sådan en lave learning rate er er meget lille. 
+% Dette træning, validering og test kurver kan ses i figur~\ref{fig: ex13 hidden}
+% Resultaterne kan ses i tabel~\ref{table:hidden-dim-lr-rate-og-test-loss}.
+
+
+
+% Da modellen med 4096 hidden dimensioner havde den laveste gennemsnitlige test loss, blev den valgt.
+% Den endelige model er derfor: 4 lag, hidden dimension 4096, SiLU aktiverings funktion i alle lag,
+% For hyperparametre sættes batch size til 1024, og learning rate til $1\cdot 10^{-7}$, 30 epochs,
+% og early stopping patience på 8 og min\_delta på 0.0. 
+
+
+% Læseren kan notere at eksperiment 6 trial 2 havde en gennemsitlig test loss på 1.2, hvilket er det abselut laveste af alle trial. 
+% Men da dette kan være grundet aggrasiv learning rate og ikke nødvendigvis en bedre model, blev det ikke valgt som endelig model.
+% Derfor sigtes der efter at slå en gennemsnitlig test loss på 1.2.

@@ -44,7 +44,7 @@ Her er $\beta$ indeks for koordinater i det fysiske rum. Det første led, $\part
 Det andet led, $\partial_{x_\beta}(v_\beta f_a)$, beskriver transport i det fysiske rum.
 Det tredje led, $\partial_{v_\beta}\left( \frac{F_{a\beta}}{m_a} f_a \right)$, beskriver transport i hastighedsrummet.
 Højresiden $C_a$ beskriver ændringen i fordelingsfunktionen som følge af kollisioner mellem partikler.
-Et lille eksempel på anvendelse af \eqref{eq:boltzmann_plasma} kan ses i appendix B \ref{Braginskii example}.
+% Et lille eksempel på anvendelse af \eqref{eq:boltzmann_plasma} kan ses i appendix B \ref{Braginskii example}.
 
 
 I ligningen indgår følgende størrelser:
@@ -172,7 +172,7 @@ Herved udlede Braginskii sine tre ligninger for tæthed, impuls og energi udvikl
 Ved modellering af turbulens i randplasmaer er Braginskii's ligninger imidlertid ofte for komplekse til direkte numerisk anvendelse.
 Derfor introduceres den reducerede drift fluid HESEL modeller, hvor en række fysiske antagelser anvendes til at forenkle beskrivelsen af plasmaets dynamik.
 
-\subsubsection{Hesel modellen}
+\subsubsection{HESEL modellen}
 I dette projekt anvendes HESEL modellen, som er en $n$ dimensionel drift fluid model udviklet til at beskrive turbulens
 og transport i tokamak plasmaers rand og SOL regioner. I dette projekt simuleres den i 2 dimensioner.
 Modellen bygger på Braginskii's fluidbeskrivelse og fremkommer gennem en række approksimationer og reduktioner af de oprindelige ligninger.
@@ -180,7 +180,7 @@ En detaljeret udledning ligger uden for dette projekts omfang og kan findes i li
 Fokus i dette projekt er derfor ikke på den fulde udledning af HESEL modellen, men på anvendelsen af modellen
 som fysisk grundlag for de efterfølgende numeriske og maskinlæringsbaserede metoder.
 
-Notationen i Hesel modellen kommer til at følge tæt notationen i \cite{num_sim_blobs} og \cite{plasma_particle_sources}:
+Notationen i HESEL modellen kommer til at følge tæt notationen i \cite{num_sim_blobs} og \cite{plasma_particle_sources}:
 
 \begin{gather}
     \mathrm{d} _t n + n\mathcal{K}(\phi) - \mathcal{K}(p_e) = \Lambda_n  \label{EQ_n} \\ 
@@ -208,7 +208,7 @@ Elektron \eqref{EQ_p_e} og iontryk \eqref{EQ_p_i} ligningerne beskriver udviklin
 Ligningerne er afledt fra Braginskiis energitransportligninger og indeholder transport med plasmaflowet, kompression i det krumme magnetfelt samt energitransport drevet af trykgradienter.
 Samtidig beskriver de energiudveksling mellem plasmaets termiske energi og kollektive bevægelse.
 
-Lambda termerne er fra \cite{num_sim_blobs} og her er de givet ved.
+Lambda termerne er fra artikelen \cite{num_sim_blobs} og her er de givet ved.
 \begin{align}
     \Lambda_n =& D_e\nabla_\perp^2 n -\alpha\left(\tilde T_e+ \frac{\bar T_e}{\bar n}\tilde n-\tilde\phi\right)
               -\frac{n}{\tau} -\frac{n-n_p}{\tau_p} \label{L_n}\\ 
@@ -222,8 +222,8 @@ $\Lambda$ koefficienterne står for at beskrive kollisionsprocesserne, varmeledn
 Her repræsenterer $D_e$ og $D_i$ de neoklassiske tværgående transportkoefficienter, som beskriver diffusiv udjævning af henholdsvis partikel, ion, elektron og vorticitetsprofiler.
 Koefficienten $\alpha$ parametriserer koblingen til parallel driftbølge dynamik på lukkede feltlinjer og driver transport gennem forskelle mellem tæthed, temperatur og potentiale.
 $\tau$ og $\tau_p$ beskriver hvor hurtgit feltet tvinges mod profilen, funktionerne med subskript $p$, 
-beskriver parallelle tab: $\tau$ er den karakteristiske tidsskala for tab til (SOL) og sheath, mens $\tau_p$ angiver den tidsskala,
-hvormed plasmaet relakseres mod de påtvungne kildeprofiler i randregionen.
+beskriver parallelle tab: $\tau$ er den karakteristiske tidsskala for tab til SOL og sheath, mens $\tau_p$ angiver den tidsskala,
+hvormed plasmaet styres mod de påtvungne kildeprofiler i randregionen.
 For dette eksperiment er profilerne givet ved:
 \begin{figure}[htbp]
     \centering
@@ -252,8 +252,8 @@ da $N$ er antallet af partikler kan tætheden $n$ udtrykkes på følgene form:
     p = \frac{N}{V}T,\quad p = nT
 \end{equation*}
 
-Når HESEL modellen simuleres, omskrives ligningerne til Bohm normaliserede enheder, hvilket reducerer antallet af fysiske parametre,
-forbedrer den numeriske stabilitet og gør det muligt at beskrive plasmaets dynamik i en dimensionsløs form uafhængigt af de valgte referenceværdier.
+Når HESEL modellen simuleres, udføres det i Bohm normaliserede enheder, hvilket reducerer antallet af fysiske parametre 
+Dette gør simuleringen mere numerisk stabil og gør det muligt at beskrive plasmaets dynamik i en dimensionsløs form uafhængigt af de valgte referenceværdier.
 Bohm normalisering betyder at visse variabler ganges med konstanter for at gøre dem dimensionsløse.
 \begin{align*}
     t \rightarrow \omega_{ci,0} t,\quad
@@ -262,10 +262,10 @@ Bohm normalisering betyder at visse variabler ganges med konstanter for at gøre
     T_{e,i} \rightarrow \frac{T_{e,i}}{T_{e0}}, \quad
     p_{e,i} \rightarrow \frac{p_{e,i}}{n_0T_{e0}},
 \end{align*}
-Det bemærkes at i literaturen bruges $(x,y,z)$ koordinate indeksering, men når Hesel simuleres bruges $(x,z,y)$ indeksering.
+Det bemærkes at i literaturen bruges $(x,y,z)$ koordinat indeksering, men når HESEL simuleres bruges $(x,z,y)$ indeksering.
 I metode afsnittet vil $(x,y,z)$ koordinat indeksering bruges men i \ref{ch3} bruges $(x,z,y)$ indeksering. Dette ændre ikke på noget fysisk eller matematisk men blot notationen.
 
-Til sidst er det nyttigt at introducere den række operatorer, som anvendes i HESEL modellen for at gøre ligningerne mere kompakte og læsbare.
+Til sidst introduceres den række operatorer, som anvendes i HESEL modellen for at gøre ligningerne mere kompakte og læsbare.
 \begin{gather}
     \mathcal{K}(f)= - \frac{\rho_s}{R}\partial_y f \label{curvature}\\
     \left\{ f, g\right\} = \partial_x f \partial_y g - \partial_y f \partial_x g \label{poission}\\
